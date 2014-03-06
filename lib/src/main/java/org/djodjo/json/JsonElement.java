@@ -142,12 +142,10 @@ public abstract class JsonElement implements Serializable {
             if (o instanceof Character) {
                 return new JsonString(Character.toString((Character)o));
             }
-            if (o.getClass().getPackage().getName().startsWith("java.")) {
-                return new JsonString(o.toString());
-            }
+
         } catch (Exception ignored) {
         }
-        return null;
+        return new JsonString(o.toString());
     }
 
     protected abstract void write( JsonWriter writer ) throws IOException;

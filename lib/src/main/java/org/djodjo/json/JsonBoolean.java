@@ -53,4 +53,10 @@ public class JsonBoolean extends JsonElement {
         writer.value(value);
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
+
+
 }

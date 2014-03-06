@@ -88,7 +88,7 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
         final int length = Array.getLength(array);
         values = new ArrayList<JsonElement>(length);
         for (int i = 0; i < length; ++i) {
-            put(JsonObject.wrap(Array.get(array, i)));
+            put(JsonElement.wrap(Array.get(array, i)));
         }
     }
 

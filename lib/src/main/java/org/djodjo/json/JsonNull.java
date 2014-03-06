@@ -40,4 +40,9 @@ public class JsonNull extends JsonElement {
         writer.nullValue();
     }
 
+    @Override
+    public String toString() {
+        return "null";
+    }
+
 }

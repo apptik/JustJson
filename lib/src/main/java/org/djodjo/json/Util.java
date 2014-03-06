@@ -89,11 +89,15 @@ class Util {
     static String toString(Object value) {
         if (value instanceof String) {
             return (String) value;
+        } else  if (value instanceof JsonElement) {
+            return ((JsonElement)value).toString();
         } else if (value != null) {
             return String.valueOf(value);
         }
         return null;
     }
+
+
 
     public static JsonException typeMismatch(Object indexOrName, Object actual,
             String requiredType) throws JsonException {
