@@ -113,14 +113,14 @@ public abstract class JsonElement implements Serializable {
     /**
      * Wraps the given object if to JsonXXX object.
      */
-    public static JsonElement wrap(Object o) {
+    public static JsonElement wrap(Object o) throws JsonException{
         if (o == null) {
             return new JsonNull();
         }
         if (o instanceof JsonElement) {
             return (JsonElement)o;
         }
-        try {
+
             if (o instanceof Collection) {
                 return new JsonArray((Collection) o);
             } else if (o.getClass().isArray()) {
@@ -143,8 +143,6 @@ public abstract class JsonElement implements Serializable {
                 return new JsonString(Character.toString((Character)o));
             }
 
-        } catch (Exception ignored) {
-        }
         return new JsonString(o.toString());
     }
 

@@ -45,7 +45,8 @@ public class JsonBoolean extends JsonElement {
 
     @Override
     public boolean equals( Object o ) {
-        return o instanceof JsonBoolean && ((JsonBoolean) o).value==value;
+        return  (o instanceof JsonBoolean && ((JsonBoolean) o).value==value)
+        || (o !=null && o.equals(value));
    }
 
     @Override

@@ -99,7 +99,7 @@ public class JsonObject extends JsonElement {
      * @throws NullPointerException if any of the map's keys are null.
      */
     /* (accept a raw type for API compatibility) */
-    public JsonObject(Map copyFrom) {
+    public JsonObject(Map copyFrom) throws JsonException{
         this();
         Map<?, ?> contentsTyped = (Map<?, ?>) copyFrom;
         for (Map.Entry<?, ?> entry : contentsTyped.entrySet()) {
@@ -240,11 +240,11 @@ public class JsonObject extends JsonElement {
 
         if (current instanceof JsonArray) {
             JsonArray array = (JsonArray) current;
-            array.checkedPut(value);
+            array.put(value);
         } else {
             JsonArray array = new JsonArray();
-            array.checkedPut(current);
-            array.checkedPut(value);
+            array.put(current);
+            array.put(value);
             nameValuePairs.put(name, array);
         }
         return this;
@@ -275,7 +275,7 @@ public class JsonObject extends JsonElement {
             throw new JsonException("Key " + name + " is not a JsonArray");
         }
 
-        array.checkedPut(value);
+        array.put(value);
 
         return this;
     }
@@ -715,7 +715,7 @@ public class JsonObject extends JsonElement {
      * Returns an array containing the string names in this object. This method
      * returns null if this object contains no mappings.
      */
-    public JsonArray names() {
+    public JsonArray names() throws JsonException{
         return nameValuePairs.isEmpty()
                 ? null
                 : new JsonArray(new ArrayList<String>(nameValuePairs.keySet()));

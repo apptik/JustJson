@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import sun.tools.jar.resources.jar_sv;
+
 // Note: this class was written without inspecting the non-free org.json sourcecode.
 
 /**
@@ -68,7 +70,7 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      *     inconsistent state.
      */
     /* Accept a raw type for API compatibility */
-    public JsonArray(Collection copyFrom) {
+    public JsonArray(Collection copyFrom) throws JsonException{
         this();
         if (copyFrom != null) {
             for (Iterator it = copyFrom.iterator(); it.hasNext();) {
@@ -147,7 +149,7 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      *     array to be in an inconsistent state.
      * @return this array.
      */
-    public JsonArray put(Object value) {
+    public JsonArray put(Object value) throws JsonException{
         return put(wrap(value));
     }
 
@@ -157,17 +159,6 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
         }
         values.add(value);
         return this;
-    }
-
-    /**
-     * Same as {@link #put}, with added validity checks.
-     */
-    void checkedPut(Object value) throws JsonException {
-        if (value instanceof Number) {
-            Util.checkDouble(((Number) value).doubleValue());
-        }
-
-        put(value);
     }
 
     /**
@@ -230,7 +221,7 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
     public JsonArray put(int index, Object value) throws JsonException {
 
         while (values.size() <= index) {
-            values.add(null);
+            values.add(new JsonNull());
         }
         values.set(index, wrap(value));
         return this;
@@ -242,7 +233,7 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      */
     public boolean isNull(int index) {
         Object value = opt(index);
-        return value == null || value == new JsonNull();
+        return value == null || value.equals(new JsonNull());
     }
 
     /**
@@ -293,12 +284,25 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      * @throws JsonException if the value at {@code index} doesn't exist or
      *     cannot be coerced to a boolean.
      */
-    public boolean getBoolean(int index) throws JsonException {
+    public boolean getBoolean(int index, boolean strict) throws JsonException {
         JsonElement el = get(index);
-        if (!el.isBoolean()) {
-            throw Util.typeMismatch(index, el, "boolean");
+        Boolean res = null;
+        if (strict && !el.isBoolean()) {
+            throw Util.typeMismatch(index, el, "boolean", strict);
         }
-        return el.asBoolean();
+        if (el.isBoolean()) {
+            res = el.asBoolean();
+        }
+        if (el.isString()) {
+            res =  Util.toBoolean(el.asString());
+        }
+        if(res == null)
+            throw Util.typeMismatch(index, el, "boolean", strict);
+        return res;
+    }
+
+    public boolean getBoolean(int index) throws JsonException {
+        return getBoolean(index, false);
     }
 
     /**
@@ -314,16 +318,15 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      * be coerced to a boolean. Returns {@code fallback} otherwise.
      */
     public boolean optBoolean(int index, boolean fallback) {
-        JsonElement el;
+        return optBoolean(index, fallback, false);
+    }
+
+    public boolean optBoolean(int index, boolean fallback, boolean strict) {
         try {
-            el = get(index);
+            return getBoolean(index, strict);
         } catch (JsonException e) {
             return fallback;
         }
-        if(!el.isBoolean()) {
-            return fallback;
-        }
-        return el.asBoolean();
     }
 
     /**
@@ -333,12 +336,25 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      * @throws JsonException if the value at {@code index} doesn't exist or
      *     cannot be coerced to a double.
      */
-    public double getDouble(int index) throws JsonException {
+    public double getDouble(int index, boolean strict) throws JsonException {
         JsonElement el = get(index);
-        if (!el.isNumber()) {
-            throw Util.typeMismatch(index, el, "double");
+        Double res = null;
+        if (strict && !el.isNumber()) {
+            throw Util.typeMismatch(index, el, "double", strict);
         }
-        return el.asDouble();
+        if (el.isNumber()) {
+            res = el.asDouble();
+        }
+        if (el.isString()) {
+            res =  Util.toDouble(el.asString());
+        }
+        if(res == null)
+            throw Util.typeMismatch(index, el, "double", strict);
+        return res;
+    }
+
+    public double getDouble(int index) throws JsonException {
+        return getDouble(index, false);
     }
 
     /**
@@ -354,16 +370,15 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      * be coerced to a double. Returns {@code fallback} otherwise.
      */
     public double optDouble(int index, double fallback) {
-        JsonElement el;
+        return optDouble(index, fallback, false);
+    }
+
+    public double optDouble(int index, double fallback, boolean strict) {
         try {
-            el = get(index);
+            return getDouble(index, strict);
         } catch (JsonException e) {
             return fallback;
         }
-        if(!el.isNumber()) {
-            return fallback;
-        }
-        return el.asDouble();
     }
 
     /**
@@ -374,17 +389,31 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      *     cannot be coerced to a int.
      */
     public int getInt(int index) throws JsonException {
-        JsonElement el = get(index);
-        if (!el.isNumber()) {
-            throw Util.typeMismatch(index, el, "int");
-        }
-        return el.asInt();
+        return getInt(index, false);
    }
 
     /**
      * Returns the value at {@code index} if it exists and is an int or
      * can be coerced to an int. Returns 0 otherwise.
      */
+    public int getInt(int index, boolean strict) throws JsonException {
+        JsonElement el = get(index);
+        Integer res = null;
+        if (strict && !el.isNumber()) {
+            throw Util.typeMismatch(index, el, "int", strict);
+        }
+        if (el.isNumber()) {
+            res = el.asInt();
+        }
+        if (el.isString()) {
+            res =  Util.toInteger(el.asString());
+        }
+        if(res == null)
+            throw Util.typeMismatch(index, el, "int", strict);
+        return res;
+    }
+
+
     public int optInt(int index) {
         return optInt(index, 0);
     }
@@ -394,16 +423,15 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      * can be coerced to an int. Returns {@code fallback} otherwise.
      */
     public int optInt(int index, int fallback) {
-        JsonElement el;
+        return optInt(index, fallback, false);
+    }
+
+    public int optInt(int index, int fallback, boolean strict) {
         try {
-            el = get(index);
+            return getInt(index, strict);
         } catch (JsonException e) {
             return fallback;
         }
-        if(!el.isNumber()) {
-            return fallback;
-        }
-        return el.asInt();
     }
 
     /**
@@ -413,12 +441,26 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      * @throws JsonException if the value at {@code index} doesn't exist or
      *     cannot be coerced to a long.
      */
-    public long getLong(int index) throws JsonException {
+
+    public long getLong(int index, boolean strict) throws JsonException {
         JsonElement el = get(index);
-        if (!el.isNumber()) {
-            throw Util.typeMismatch(index, el, "long");
+        Long res = null;
+        if (strict && !el.isNumber()) {
+            throw Util.typeMismatch(index, el, "long", strict);
         }
-        return el.asLong();
+        if (el.isNumber()) {
+            res = el.asLong();
+        }
+        if (el.isString()) {
+            res =  Util.toLong(el.asString());
+        }
+        if(res == null)
+            throw Util.typeMismatch(index, el, "long", strict);
+        return res;
+    }
+
+    public long getLong(int index) throws JsonException {
+        return getLong(index, false);
     }
 
     /**
@@ -434,16 +476,16 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      * can be coerced to a long. Returns {@code fallback} otherwise.
      */
     public long optLong(int index, long fallback) {
-        JsonElement el;
+        return optLong(index, fallback, false);
+    }
+
+
+    public long optLong(int index, long fallback, boolean strict) {
         try {
-            el = get(index);
+            return getLong(index, strict);
         } catch (JsonException e) {
             return fallback;
         }
-        if(!el.isNumber()) {
-            return fallback;
-        }
-        return el.asInt();
     }
 
     /**
@@ -452,12 +494,20 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      *
      * @throws JsonException if no such value exists.
      */
-    public String getString(int index) throws JsonException {
+    public String getString(int index, boolean strict) throws JsonException {
         JsonElement el = get(index);
-        if (!el.isString()) {
-            throw Util.typeMismatch(index, el, "String");
+        String res = null;
+        if (strict && !el.isString()) {
+            throw Util.typeMismatch(index, el, "string", strict);
         }
-        return el.asString();
+        res = el.toString();
+        if(res == null)
+            throw Util.typeMismatch(index, el, "string", strict);
+        return res;
+    }
+
+    public String getString(int index) throws JsonException {
+        return getString(index, false);
     }
 
     /**
@@ -473,17 +523,17 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
      * necessary. Returns {@code fallback} if no such value exists.
      */
     public String optString(int index, String fallback) {
-        JsonElement el;
+        return optString(index, fallback, false);
+    }
+
+    public String optString(int index, String fallback, boolean strict) {
         try {
-            el = get(index);
+            return getString(index, strict);
         } catch (JsonException e) {
             return fallback;
         }
-        if(!el.isString()) {
-            return fallback;
-        }
-        return el.asString();
     }
+
 
     /**
      * Returns the value at {@code index} if it exists and is a {@code
@@ -564,7 +614,8 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
         }
         for (int i = 0; i < length; i++) {
             String name = names.opt(i).toString();
-            result.put(name, opt(i));
+            if(!opt(i).equals(null))
+                result.put(name, opt(i));
         }
         return result;
     }

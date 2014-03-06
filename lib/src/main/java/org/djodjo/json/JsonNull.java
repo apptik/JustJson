@@ -32,7 +32,7 @@ public class JsonNull extends JsonElement {
 
     @Override
     public boolean equals( Object o ) {
-        return o !=null && o instanceof JsonNull;
+        return o==null || o instanceof JsonNull;
     }
 
     @Override

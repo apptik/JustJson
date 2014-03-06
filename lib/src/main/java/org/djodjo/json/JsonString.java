@@ -53,7 +53,9 @@ public class JsonString extends JsonElement {
 
     @Override
     public boolean equals( Object o ) {
-        return o instanceof JsonString && ((JsonString) o).value.equals(value);
+        return (o instanceof JsonString && ((JsonString) o).value.equals(value))
+                || (o != null && o.equals(value))
+                ;
     }
 
     @Override

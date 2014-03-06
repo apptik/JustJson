@@ -23,14 +23,7 @@ class Util {
      */
     private static final Double NEGATIVE_ZERO = -0d;
 
-    static double checkDouble(double d) throws JsonException {
-        if (Double.isInfinite(d) || Double.isNaN(d)) {
-            throw new JsonException("Forbidden numeric value: " + d);
-        }
-        return d;
-    }
-
-    static Boolean toBoolean(Object value) {
+   static Boolean toBoolean(Object value) {
         if (value instanceof Boolean) {
             return (Boolean) value;
         } else if (value instanceof String) {
@@ -144,7 +137,6 @@ class Util {
         }
 
         double doubleValue = number.doubleValue();
-        Util.checkDouble(doubleValue);
 
         // the original returns "-0" instead of "-0.0" for negative zero
         if (number.equals(NEGATIVE_ZERO)) {

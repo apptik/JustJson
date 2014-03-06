@@ -39,8 +39,16 @@ public class JsonNumber extends JsonElement {
         if( value == null ) {
             throw new NullPointerException( "value is null" );
         }
+        checkDouble(value.doubleValue());
         this.numValue = value;
         this.value = numValue.toString();
+    }
+
+    private double checkDouble(double d) throws IllegalArgumentException {
+        if (Double.isInfinite(d) || Double.isNaN(d)) {
+            throw new IllegalArgumentException("Forbidden numeric value: " + d);
+        }
+        return d;
     }
 
     @Override
@@ -97,7 +105,12 @@ public class JsonNumber extends JsonElement {
 
     @Override
     public boolean equals( Object o ) {
-        return o instanceof JsonNumber && ((JsonNumber) o).value.equals(value);
+        return
+                (o instanceof JsonNumber && ((JsonNumber) o).value.equals(value))
+                        ||
+                        (  o !=null && asNumber().equals(o))
+                ;
+
     }
 
     @Override

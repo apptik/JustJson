@@ -40,13 +40,18 @@ import org.djodjo.json.JsonNull;
 import org.djodjo.json.JsonNumber;
 import org.djodjo.json.JsonObject;
 import org.djodjo.json.JsonString;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 
 /**
  * This black box test was written without inspecting the non-free org.json sourcecode.
  */
+@RunWith(JUnit4.class)
 public class JsonObjectTest extends TestCase {
 
+    @Test
     public void testEmptyObject() throws JsonException {
         JsonObject object = new JsonObject();
         assertEquals(0, object.length());
@@ -98,7 +103,6 @@ public class JsonObjectTest extends TestCase {
         } catch (JsonException e) {
         }
         assertFalse(object.has("foo"));
-        assertTrue(object.isNull("foo")); // isNull also means "is not present"
         assertNull(object.opt("foo"));
         assertEquals(false, object.optBoolean("foo"));
         assertEquals(true, object.optBoolean("foo", true));
@@ -115,22 +119,24 @@ public class JsonObjectTest extends TestCase {
         assertNull(object.remove("foo"));
     }
 
+    @Test
     public void testEqualsAndHashCode() throws JsonException {
         JsonObject a = new JsonObject();
         JsonObject b = new JsonObject();
 
-        // Json object doesn't override either equals or hashCode (!)
-        assertFalse(a.equals(b));
+        // Json object override equals
+        assertTrue(a.equals(b));
         assertEquals(a.hashCode(), System.identityHashCode(a));
     }
 
+    @Test
     public void testGet() throws JsonException {
         JsonObject object = new JsonObject();
         Object value = new Object();
         object.put("foo", value);
         object.put("bar", new Object());
         object.put("baz", new Object());
-        assertSame(value, object.get("foo"));
+        assertEquals(object.get("foo"), value.toString());
         try {
             object.get("FOO");
             fail();
@@ -148,6 +154,7 @@ public class JsonObjectTest extends TestCase {
         }
     }
 
+    @Test
     public void testPut() throws JsonException {
         JsonObject object = new JsonObject();
         assertSame(object, object.put("foo", true));
@@ -162,63 +169,64 @@ public class JsonObjectTest extends TestCase {
         assertEquals(Long.MAX_VALUE - 1, object.getLong("bar"));
         object.put("baz", "x");
         assertEquals("x", object.get("baz").toString());
-        object.put("bar", new JsonNull());
-        assertSame(new JsonNull(), object.get("bar"));
+        object.put("bar", null);
+        assertEquals(object.get("bar"), null);
     }
 
+    @Test
     public void testPutNullRemoves() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", "bar");
         object.put("foo", (Collection) null);
-        assertEquals(0, object.length());
-        assertFalse(object.has("foo"));
-        try {
-            object.get("foo");
-            fail();
-        } catch (JsonException e) {
-        }
+        assertEquals(1, object.length());
+        assertTrue(object.has("foo"));
+        assertEquals(object.get("foo"), null);
     }
 
+    @Test
     public void testPutOpt() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", "bar");
         object.putOpt("foo", null);
-        assertEquals("bar", object.get("foo").toString());
+        assertEquals(object.get("foo"), "bar");
         object.putOpt(null, null);
         assertEquals(1, object.length());
         object.putOpt(null, "bar");
         assertEquals(1, object.length());
     }
 
+    @Test
     public void testPutOptUnsupportedNumbers() throws JsonException {
         JsonObject object = new JsonObject();
         try {
             object.putOpt("foo", Double.NaN);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
         try {
             object.putOpt("foo", Double.NEGATIVE_INFINITY);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
         try {
             object.putOpt("foo", Double.POSITIVE_INFINITY);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
+    @Test
     public void testRemove() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", "bar");
         assertEquals(null, object.remove(null));
         assertEquals(null, object.remove(""));
         assertEquals(null, object.remove("bar"));
-        assertEquals("bar", object.remove("foo"));
+        assertEquals(object.remove("foo"), "bar");
         assertEquals(null, object.remove("foo"));
     }
 
+    @Test
     public void testBooleans() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", true);
@@ -256,7 +264,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals(false, object.optBoolean("bar", false));
     }
 
-    // http://code.google.com/p/android/issues/detail?id=16411
+    @Test
     public void testCoerceStringToBoolean() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", "maybe");
@@ -269,6 +277,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals(true, object.optBoolean("foo", true));
     }
 
+    @Test
     public void testNumbers() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", Double.MIN_VALUE);
@@ -282,14 +291,13 @@ public class JsonObjectTest extends TestCase {
         assertTrue(toString, toString.contains("\"bar\":9223372036854775806"));
         assertTrue(toString, toString.contains("\"baz\":1.7976931348623157E308"));
 
-        // toString() and getString() return different values for -0d!
-        assertTrue(toString, toString.contains("\"quux\":-0}") // no trailing decimal point
-                || toString.contains("\"quux\":-0,"));
+        assertTrue(toString, toString.contains("\"quux\":-0.0}") // no trailing decimal point
+                || toString.contains("\"quux\":-0.0,"));
 
-        assertEquals(Double.MIN_VALUE, object.get("foo"));
-        assertEquals(9223372036854775806L, object.get("bar"));
-        assertEquals(Double.MAX_VALUE, object.get("baz"));
-        assertEquals(-0d, object.get("quux"));
+        assertEquals(object.get("foo"), Double.MIN_VALUE);
+        assertEquals(object.get("bar"),9223372036854775806L);
+        assertEquals(object.get("baz"),Double.MAX_VALUE);
+        assertEquals(object.get("quux"),-0d);
         assertEquals(Double.MIN_VALUE, object.getDouble("foo"));
         assertEquals(9.223372036854776E18, object.getDouble("bar"));
         assertEquals(Double.MAX_VALUE, object.getDouble("baz"));
@@ -302,11 +310,11 @@ public class JsonObjectTest extends TestCase {
         assertEquals(-2, object.getInt("bar"));
         assertEquals(Integer.MAX_VALUE, object.getInt("baz"));
         assertEquals(0, object.getInt("quux"));
-        assertEquals(Double.MIN_VALUE, object.opt("foo"));
+        assertEquals(object.opt("foo"), Double.MIN_VALUE);
         assertEquals(9223372036854775806L, object.optLong("bar"));
         assertEquals(Double.MAX_VALUE, object.optDouble("baz"));
         assertEquals(0, object.optInt("quux"));
-        assertEquals(Double.MIN_VALUE, object.opt("foo"));
+        assertEquals(object.opt("foo"),Double.MIN_VALUE);
         assertEquals(9223372036854775806L, object.optLong("bar"));
         assertEquals(Double.MAX_VALUE, object.optDouble("baz"));
         assertEquals(0, object.optInt("quux"));
@@ -320,25 +328,27 @@ public class JsonObjectTest extends TestCase {
         assertEquals("-0.0", object.getString("quux"));
     }
 
+    @Test
     public void testFloats() throws JsonException {
         JsonObject object = new JsonObject();
         try {
             object.put("foo", (Float) Float.NaN);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
         try {
             object.put("foo", (Float) Float.NEGATIVE_INFINITY);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
         try {
             object.put("foo", (Float) Float.POSITIVE_INFINITY);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
+    @Test
     public void testOtherNumbers() throws JsonException {
         Number nan = new Number() {
             public int intValue() {
@@ -362,10 +372,11 @@ public class JsonObjectTest extends TestCase {
         try {
             object.put("foo", nan);
             fail("Object.put() accepted a NaN (via a custom Number class)");
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
+    @Test
     public void testForeignObjects() throws JsonException {
         Object foreign = new Object() {
             @Override public String toString() {
@@ -379,6 +390,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals("{\"foo\":\"x\"}", object.toString());
     }
 
+    @Test
     public void testNullKeys() {
         try {
             new JsonObject().put(null, false);
@@ -407,6 +419,7 @@ public class JsonObjectTest extends TestCase {
         }
     }
 
+    @Test
     public void testStrings() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", "true");
@@ -459,6 +472,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals(true, object.getBoolean("foo"));
     }
 
+    @Test
     public void testJsonObjects() throws JsonException {
         JsonObject object = new JsonObject();
 
@@ -485,12 +499,14 @@ public class JsonObjectTest extends TestCase {
         assertEquals(null, object.optJsonObject("foo"));
     }
 
+    @Test
     public void testNullCoercionToString() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", new JsonNull());
         assertEquals("null", object.getString("foo"));
     }
 
+    @Test
     public void testArrayCoercion() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", "[true]");
@@ -501,6 +517,7 @@ public class JsonObjectTest extends TestCase {
         }
     }
 
+    @Test
     public void testObjectCoercion() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", "{}");
@@ -511,27 +528,29 @@ public class JsonObjectTest extends TestCase {
         }
     }
 
+    @Test
     public void testAccumulateValueChecking() throws JsonException {
         JsonObject object = new JsonObject();
         try {
             object.accumulate("foo", Double.NaN);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
         object.accumulate("foo", 1);
         try {
             object.accumulate("foo", Double.NaN);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
         object.accumulate("foo", 2);
         try {
             object.accumulate("foo", Double.NaN);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
+    @Test
     public void testToJsonArray() throws JsonException {
         JsonObject object = new JsonObject();
         Object value = new Object();
@@ -546,14 +565,15 @@ public class JsonObjectTest extends TestCase {
         names.put("foo");
 
         JsonArray array = object.toJsonArray(names);
-        assertEquals(-0.0d, array.get(0));
-        assertEquals(value, array.get(1));
-        assertEquals(true, array.get(2));
+        assertEquals(array.get(0), -0.0d);
+        assertEquals(array.get(1), value.toString());
+        assertEquals(array.get(2), true);
 
         object.put("foo", false);
-        assertEquals(true, array.get(2));
+        assertEquals(array.get(2), true);
     }
 
+    @Test
     public void testToJsonArrayMissingNames() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", true);
@@ -569,16 +589,13 @@ public class JsonObjectTest extends TestCase {
         JsonArray array = object.toJsonArray(names);
         assertEquals(4, array.length());
 
-        assertEquals(5.0d, array.get(0));
-        assertEquals(true, array.get(1));
-        try {
-            array.get(2);
-            fail();
-        } catch (JsonException e) {
-        }
+        assertEquals(array.get(0), 5.0d);
+        assertEquals(array.get(1), true);
+        assertEquals(array.get(2), null);
         assertEquals(new JsonNull(), array.get(3));
     }
 
+    @Test
     public void testToJsonArrayNull() throws JsonException {
         JsonObject object = new JsonObject();
         assertEquals(null, object.toJsonArray(null));
@@ -589,6 +606,7 @@ public class JsonObjectTest extends TestCase {
         }
     }
 
+    @Test
     public void testToJsonArrayEndsUpEmpty() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", 5);
@@ -597,6 +615,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals(1, object.toJsonArray(array).length());
     }
 
+    @Test
     public void testToJsonArrayNonString() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", 5);
@@ -611,53 +630,55 @@ public class JsonObjectTest extends TestCase {
         // array elements are converted to strings to do name lookups on the map!
         JsonArray array = object.toJsonArray(names);
         assertEquals(3, array.length());
-        assertEquals(10, array.get(0));
-        assertEquals(15, array.get(1));
-        assertEquals(5, array.get(2));
+        assertEquals(array.get(0), 10);
+        assertEquals(array.get(1), 15);
+        assertEquals(array.get(2), 5);
     }
 
+    @Test
     public void testPutUnsupportedNumbers() throws JsonException {
         JsonObject object = new JsonObject();
         try {
             object.put("foo", Double.NaN);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
         try {
             object.put("foo", Double.NEGATIVE_INFINITY);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
         try {
             object.put("foo", Double.POSITIVE_INFINITY);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
+    @Test
     public void testPutUnsupportedNumbersAsObjects() throws JsonException {
         JsonObject object = new JsonObject();
         try {
             object.put("foo", (Double) Double.NaN);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
         try {
             object.put("foo", (Double) Double.NEGATIVE_INFINITY);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
         try {
             object.put("foo", (Double) Double.POSITIVE_INFINITY);
             fail();
-        } catch (JsonException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
     /**
-     * Although JsonObject is usually defensive about which numbers it accepts,
-     * it doesn't check inputs in its constructor.
+     * JsonObject constructor fails
      */
+    @Test(expected=IllegalArgumentException.class)
     public void testCreateWithUnsupportedNumbers() throws JsonException {
         Map<String, Object> contents = new HashMap<String, Object>();
         contents.put("foo", Double.NaN);
@@ -665,25 +686,24 @@ public class JsonObjectTest extends TestCase {
         contents.put("baz", Double.POSITIVE_INFINITY);
 
         JsonObject object = new JsonObject(contents);
-        assertEquals(Double.NaN, object.get("foo"));
-        assertEquals(Double.NEGATIVE_INFINITY, object.get("bar"));
-        assertEquals(Double.POSITIVE_INFINITY, object.get("baz"));
     }
 
-    public void testToStringWithUnsupportedNumbers() {
-        // when the object contains an unsupported number, toString returns null!
+    @Test(expected=IllegalArgumentException.class)
+    public void testToStringWithUnsupportedNumbers() throws JsonException{
+        // when the object contains an unsupported number JsonObject constructor fails
         JsonObject object = new JsonObject(Collections.singletonMap("foo", Double.NaN));
-        assertEquals(null, object.toString());
     }
 
+    @Test
     public void testMapConstructorCopiesContents() throws JsonException {
         Map<String, Object> contents = new HashMap<String, Object>();
         contents.put("foo", 5);
         JsonObject object = new JsonObject(contents);
         contents.put("foo", 10);
-        assertEquals(5, object.get("foo"));
+        assertEquals(object.get("foo"), 5);
     }
 
+    @Test
     public void testMapConstructorWithBogusEntries() {
         Map<Object, Object> contents = new HashMap<Object, Object>();
         contents.put(5, 5);
@@ -695,6 +715,7 @@ public class JsonObjectTest extends TestCase {
         }
     }
 
+    @Test
     public void testAccumulateMutatesInPlace() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", 5);
@@ -705,6 +726,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals("[5,6,7]", array.toString());
     }
 
+    @Test
     public void testAccumulateExistingArray() throws JsonException {
         JsonArray array = new JsonArray();
         JsonObject object = new JsonObject();
@@ -713,6 +735,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals("[5]", array.toString());
     }
 
+    @Test
     public void testAccumulatePutArray() throws JsonException {
         JsonObject object = new JsonObject();
         object.accumulate("foo", 5);
@@ -721,6 +744,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals("{\"foo\":[5,[]]}", object.toString());
     }
 
+    @Test
     public void testAccumulateNull() {
         JsonObject object = new JsonObject();
         try {
@@ -730,25 +754,27 @@ public class JsonObjectTest extends TestCase {
         }
     }
 
+    @Test
     public void testEmptyStringKey() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("", 5);
-        assertEquals(5, object.get(""));
+        assertEquals(object.get(""), 5);
         assertEquals("{\"\":5}", object.toString());
     }
 
+    @Test
     public void testNullValue() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", new JsonNull());
         object.put("bar", (Collection) null);
 
-        // there are two ways to represent null; each behaves differently!
         assertTrue(object.has("foo"));
-        assertFalse(object.has("bar"));
+        assertTrue(object.has("bar"));
         assertTrue(object.isNull("foo"));
         assertTrue(object.isNull("bar"));
     }
 
+    @Test
     public void testHas() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", 5);
@@ -757,6 +783,7 @@ public class JsonObjectTest extends TestCase {
         assertFalse(object.has(null));
     }
 
+    @Test
     public void testOptNull() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", "bar");
@@ -775,6 +802,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals("baz", object.optString(null, "baz"));
     }
 
+    @Test
     public void testNames() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", 5);
@@ -786,6 +814,7 @@ public class JsonObjectTest extends TestCase {
         assertTrue(array.toString().contains("baz"));
     }
 
+    @Test
     public void testKeysEmptyObject() {
         JsonObject object = new JsonObject();
         assertFalse(object.keys().hasNext());
@@ -796,6 +825,7 @@ public class JsonObjectTest extends TestCase {
         }
     }
 
+    @Test
     public void testKeys() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", 5);
@@ -819,6 +849,7 @@ public class JsonObjectTest extends TestCase {
         }
     }
 
+    @Test
     public void testMutatingKeysMutatesObject() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", 5);
@@ -828,11 +859,12 @@ public class JsonObjectTest extends TestCase {
         assertEquals(0, object.length());
     }
 
+    @Test
     public void testQuote() {
         // covered by JsonStringerTest.testEscaping
     }
 
-
+    @Test
     public void test_wrap() throws Exception {
         assertEquals(new JsonNull(), JsonObject.wrap(null));
 
@@ -852,7 +884,7 @@ public class JsonObjectTest extends TestCase {
         assertTrue(JsonObject.wrap(new ConnectException()) instanceof JsonString);
     }
 
-    // https://code.google.com/p/android/issues/detail?id=55114
+    @Test
     public void test_toString_listAsMapValue() throws Exception {
         ArrayList<Object> list = new ArrayList<Object>();
         list.add("a");
@@ -863,6 +895,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals("{\"x\":\"l\",\"y\":[\"a\",[]]}", new JsonObject(map).toString());
     }
 
+    @Test
     public void testAppendExistingInvalidKey() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", 5);
@@ -873,6 +906,7 @@ public class JsonObjectTest extends TestCase {
         }
     }
 
+    @Test
     public void testAppendExistingArray() throws JsonException {
         JsonArray array = new JsonArray();
         JsonObject object = new JsonObject();
@@ -881,6 +915,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals("[5]", array.toString());
     }
 
+    @Test
     public void testAppendPutArray() throws JsonException {
         JsonObject object = new JsonObject();
         object.append("foo", 5);
@@ -889,6 +924,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals("{\"foo\":[5,[]]}", object.toString());
     }
 
+    @Test
     public void testAppendNull() {
         JsonObject object = new JsonObject();
         try {
