@@ -342,12 +342,32 @@ public class JsonObject extends JsonElement {
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
      *     to a boolean.
      */
-    public boolean getBoolean(String name) throws JsonException {
+    public boolean getBoolean(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
-        if (!el.isBoolean()) {
-            throw Util.typeMismatch(name, el, "boolean");
+        Boolean res = null;
+        if (strict && !el.isBoolean()) {
+            throw Util.typeMismatch(name, el, "boolean", strict);
         }
-        return el.asBoolean();
+        if (el.isBoolean()) {
+            res = el.asBoolean();
+        }
+        if (el.isString()) {
+            res =  Util.toBoolean(el.asString());
+        }
+        if(res == null)
+            throw Util.typeMismatch(name, el, "boolean", strict);
+        return res;
+    }
+
+    /**
+     * Returns the value mapped by {@code name} if it exists and is a boolean or
+     * can be coerced to a boolean, or throws otherwise.
+     *
+     * @throws JsonException if the mapping doesn't exist or cannot be coerced
+     *     to a boolean.
+     */
+    public boolean getBoolean(String name) throws JsonException {
+        return getBoolean(name, false);
     }
 
     /**
@@ -363,16 +383,15 @@ public class JsonObject extends JsonElement {
      * or {@code fallback} otherwise.
      */
     public boolean optBoolean(String name, boolean fallback) {
-        JsonElement el;
+        return optBoolean(name, fallback, false);
+    }
+
+    public boolean optBoolean(String name, boolean fallback, boolean strict) {
         try {
-            el = get(name);
+            return getBoolean(name, strict);
         } catch (JsonException e) {
             return fallback;
         }
-        if(!el.isBoolean()) {
-            return fallback;
-        }
-        return el.asBoolean();
     }
 
     /**
@@ -382,12 +401,25 @@ public class JsonObject extends JsonElement {
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
      *     to a double.
      */
-    public double getDouble(String name) throws JsonException {
+    public double getDouble(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
-        if (!el.isNumber()) {
-            throw Util.typeMismatch(name, el, "double");
+        Double res = null;
+        if (strict && !el.isNumber()) {
+            throw Util.typeMismatch(name, el, "double", strict);
         }
-        return el.asDouble();
+        if (el.isNumber()) {
+            res = el.asDouble();
+        }
+        if (el.isString()) {
+            res =  Util.toDouble(el.asString());
+        }
+        if(res == null)
+            throw Util.typeMismatch(name, el, "double", strict);
+        return res;
+    }
+
+    public double getDouble(String name) throws JsonException {
+        return getDouble(name, false);
     }
 
     /**
@@ -403,18 +435,16 @@ public class JsonObject extends JsonElement {
      * can be coerced to a double, or {@code fallback} otherwise.
      */
     public double optDouble(String name, double fallback) {
-        JsonElement el = null;
+        return optDouble(name, fallback, false);
+    }
+
+    public double optDouble(String name, double fallback, boolean strict) {
         try {
-            el = get(name);
+            return getDouble(name, strict);
         } catch (JsonException e) {
             return fallback;
         }
-        if(!el.isNumber()) {
-            return fallback;
-        }
-        return el.asDouble();
     }
-
     /**
      * Returns the value mapped by {@code name} if it exists and is an int or
      * can be coerced to an int, or throws otherwise.
@@ -422,12 +452,25 @@ public class JsonObject extends JsonElement {
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
      *     to an int.
      */
-    public int getInt(String name) throws JsonException {
+    public int getInt(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
-        if (!el.isNumber()) {
-            throw Util.typeMismatch(name, el, "int");
+        Integer res = null;
+        if (strict && !el.isNumber()) {
+            throw Util.typeMismatch(name, el, "int", strict);
         }
-        return el.asInt();
+        if (el.isNumber()) {
+            res = el.asInt();
+        }
+        if (el.isString()) {
+            res =  Util.toInteger(el.asString());
+        }
+        if(res == null)
+            throw Util.typeMismatch(name, el, "int", strict);
+        return res;
+    }
+
+    public int getInt(String name) throws JsonException {
+        return getInt(name, false);
     }
 
     /**
@@ -443,17 +486,15 @@ public class JsonObject extends JsonElement {
      * can be coerced to an int, or {@code fallback} otherwise.
      */
     public int optInt(String name, int fallback) {
-        JsonElement el = null;
+        return optInt(name, fallback, false);
+    }
+
+    public int optInt(String name, int fallback, boolean strict) {
         try {
-            el = get(name);
+            return getInt(name, strict);
         } catch (JsonException e) {
             return fallback;
         }
-        if(!el.isNumber()) {
-            return fallback;
-        }
-
-        return el.asInt();
     }
 
     /**
@@ -465,12 +506,25 @@ public class JsonObject extends JsonElement {
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
      *     to a long.
      */
-    public long getLong(String name) throws JsonException {
+    public long getLong(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
-        if (!el.isNumber()) {
-            throw Util.typeMismatch(name, el, "long");
+        Long res = null;
+        if (strict && !el.isNumber()) {
+            throw Util.typeMismatch(name, el, "long", strict);
         }
-        return el.asLong();
+        if (el.isNumber()) {
+            res = el.asLong();
+        }
+        if (el.isString()) {
+            res =  Util.toLong(el.asString());
+        }
+        if(res == null)
+            throw Util.typeMismatch(name, el, "long", strict);
+        return res;
+    }
+
+    public long getLong(String name) throws JsonException {
+        return getLong(name, false);
     }
 
     /**
@@ -489,16 +543,15 @@ public class JsonObject extends JsonElement {
      * numbers via Util.
      */
     public long optLong(String name, long fallback) {
-        JsonElement el = null;
+        return optLong(name, fallback, false);
+    }
+
+    public long optLong(String name, long fallback, boolean strict) {
         try {
-            el = get(name);
+            return getLong(name, strict);
         } catch (JsonException e) {
             return fallback;
         }
-        if(!el.isNumber()) {
-            return fallback;
-        }
-        return el.asLong();
     }
 
     /**
@@ -507,12 +560,20 @@ public class JsonObject extends JsonElement {
      *
      * @throws JsonException if no such mapping exists.
      */
-    public String getString(String name) throws JsonException {
+    public String getString(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
-        if (!el.isString()) {
-            throw Util.typeMismatch(name, el, "string");
+        String res = null;
+        if (strict && !el.isString()) {
+            throw Util.typeMismatch(name, el, "string", strict);
         }
-        return el.asString();
+        res = el.toString();
+        if(res == null)
+            throw Util.typeMismatch(name, el, "string", strict);
+        return res;
+    }
+
+    public String getString(String name) throws JsonException {
+        return getString(name, false);
     }
 
     /**
@@ -528,17 +589,17 @@ public class JsonObject extends JsonElement {
      * necessary, or {@code fallback} if no such mapping exists.
      */
     public String optString(String name, String fallback) {
-        JsonElement el = null;
+        return optString(name, fallback, false);
+    }
+
+    public String optString(String name, String fallback, boolean strict) {
         try {
-            el = get(name);
+            return getString(name, strict);
         } catch (JsonException e) {
             return fallback;
         }
-        if(!el.isString()) {
-            return fallback;
-        }
-        return el.asString();
     }
+
 
     /**
      * Returns the value mapped by {@code name} if it exists and is a {@code
@@ -602,7 +663,7 @@ public class JsonObject extends JsonElement {
             return null;
         }
         return el.asJsonObject();
-   }
+    }
 
     /**
      * Returns an array with the values corresponding to {@code names}. The

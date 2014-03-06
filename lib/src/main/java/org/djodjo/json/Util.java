@@ -100,7 +100,18 @@ class Util {
 
 
     public static JsonException typeMismatch(Object indexOrName, Object actual,
-            String requiredType) throws JsonException {
+                                             String requiredType, boolean mode) throws JsonException {
+        if (actual == null) {
+            throw new JsonException("Value at " + indexOrName + " is null.");
+        } else {
+            throw new JsonException("Value " + actual + " at " + indexOrName
+                    + " of type " + actual.getClass().getName()
+                    + " cannot be converted to " + requiredType + ". Strict mode is: " + mode);
+        }
+    }
+
+    public static JsonException typeMismatch(Object indexOrName, Object actual,
+                                             String requiredType) throws JsonException {
         if (actual == null) {
             throw new JsonException("Value at " + indexOrName + " is null.");
         } else {

@@ -152,16 +152,16 @@ public class JsonObjectTest extends TestCase {
         JsonObject object = new JsonObject();
         assertSame(object, object.put("foo", true));
         object.put("foo", false);
-        assertEquals(false, object.get("foo"));
+        assertEquals(false, object.getBoolean("foo"));
 
         object.put("foo", 5.0d);
-        assertEquals(5.0d, object.get("foo"));
+        assertEquals(5.0d, object.getDouble("foo"));
         object.put("foo", 0);
-        assertEquals(0, object.get("foo"));
+        assertEquals(0, object.getInt("foo"));
         object.put("bar", Long.MAX_VALUE - 1);
-        assertEquals(Long.MAX_VALUE - 1, object.get("bar"));
+        assertEquals(Long.MAX_VALUE - 1, object.getLong("bar"));
         object.put("baz", "x");
-        assertEquals("x", object.get("baz"));
+        assertEquals("x", object.get("baz").toString());
         object.put("bar", new JsonNull());
         assertSame(new JsonNull(), object.get("bar"));
     }
@@ -183,7 +183,7 @@ public class JsonObjectTest extends TestCase {
         JsonObject object = new JsonObject();
         object.put("foo", "bar");
         object.putOpt("foo", null);
-        assertEquals("bar", object.get("foo"));
+        assertEquals("bar", object.get("foo").toString());
         object.putOpt(null, null);
         assertEquals(1, object.length());
         object.putOpt(null, "bar");
@@ -421,10 +421,10 @@ public class JsonObjectTest extends TestCase {
         assertTrue(object.toString().contains("\"quux\":\"null\""));
         assertTrue(object.toString().contains("\"height\":\"5\\\"8' tall\""));
 
-        assertEquals("true", object.get("foo"));
+        assertEquals("true", object.get("foo").toString());
         assertEquals("null", object.getString("quux"));
         assertEquals("5\"8' tall", object.getString("height"));
-        assertEquals("true", object.opt("foo"));
+        assertEquals("true", object.opt("foo").toString());
         assertEquals("5.5", object.optString("bar"));
         assertEquals("true", object.optString("foo", "x"));
         assertFalse(object.isNull("foo"));

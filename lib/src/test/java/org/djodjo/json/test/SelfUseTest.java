@@ -136,19 +136,22 @@ public class SelfUseTest extends TestCase {
 
     public void testObjectOptType() throws JsonException {
         object.optBoolean("foo");
-        assertEquals(1, objectOptCalls);
+        assertEquals(0, objectOptCalls);
         assertEquals(1, objectOptTypeCalls);
         object.optDouble("foo");
-        assertEquals(2, objectOptCalls);
+        assertEquals(0, objectOptCalls);
         assertEquals(2, objectOptTypeCalls);
         object.optInt("foo");
-        assertEquals(3, objectOptCalls);
+        assertEquals(0, objectOptCalls);
         assertEquals(3, objectOptTypeCalls);
         object.optLong("foo");
-        assertEquals(4, objectOptCalls);
+        assertEquals(0, objectOptCalls);
         assertEquals(4, objectOptTypeCalls);
         object.optString("foo");
-        assertEquals(5, objectOptCalls);
+        assertEquals(0, objectOptCalls);
+        assertEquals(5, objectOptTypeCalls);
+        object.opt("foo");
+        assertEquals(1, objectOptCalls);
         assertEquals(5, objectOptTypeCalls);
     }
 
@@ -183,19 +186,19 @@ public class SelfUseTest extends TestCase {
 
     public void testArrayOptType() throws JsonException {
         array.optBoolean(3);
-        assertEquals(1, arrayOptCalls);
+        assertEquals(0, arrayOptCalls);
         assertEquals(1, arrayOptTypeCalls);
         array.optDouble(3);
-        assertEquals(2, arrayOptCalls);
+        assertEquals(0, arrayOptCalls);
         assertEquals(2, arrayOptTypeCalls);
         array.optInt(3);
-        assertEquals(3, arrayOptCalls);
+        assertEquals(0, arrayOptCalls);
         assertEquals(3, arrayOptTypeCalls);
         array.optLong(3);
-        assertEquals(4, arrayOptCalls);
+        assertEquals(0, arrayOptCalls);
         assertEquals(4, arrayOptTypeCalls);
         array.optString(3);
-        assertEquals(5, arrayOptCalls);
+        assertEquals(0, arrayOptCalls);
         assertEquals(5, arrayOptTypeCalls);
     }
 
