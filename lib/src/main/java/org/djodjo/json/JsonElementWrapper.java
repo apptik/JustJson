@@ -18,7 +18,14 @@
 package org.djodjo.json;
 
 
+import org.djodjo.json.schema.JsonSchema;
+import org.djodjo.json.schema.JsonSchemaLocalFetcher;
+import org.djodjo.json.schema.JsonSchemaV4;
+import org.djodjo.json.schema.JsonSchemaV4Validator;
+
 import java.net.URI;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 
 /**
@@ -34,6 +41,7 @@ public abstract class JsonElementWrapper {
     protected JsonElement json;
     private String contentType;
     private URI jsonSchemaUri;
+    private LinkedHashSet<Validator> validators = new LinkedHashSet<Validator>();
 
     public JsonElement getJson() {
         return json;
@@ -64,6 +72,27 @@ public abstract class JsonElementWrapper {
     public JsonElementWrapper(JsonElement jsonElement, String contentType, URI jsonSchema) {
         this(jsonElement, contentType);
         this.jsonSchemaUri = jsonSchema;
+        tryFetchSchema(this.jsonSchemaUri);
+    }
+
+    /**
+     * Tries to fetch a schema and add the default JsonSchema validator for it
+     * @param jsonSchemaUri
+     * @return
+     */
+    private boolean tryFetchSchema(URI jsonSchemaUri) {
+        if(jsonSchemaUri==null) return false;
+        try {
+            JsonSchema jsonSchema =  new JsonSchemaLocalFetcher().fetch(jsonSchemaUri);
+            if(jsonSchema instanceof JsonSchemaV4) {
+                this.validators.add(new JsonSchemaV4Validator((JsonSchemaV4) jsonSchema));
+            }
+            else throw new Exception("Unknown Schema Type");
+        } catch (Exception ex) {
+            return false;
+        }
+
+        return true;
     }
 
     public JsonElementWrapper wrap(JsonElement jsonElement) {
@@ -78,7 +107,31 @@ public abstract class JsonElementWrapper {
 
     public JsonElementWrapper setJsonSchema(URI uri) {
         this.jsonSchemaUri = uri;
+        tryFetchSchema(this.jsonSchemaUri);
         return this;
+    }
+
+    public JsonElementWrapper addValidator(Validator validator) {
+        this.validators.add(validator);
+        return this;
+    }
+
+    public boolean isDataValid() {
+        Iterator<Validator> iterator = validators.iterator();
+        while (iterator.hasNext()){
+            if (!iterator.next().isValid(this.getJson()))
+                return false;
+        }
+        return true;
+    }
+
+    public String validateData() {
+        StringBuilder sb = new StringBuilder();
+        Iterator<Validator> iterator = validators.iterator();
+        while (iterator.hasNext()){
+            iterator.next().validate(this.getJson(), sb);
+        }
+        return sb.toString();
     }
 
 }
