@@ -18,10 +18,9 @@
 package org.djodjo.json;
 
 
-import org.djodjo.json.schema.JsonSchema;
-import org.djodjo.json.schema.JsonSchemaLocalFetcher;
-import org.djodjo.json.schema.JsonSchemaV4;
-import org.djodjo.json.schema.JsonSchemaV4Validator;
+import org.djodjo.json.schema.Schema;
+import org.djodjo.json.schema.SchemaFetcher;
+import org.djodjo.json.schema.SchemaLocalFetcher;
 
 import java.net.URI;
 import java.util.Iterator;
@@ -41,7 +40,10 @@ public abstract class JsonElementWrapper {
     protected JsonElement json;
     private String contentType;
     private URI jsonSchemaUri;
+    private Schema jsonSchema;
     private LinkedHashSet<Validator> validators = new LinkedHashSet<Validator>();
+    private LinkedHashSet<SchemaFetcher> fetchers = new LinkedHashSet<SchemaFetcher>();
+
 
     public JsonElement getJson() {
         return json;
@@ -57,6 +59,7 @@ public abstract class JsonElementWrapper {
 
 
     public JsonElementWrapper() {
+        fetchers.add(new SchemaLocalFetcher());
     }
 
     public JsonElementWrapper(JsonElement jsonElement) {
@@ -76,23 +79,31 @@ public abstract class JsonElementWrapper {
     }
 
     /**
-     * Tries to fetch a schema and add the default JsonSchema validator for it
+     * Tries to fetch a schema and add the default Schema validator for it
      * @param jsonSchemaUri
      * @return
      */
-    private boolean tryFetchSchema(URI jsonSchemaUri) {
-        if(jsonSchemaUri==null) return false;
+    private Schema tryFetchSchema(URI jsonSchemaUri) {
+        Schema jsonSchema = null;
+        if(jsonSchemaUri==null) return null;
         try {
-            JsonSchema jsonSchema =  new JsonSchemaLocalFetcher().fetch(jsonSchemaUri);
-            if(jsonSchema instanceof JsonSchemaV4) {
-                this.validators.add(new JsonSchemaV4Validator((JsonSchemaV4) jsonSchema));
-            }
-            else throw new Exception("Unknown Schema Type");
+            jsonSchema = doFetchSchema(jsonSchemaUri);
+            Validator validator = jsonSchema.getDefaultValidator();
+            if(validator !=null) validators.add(validator);
         } catch (Exception ex) {
-            return false;
+            return null;
         }
 
-        return true;
+        return jsonSchema;
+    }
+
+    private Schema doFetchSchema(URI jsonSchemaUri) {
+        Schema currSchema = null;
+        Iterator<SchemaFetcher> iterator = fetchers.iterator();
+        while (iterator.hasNext() && currSchema==null){
+            currSchema = iterator.next().fetch(jsonSchemaUri);
+        }
+        return currSchema;
     }
 
     public JsonElementWrapper wrap(JsonElement jsonElement) {
@@ -132,6 +143,12 @@ public abstract class JsonElementWrapper {
             iterator.next().validate(this.getJson(), sb);
         }
         return sb.toString();
+    }
+
+    public Schema fetchJsonSchema() {
+        if(jsonSchema==null)
+            tryFetchSchema(this.jsonSchemaUri);
+        return jsonSchema;
     }
 
 }

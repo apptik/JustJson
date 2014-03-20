@@ -3,9 +3,9 @@ package org.djodjo.json.schema;
 
 import org.djodjo.json.JsonElement;
 
-public class JsonSchemaV4Validator extends JsonSchemaValidator<JsonSchemaV4> {
+public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
 
-    public JsonSchemaV4Validator(JsonSchemaV4 schema) {
+    public SchemaV4Validator(SchemaV4 schema) {
         super(schema);
     }
 
