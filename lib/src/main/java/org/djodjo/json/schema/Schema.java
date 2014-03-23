@@ -76,7 +76,7 @@ public abstract class Schema extends JsonObjectWrapper {
     }
 
     public double getMultipleOf() {
-        return getJson().optDouble("multipleOf", 0);
+        return getJson().optDouble("multipleOf", Double.MIN_VALUE);
     }
 
     public double getMaximum() {

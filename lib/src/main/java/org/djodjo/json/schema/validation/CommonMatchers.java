@@ -23,9 +23,11 @@ import org.djodjo.json.Validator;
 import org.djodjo.json.schema.Schema;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 
@@ -34,6 +36,112 @@ public class CommonMatchers {
     private CommonMatchers(){}
 
 
+    public static Matcher<JsonElement> isLessThan(final double value) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not Number
+                if(!item.isNumber()) return true;
+                if(!(item.asDouble()<value)) {
+                    mismatchDescription.appendText("value is not less than exclusive maximum " + value);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("exclusive maximum");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> isLessOrEqualThan(final double value) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not Number
+                if(!item.isNumber()) return true;
+                if(!(item.asDouble()<=value)) {
+                    mismatchDescription.appendText("value is not less than maximum " + value);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("maximum");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> isMoreThan(final double value) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not Number
+                if(!item.isNumber()) return true;
+                if(!(item.asDouble()>value)) {
+                    mismatchDescription.appendText("value is not more than exclusive minimum " + value);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("exclusive minimum");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> isMoreOrEqualThan(final double value) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not Number
+                if(!item.isNumber()) return true;
+                if(!(item.asDouble()>=value)) {
+                    mismatchDescription.appendText("value is not more than minimum " + value);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("minimum");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> isMultipleOf(final double value) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not Number
+                if(!item.isNumber()) return true;
+
+                Number remainder = item.asDouble()%value;
+                if(!remainder.equals(0) && !remainder.equals(0.0)) {
+                    mismatchDescription.appendText("value is not multipleOf " + value);
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("multipleOf");
+            }
+        };
+    }
     public static Matcher<JsonElement> isPresent(final String property) {
         return new TypeSafeDiagnosingMatcher<JsonElement>() {
             @Override

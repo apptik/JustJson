@@ -164,4 +164,36 @@ public class JsonSchemaV4Validation {
 
 
     }
+
+    @Test
+    public void testMultipleOf() throws Exception {
+        schema.wrap(JsonElement.readFrom("{" +
+                "\"type\" : \"object\"," +
+                "\"properties\" : {" +
+                "\"one\" : {\"type\" : \"number\"   ," +
+                "\"multipleOf\" : 5 }" +
+                "}" +
+                "}"));
+        Validator validator = schema.getDefaultValidator();
+        assertFalse(validator.isValid(JsonElement.readFrom("{ " +
+                "\"one\":1" +
+                "}")));
+        assertTrue(validator.isValid(JsonElement.readFrom("{ " +
+                "\"one\":10" +
+                "}")));
+        schema.wrap(JsonElement.readFrom("{" +
+                "\"type\" : \"object\"," +
+                "\"properties\" : {" +
+                "\"one\" : {\"type\" : \"number\"   ," +
+                "\"multipleOf\" : 3.4 }" +
+                "}" +
+                "}"));
+        validator = schema.getDefaultValidator();
+        assertFalse(validator.isValid(JsonElement.readFrom("{ " +
+                "\"one\":1" +
+                "}")));
+        assertTrue(validator.isValid(JsonElement.readFrom("{ " +
+                "\"one\":6.8" +
+                "}")));
+    }
 }
