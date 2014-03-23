@@ -78,7 +78,7 @@ import java.util.Set;
  * <i>Effective Java</i> Item 17, "Design and Document or inheritance or else
  * prohibit it" for further information.
  */
-public class JsonObject extends JsonElement {
+public class JsonObject extends JsonElement implements Iterable<Map.Entry<String,JsonElement>> {
 
     private final LinkedTreeMap<String, JsonElement> nameValuePairs = new LinkedTreeMap<String, JsonElement>();
 
@@ -744,5 +744,15 @@ public class JsonObject extends JsonElement {
     @Override
     public boolean equals( Object o ) {
         return o instanceof JsonObject && ((JsonObject) o).nameValuePairs.equals(nameValuePairs);
+    }
+
+    @Override
+    public String getJsonType() {
+        return "object";
+    }
+
+    @Override
+    public Iterator<Map.Entry<String, JsonElement>> iterator() {
+            return nameValuePairs.entrySet().iterator();
     }
 }
