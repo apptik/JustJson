@@ -63,4 +63,10 @@ public class JsonString extends JsonElement {
         writer.value(value);
     }
 
+    @Override
+    public String getJsonType() {
+        return "string";
+    }
+
+
 }

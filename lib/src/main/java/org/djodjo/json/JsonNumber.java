@@ -118,4 +118,10 @@ public class JsonNumber extends JsonElement {
         writer.value( asNumber() );
     }
 
+
+    @Override
+    public String getJsonType() {
+        return "number";
+    }
+
 }

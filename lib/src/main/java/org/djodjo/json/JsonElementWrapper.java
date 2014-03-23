@@ -19,8 +19,8 @@ package org.djodjo.json;
 
 
 import org.djodjo.json.schema.Schema;
-import org.djodjo.json.schema.SchemaFetcher;
-import org.djodjo.json.schema.SchemaLocalFetcher;
+import org.djodjo.json.schema.fetch.SchemaFetcher;
+import org.djodjo.json.schema.fetch.SchemaLocalFetcher;
 
 import java.net.URI;
 import java.util.Iterator;

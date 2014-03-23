@@ -652,4 +652,10 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
     public Iterator<JsonElement> iterator() {
         return values.iterator();
     }
+
+    @Override
+    public String getJsonType() {
+        return "array";
+    }
+
 }

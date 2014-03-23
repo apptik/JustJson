@@ -59,5 +59,10 @@ public class JsonBoolean extends JsonElement {
         return String.valueOf(value);
     }
 
+    @Override
+    public String getJsonType() {
+        return "boolean";
+    }
+
 
 }

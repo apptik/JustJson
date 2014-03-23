@@ -45,4 +45,10 @@ public class JsonNull extends JsonElement {
         return "null";
     }
 
+    @Override
+    public String getJsonType() {
+        return "null";
+    }
+
+
 }

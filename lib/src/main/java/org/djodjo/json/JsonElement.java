@@ -148,6 +148,7 @@ public abstract class JsonElement implements Serializable {
 
     protected abstract void write( JsonWriter writer ) throws IOException;
 
+    public abstract String getJsonType();
 
 
 }
