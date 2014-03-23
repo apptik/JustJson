@@ -14,24 +14,24 @@ import org.djodjo.json.Validator;
 import java.net.URI;
 import java.util.ArrayList;
 
-public class Schema extends JsonObjectWrapper {
+public abstract class Schema extends JsonObjectWrapper {
+
+    public static final String TYPE_OBJECT = "object";
+    public static final String TYPE_ARRAY = "array";
+    public static final String TYPE_STRING = "string";
+    public static final String TYPE_NUMBER = "number";
+    public static final String TYPE_BOOLEAN = "boolean";
 
     public Schema() {
+        super();
         this.setContentType("application/schema+json");
     }
-    public Schema(JsonObject jsonObject) {
-        throw new RuntimeException("Cannot instantiate Schema like this. Use wrap method.");
-    }
-    @Override
-    public JsonObjectWrapper wrap(JsonElement jsonElement) {
-        super.wrap(jsonElement);
-        return getRightVersion();
-    }
-    private Schema getRightVersion() {
-        if(getSchema().equals("http://json-schema.org/draft-04/schema#"))
-            return (Schema)new SchemaV4().wrap(getJson());
-        return this;
-    }
+
+    /**
+     *
+     * @return empty schema from the same version as the current one
+     */
+    public abstract Schema getEmptySchema();
 
     @Override
     public JsonElementWrapper setJsonSchema(URI uri) {
@@ -120,7 +120,7 @@ public class Schema extends JsonObjectWrapper {
         }
         else {
             res = new ArrayList<Schema>();
-            res.add((Schema)new Schema().wrap(getJson().optJsonObject("items")));
+            res.add((Schema)getEmptySchema().wrap(getJson().optJsonObject("items")));
         }
         return res;
     }
@@ -158,8 +158,9 @@ public class Schema extends JsonObjectWrapper {
         return getJson().optJsonObject("definitions");
     }
 
-    public JsonObject getProperties() {
-        return getJson().optJsonObject("properties");
+    public SchemaArray getProperties() {
+        if(!getJson().has("properties")) return null;
+        return (SchemaArray) new SchemaArray(this.getEmptySchema()).wrap(getJson().optJsonObject("properties"));
     }
 
     public JsonObject getPatternProperties() {
@@ -176,6 +177,7 @@ public class Schema extends JsonObjectWrapper {
 
     public ArrayList<String> getType() {
         ArrayList<String> res;
+        if(getJson().opt("type")==null) return null;
         if(getJson().opt("type").isJsonArray()) {
             return new JsonStringArrayWrapper().wrap(getJson().optJsonArray("type")).getStringList();
         }
@@ -199,7 +201,7 @@ public class Schema extends JsonObjectWrapper {
     }
 
     public Schema getNot() {
-        return (Schema)new Schema().wrap(getJson().optJsonObject("not"));
+        return (Schema)getEmptySchema().wrap(getJson().optJsonObject("not"));
     }
 
 

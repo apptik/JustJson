@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package org.djodjo.json;
+package org.djodjo.json.schema.validation;
 
 
-public interface Validator {
+import org.djodjo.json.AbstractValidator;
+import org.djodjo.json.schema.Schema;
 
-    /**
-     * Fast check is JsonElement is valid
-     * @param el the JsonElemnt being validated
-     * @return valid or not valid
-     */
-    public boolean isValid(JsonElement el);
 
-    /**
-     * Runs a full validation and returns a result
-     * @param el the JsonElemnt being validated
-     * @return huyman readable result of the validation
-     */
-    public String validate(JsonElement el);
+/**
+ *  General JsonSchema validator as specified in http://tools.ietf.org/html/draft-fge-json-schema-validation-00
+ * @param <T>
+ */
+public abstract class SchemaValidator<T extends Schema> extends AbstractValidator {
 
-    boolean validate(JsonElement el, StringBuilder sb);
+    T schema;
+
+    public SchemaValidator(T schema) {
+        this.schema = schema;
+    }
+
 }

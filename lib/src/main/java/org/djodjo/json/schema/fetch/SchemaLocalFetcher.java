@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package org.djodjo.json;
+package org.djodjo.json.schema.fetch;
 
 
-public interface Validator {
+import org.djodjo.json.schema.Schema;
+import org.djodjo.json.schema.SchemaV4;
 
-    /**
-     * Fast check is JsonElement is valid
-     * @param el the JsonElemnt being validated
-     * @return valid or not valid
-     */
-    public boolean isValid(JsonElement el);
+import java.net.URI;
 
-    /**
-     * Runs a full validation and returns a result
-     * @param el the JsonElemnt being validated
-     * @return huyman readable result of the validation
-     */
-    public String validate(JsonElement el);
 
-    boolean validate(JsonElement el, StringBuilder sb);
+//TODO
+public class SchemaLocalFetcher implements SchemaFetcher {
+
+    @Override
+    public Schema fetch(URI schemaUri) {
+        return new SchemaV4();
+    }
 }
