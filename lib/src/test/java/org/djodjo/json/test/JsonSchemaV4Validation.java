@@ -145,6 +145,5 @@ public class JsonSchemaV4Validation {
                 "\"one\":\"string is good\"," +
                 "\"two\":{}" +
                 "}")));
-
     }
 }

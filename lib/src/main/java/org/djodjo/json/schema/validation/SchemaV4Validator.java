@@ -19,7 +19,7 @@ package org.djodjo.json.schema.validation;
 
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.schema.Schema;
-import org.djodjo.json.schema.SchemaArray;
+import org.djodjo.json.schema.SchemaMap;
 import org.djodjo.json.schema.SchemaV4;
 import org.hamcrest.Matcher;
 
@@ -42,10 +42,16 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
             allMatchers.add(isOfType(schemaType));
         }
 
-        SchemaArray schemaArray = schema.getProperties();
-        if(schemaArray != null && schemaArray.length() > 0) {
+        ArrayList<String> required = schema.getRequired();
+        if(schemaType != null && !schemaType.isEmpty()) {
+
+        }
+
+
+        SchemaMap schemaMap = schema.getProperties();
+        if(schemaMap != null && schemaMap.length() > 0) {
             //TODO applies only for objects
-            for(Map.Entry<String, Schema> entry : schemaArray) {
+            for(Map.Entry<String, Schema> entry : schemaMap) {
                 allMatchers.add(isSubPropertyValid(entry.getValue().getDefaultValidator(), entry.getKey()));
             }
         }

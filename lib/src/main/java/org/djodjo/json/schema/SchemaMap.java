@@ -20,12 +20,12 @@ package org.djodjo.json.schema;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.TypedJsonObject;
 
-public class SchemaArray extends TypedJsonObject<Schema> {
+public class SchemaMap extends TypedJsonObject<Schema> {
 
     //blank schema used to
     public Schema schema;
 
-    public SchemaArray(Schema schema) {
+    public SchemaMap(Schema schema) {
         this.schema = schema;
     }
 

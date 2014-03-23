@@ -2,7 +2,6 @@ package org.djodjo.json.schema;
 
 
 import org.djodjo.json.JsonArray;
-import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonElementWrapper;
 import org.djodjo.json.JsonException;
 import org.djodjo.json.JsonObject;
@@ -158,9 +157,9 @@ public abstract class Schema extends JsonObjectWrapper {
         return getJson().optJsonObject("definitions");
     }
 
-    public SchemaArray getProperties() {
+    public SchemaMap getProperties() {
         if(!getJson().has("properties")) return null;
-        return (SchemaArray) new SchemaArray(this.getEmptySchema()).wrap(getJson().optJsonObject("properties"));
+        return (SchemaMap) new SchemaMap(this.getEmptySchema()).wrap(getJson().optJsonObject("properties"));
     }
 
     public JsonObject getPatternProperties() {
