@@ -46,20 +46,21 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
 
     @Override
     public Iterator<Map.Entry<String, T>> iterator() {
+        final Iterator<Map.Entry<String, JsonElement>> iterator = getJson().iterator();
         return new Iterator<Map.Entry<String, T>>() {
             @Override
             public boolean hasNext() {
-                return getJson().iterator().hasNext();
+                return iterator.hasNext();
             }
 
             @Override
             public Map.Entry<String, T> next() {
-                return new TypedObjectEntry(getJson().iterator().next());
+                return new TypedObjectEntry(iterator.next());
             }
 
             @Override
             public void remove() {
-                getJson().iterator().remove();
+                iterator.remove();
             }
         };
     }
