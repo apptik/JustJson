@@ -34,12 +34,15 @@ public class CommonMatchers {
     private CommonMatchers(){}
 
 
-    public static Matcher<JsonObject> isPresent(final String property) {
-        return new TypeSafeDiagnosingMatcher<JsonObject>() {
+    public static Matcher<JsonElement> isPresent(final String property) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
             @Override
-            protected boolean matchesSafely(JsonObject item, Description mismatchDescription) {
-                if(!item.has(property)) {
-                    mismatchDescription.appendText("propery: '" + property + "' is missing");
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not JsonObject
+                if(!item.isJsonObject()) return true;
+
+                if(!item.asJsonObject().has(property)) {
+                    mismatchDescription.appendText("property: '" + property + "' is missing");
                     return false;
                 }
                 return true;

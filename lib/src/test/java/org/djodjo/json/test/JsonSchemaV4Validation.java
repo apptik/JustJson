@@ -146,4 +146,22 @@ public class JsonSchemaV4Validation {
                 "\"two\":{}" +
                 "}")));
     }
+
+    @Test
+    public void testRequired() throws Exception {
+        schema.wrap(JsonElement.readFrom("{\"required\" : [\"other\"]}"));
+        Validator validator = schema.getDefaultValidator();
+        assertFalse(validator.isValid(jsonObject));
+        schema.wrap(JsonElement.readFrom("{\"required\" : [\"obj\"]}"));
+        validator = schema.getDefaultValidator();
+        assertTrue(validator.isValid(jsonObject));
+        schema.wrap(JsonElement.readFrom("{\"required\" : [\"obj\",\"another\"]}"));
+        validator = schema.getDefaultValidator();
+        assertFalse(validator.isValid(jsonObject));
+        schema.wrap(JsonElement.readFrom("{\"required\" : [\"obj\",\"arr\"]}"));
+        validator = schema.getDefaultValidator();
+        assertTrue(validator.isValid(jsonObject));
+
+
+    }
 }

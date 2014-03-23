@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import static org.djodjo.json.schema.validation.CommonMatchers.isOfType;
+import static org.djodjo.json.schema.validation.CommonMatchers.isPresent;
 import static org.djodjo.json.schema.validation.CommonMatchers.isSubPropertyValid;
 import static org.hamcrest.Matchers.allOf;
 
@@ -43,8 +44,10 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
         }
 
         ArrayList<String> required = schema.getRequired();
-        if(schemaType != null && !schemaType.isEmpty()) {
-
+        if(required != null && !required.isEmpty()) {
+            for(String param : required) {
+                allMatchers.add(isPresent(param));
+            }
         }
 
 
