@@ -34,4 +34,6 @@ public interface Validator {
     public String validate(JsonElement el);
 
     boolean validate(JsonElement el, StringBuilder sb);
+
+    String getTitle();
 }

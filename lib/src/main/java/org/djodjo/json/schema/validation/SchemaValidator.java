@@ -33,4 +33,8 @@ public abstract class SchemaValidator<T extends Schema> extends AbstractValidato
         this.schema = schema;
     }
 
+    @Override
+    public String getTitle() {
+        return schema.getTitle();
+    }
 }

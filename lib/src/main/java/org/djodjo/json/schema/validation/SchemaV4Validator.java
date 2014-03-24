@@ -22,20 +22,27 @@ import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
 import org.djodjo.json.schema.SchemaV4;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 
 import java.util.ArrayList;
 import java.util.Map;
 
+import static org.djodjo.json.schema.validation.CommonMatchers.areItemsUnique;
+import static org.djodjo.json.schema.validation.CommonMatchers.areItemsValid;
+import static org.djodjo.json.schema.validation.CommonMatchers.doesItemCountMatches;
+import static org.djodjo.json.schema.validation.CommonMatchers.isItemValid;
 import static org.djodjo.json.schema.validation.CommonMatchers.isLessOrEqualThan;
 import static org.djodjo.json.schema.validation.CommonMatchers.isLessThan;
 import static org.djodjo.json.schema.validation.CommonMatchers.isMoreOrEqualThan;
 import static org.djodjo.json.schema.validation.CommonMatchers.isMoreThan;
 import static org.djodjo.json.schema.validation.CommonMatchers.isMultipleOf;
 import static org.djodjo.json.schema.validation.CommonMatchers.isOfType;
-import static org.djodjo.json.schema.validation.CommonMatchers.isPresent;
-import static org.djodjo.json.schema.validation.CommonMatchers.isSubPropertyValid;
+import static org.djodjo.json.schema.validation.CommonMatchers.isPropertyPresent;
+import static org.djodjo.json.schema.validation.CommonMatchers.isPropertyValid;
 import static org.djodjo.json.schema.validation.CommonMatchers.matchesPattern;
+import static org.djodjo.json.schema.validation.CommonMatchers.maxItems;
+import static org.djodjo.json.schema.validation.CommonMatchers.minItems;
+import static org.djodjo.json.schema.validation.CommonMatchers.maxProperties;
+import static org.djodjo.json.schema.validation.CommonMatchers.minProperties;
 import static org.djodjo.json.schema.validation.CommonMatchers.withCharsLessOrEqualTo;
 import static org.djodjo.json.schema.validation.CommonMatchers.withCharsMoreOrEqualTo;
 import static org.hamcrest.Matchers.allOf;
@@ -52,7 +59,6 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
         putMatchers4Array();
         putMatcher4Object();
         putMatchers4Common();
-
 
     }
 
@@ -104,28 +110,77 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
     }
     private void putMatchers4Array() {
 
+        ArrayList<Schema>  items = schema.getItems();
+        if(items != null && !items.isEmpty()) {
+            if(items.size() == 1) {
+                //single type for array items
+                allMatchers.add(areItemsValid(items.get(0).getDefaultValidator()));
+            } else {
+                //tuple typing
+                //first check if schemas needs to be the same as the instance items
+                if(!schema.getAdditionalItems()) {
+                    allMatchers.add(doesItemCountMatches(items.size()));
+                }
+
+                //then check if available items are according to provided schemas
+                for(int i=0;i<items.size();i++) {
+                    allMatchers.add(isItemValid(items.get(i).getDefaultValidator(), i));
+                }
+
+            }
+        }
+
+        int maxItems = schema.getMaxItems();
+        if(maxItems < Integer.MAX_VALUE) {
+            allMatchers.add(maxItems(maxItems));
+        }
+
+        int minItems = schema.getMinItems();
+        if(minItems > 0) {
+            allMatchers.add(minItems(minItems));
+        }
+
+        if(schema.getUniqueItems()) {
+            allMatchers.add(areItemsUnique());
+        }
+
+
     }
 
     private void putMatcher4Object() {
+
+        int maxProperties = schema.getMaxProperties();
+        if(maxProperties < Integer.MAX_VALUE) {
+            allMatchers.add(maxProperties(maxProperties));
+        }
+
+        int minProperties = schema.getMinProperties();
+        if(minProperties > 0) {
+            allMatchers.add(minProperties(minProperties));
+        }
+
         ArrayList<String> required = schema.getRequired();
         if(required != null && !required.isEmpty()) {
             for(String param : required) {
-                allMatchers.add(isPresent(param));
+                allMatchers.add(isPropertyPresent(param));
             }
         }
-
 
         SchemaMap schemaMap = schema.getProperties();
         if(schemaMap != null && schemaMap.length() > 0) {
-            //TODO applies only for objects
             for(Map.Entry<String, Schema> entry : schemaMap) {
-                allMatchers.add(isSubPropertyValid(entry.getValue().getDefaultValidator(), entry.getKey()));
+                allMatchers.add(isPropertyValid(entry.getValue().getDefaultValidator(), entry.getKey()));
             }
         }
+
+        //TODO as per : http://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.4.4.4
+
+        //TODO as per : http://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.4.5
 
     }
 
     private void putMatchers4Common() {
+
         ArrayList<String> schemaType = schema.getType();
         if(schemaType != null && !schemaType.isEmpty()) {
             allMatchers.add(isOfType(schemaType));

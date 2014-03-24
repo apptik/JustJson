@@ -107,14 +107,17 @@ public abstract class Schema extends JsonObjectWrapper {
         return getJson().optString("pattern","");
     }
 
-    //TODO
+    //TODO can return also object
     public boolean getAdditionalItems() {
         return getJson().optBoolean("additionalItems", true);
     }
 
     public ArrayList<Schema> getItems() {
         ArrayList<Schema> res;
-        if(getJson().opt("items").isJsonArray()) {
+        if(getJson().opt("items") == null) {
+            return null;
+        }
+        else if(getJson().opt("items").isJsonArray()) {
             return ((JsonObjectArrayWrapper<Schema>)new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("type"))).getJsonWrappersList();
         }
         else {
@@ -148,7 +151,7 @@ public abstract class Schema extends JsonObjectWrapper {
         return new JsonStringArrayWrapper().wrap(getJson().optJsonArray("required")).getStringList();
     }
 
-    //TODO
+    //TODO can return also object
     public boolean getAdditionalProperties() {
         return getJson().optBoolean("additionalProperties", true);
     }

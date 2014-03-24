@@ -18,16 +18,11 @@ package org.djodjo.json.schema.validation;
 
 
 import org.djodjo.json.JsonElement;
-import org.djodjo.json.JsonObject;
 import org.djodjo.json.Validator;
-import org.djodjo.json.schema.Schema;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.hamcrest.TypeSafeMatcher;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -36,6 +31,9 @@ public class CommonMatchers {
 
     private CommonMatchers(){}
 
+
+
+    // ==> STRING ==>
     public static Matcher<JsonElement> withCharsLessOrEqualTo(final int value) {
         return new TypeSafeDiagnosingMatcher<JsonElement>() {
 
@@ -96,7 +94,10 @@ public class CommonMatchers {
         };
     }
 
+    // <== STRING <==
 
+
+    // ==> NUMBER ==>
 
     public static Matcher<JsonElement> isLessThan(final double value) {
         return new TypeSafeDiagnosingMatcher<JsonElement>() {
@@ -161,6 +162,8 @@ public class CommonMatchers {
         };
     }
 
+
+
     public static Matcher<JsonElement> isMoreOrEqualThan(final double value) {
         return new TypeSafeDiagnosingMatcher<JsonElement>() {
 
@@ -204,27 +207,13 @@ public class CommonMatchers {
             }
         };
     }
-    public static Matcher<JsonElement> isPresent(final String property) {
-        return new TypeSafeDiagnosingMatcher<JsonElement>() {
-            @Override
-            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
-                //we do not care for the properties if parent item is not JsonObject
-                if(!item.isJsonObject()) return true;
 
-                if(!item.asJsonObject().has(property)) {
-                    mismatchDescription.appendText("property: '" + property + "' is missing");
-                    return false;
-                }
-                return true;
-            }
+    // <== NUMBER <==
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("property is present");
-            }
-        };
-    }
 
+
+
+    // ==> COMMON ==>
     public static Matcher<JsonElement> isOfType(final String type) {
         return new TypeSafeDiagnosingMatcher<JsonElement>() {
             @Override
@@ -263,7 +252,209 @@ public class CommonMatchers {
         };
     }
 
-    public static Matcher<JsonElement> isSubPropertyValid(final Validator validator, final String property) {
+    // <== COMMON <==
+
+    // ==> ARRAY ==>
+
+    public static Matcher<JsonElement> areItemsValid(final Validator validator) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not JsonArray
+                if(!item.isJsonArray()) return true;
+
+                for(int i=0;i<item.asJsonArray().length();i++) {
+                    if(!isItemValid(validator,i).matches(item)) return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("is array item valid");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> isItemValid(final Validator validator, final int itemPos) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not JsonArray
+                if(!item.isJsonArray()) return true;
+
+                //we also dont care if the item at position is not actually there
+                //if it is needed it will be handled by another matcher
+                if(item.asJsonArray().opt(itemPos) == null) return true;
+
+                if(!validator.isValid(item.asJsonArray().opt(itemPos))) {
+                    mismatchDescription.appendText("item at pos: " + itemPos + ", does not validate by validator " + validator.getTitle());
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("is array item valid");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> doesItemCountMatches(final int itemsCount) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not JsonArray
+                if(!item.isJsonArray()) return true;
+
+
+                if(item.asJsonArray().length() > itemsCount) {
+                    mismatchDescription.appendText("items in Json array more than defined");
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("array items max count");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> maxItems(final int maxItems) {
+        return doesItemCountMatches(maxItems);
+    }
+
+    public static Matcher<JsonElement> minItems(final int minItems) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the items if parent item is not JsonArray
+                if(!item.isJsonArray()) return true;
+
+
+                if(item.asJsonArray().length() < minItems) {
+                    mismatchDescription.appendText("items in Json array less than defined");
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("array items min count");
+            }
+        };
+    }
+
+
+    public static Matcher<JsonElement> areItemsUnique() {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the items if parent item is not JsonArray
+                if(!item.isJsonArray()) return true;
+
+                JsonElement prevEl = null;
+                for(JsonElement el:item.asJsonArray()) {
+                    if (prevEl!=null && el.equals(prevEl)) {
+                        mismatchDescription.appendText("items in Json array are not unique");
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("unique items");
+            }
+        };
+    }
+
+
+    // <== ARRAY <==
+
+    // ==> OBJECT ==>
+
+
+    public static Matcher<JsonElement> maxProperties(final int maxProperties) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not JsonObject
+                if(!item.isJsonObject()) return true;
+
+
+                if(item.asJsonObject().length() > maxProperties) {
+                    mismatchDescription.appendText("properties in Json object more than defined");
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("object properties max count");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> minProperties(final int minProperties) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not JsonObject
+                if(!item.isJsonObject()) return true;
+
+
+                if(item.asJsonObject().length() < minProperties) {
+                    mismatchDescription.appendText("properties in Json object less than defined");
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("object properties min count");
+            }
+        };
+    }
+
+
+
+    public static Matcher<JsonElement> isPropertyPresent(final String property) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not JsonObject
+                if(!item.isJsonObject()) return true;
+
+                if(!item.asJsonObject().has(property)) {
+                    mismatchDescription.appendText("property: '" + property + "' is missing");
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("object property is present");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> isPropertyValid(final Validator validator, final String property) {
         return new TypeSafeDiagnosingMatcher<JsonElement>() {
             @Override
             protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
@@ -279,7 +470,33 @@ public class CommonMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("is property valid");
+                description.appendText("is object property valid");
+            }
+        };
+    }
+    // <== OBJECT <==
+
+
+    /**
+     * General matcher
+     * @param validator
+     * @param element
+     * @return
+     */
+    public static Matcher<JsonElement> isElementValid(final Validator validator,final JsonElement element) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                if(!validator.isValid(element)) {
+                    mismatchDescription.appendText("element: " + element.toString() + ", does not validate by validator " + validator.getTitle());
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("is array item valid");
             }
         };
     }
