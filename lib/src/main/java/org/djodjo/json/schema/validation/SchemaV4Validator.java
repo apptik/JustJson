@@ -35,6 +35,9 @@ import static org.djodjo.json.schema.validation.CommonMatchers.isMultipleOf;
 import static org.djodjo.json.schema.validation.CommonMatchers.isOfType;
 import static org.djodjo.json.schema.validation.CommonMatchers.isPresent;
 import static org.djodjo.json.schema.validation.CommonMatchers.isSubPropertyValid;
+import static org.djodjo.json.schema.validation.CommonMatchers.matchesPattern;
+import static org.djodjo.json.schema.validation.CommonMatchers.withCharsLessOrEqualTo;
+import static org.djodjo.json.schema.validation.CommonMatchers.withCharsMoreOrEqualTo;
 import static org.hamcrest.Matchers.allOf;
 
 
@@ -80,6 +83,23 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
 
     }
     private void putMatchers4String() {
+
+        int maxLength = schema.getMaxLength();
+        if(maxLength != Integer.MAX_VALUE) {
+            allMatchers.add(withCharsLessOrEqualTo(maxLength));
+        }
+
+        int minLength = schema.getMinLength();
+        if(minLength > 0) {
+            allMatchers.add(withCharsMoreOrEqualTo(minLength));
+        }
+
+        String pattern = schema.getPattern();
+        if(pattern != null && !pattern.isEmpty()) {
+            allMatchers.add(matchesPattern(pattern));
+        }
+
+
 
     }
     private void putMatchers4Array() {

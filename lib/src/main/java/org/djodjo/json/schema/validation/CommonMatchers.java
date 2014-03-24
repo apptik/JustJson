@@ -29,11 +29,73 @@ import org.hamcrest.TypeSafeMatcher;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 
 public class CommonMatchers {
 
     private CommonMatchers(){}
+
+    public static Matcher<JsonElement> withCharsLessOrEqualTo(final int value) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not String
+                if(!item.isString()) return true;
+                if(item.asString().length()>value) {
+                    mismatchDescription.appendText("String length more than maximum value: " + value);
+                    return false;
+                }
+                return true;
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("String maximum length");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> withCharsMoreOrEqualTo(final int value) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not String
+                if(!item.isString()) return true;
+                if(item.asString().length()<value) {
+                    mismatchDescription.appendText("String length less than minimum value: " + value);
+                    return false;
+                }
+                return true;
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("String minimum length");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> matchesPattern(final String value) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not String
+                if(!item.isString()) return true;
+                if(!Pattern.matches(value,item.asString())) {
+                    mismatchDescription.appendText("Pattern '"+value+"' does not match '" + item.asString() +"'");
+                    return false;
+                }
+                return true;
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Pattern match");
+            }
+        };
+    }
+
 
 
     public static Matcher<JsonElement> isLessThan(final double value) {
