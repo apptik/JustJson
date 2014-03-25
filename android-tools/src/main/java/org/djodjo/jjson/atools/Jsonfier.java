@@ -2,6 +2,7 @@ package org.djodjo.jjson.atools;
 
 
 import android.view.View;
+import android.view.ViewGroup;
 
 import org.djodjo.json.JsonElementWrapper;
 import org.djodjo.json.JsonObjectWrapper;
@@ -24,7 +25,7 @@ public interface Jsonfier {
      * @param container
      * @return the container View
      */
-    View inflateJson(Schema schema, View container);
+    ViewGroup inflateJson(Schema schema, ViewGroup container);
 
 
     /**
@@ -34,5 +35,7 @@ public interface Jsonfier {
      * @param addMissingViews add views for definitions in the Wrapper/Schema where not present in the UI
      * @return the container View
      */
-    View fillInJson(JsonElementWrapper src, View container, boolean addMissingViews);
+    ViewGroup fillInJson(JsonElementWrapper src, ViewGroup container, boolean addMissingViews);
+
+
 }

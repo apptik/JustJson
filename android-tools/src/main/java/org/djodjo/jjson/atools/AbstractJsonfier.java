@@ -2,6 +2,7 @@ package org.djodjo.jjson.atools;
 
 
 import android.view.View;
+import android.view.ViewGroup;
 
 import org.djodjo.json.JsonElementWrapper;
 import org.djodjo.json.JsonObjectWrapper;
@@ -19,12 +20,14 @@ public abstract class AbstractJsonfier implements Jsonfier {
     }
 
     @Override
-    public View inflateJson(Schema schema, View container) {
-        return null;
+    public ViewGroup inflateJson(Schema schema, ViewGroup container) {
+
+        return new LayoutBuilder(schema).build(container);
     }
 
     @Override
-    public View fillInJson(JsonElementWrapper src, View container, boolean addMissingViews) {
-        return null;
+    public ViewGroup fillInJson(JsonElementWrapper src, ViewGroup container, boolean addMissingViews) {
+
+        return container;
     }
 }
