@@ -1,6 +1,7 @@
 package org.djodjo.jjson.atools;
 
 
+import android.app.Activity;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 
@@ -12,7 +13,8 @@ import java.util.Map;
 public class LayoutBuilder<T extends Schema> {
 
 
-    private T schema;
+    private final Activity activity;
+    private final T schema;
     private boolean mergeAnyOf = false;
     private boolean mergeAllOf = false;
     private boolean mergeOneOf = false;
@@ -35,7 +37,8 @@ public class LayoutBuilder<T extends Schema> {
     private LinkedHashSet<String> allOfControllers = new LinkedHashSet<String>();
     private LinkedHashSet<String> oneOfControllers = new LinkedHashSet<String>();
 
-    public LayoutBuilder(T schema) {
+    public LayoutBuilder(T schema, Activity activity) {
+        this.activity = activity;
         this.schema = schema;
     }
 
@@ -54,9 +57,9 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
+
     public ViewGroup build(ViewGroup vg) {
         for(Map.Entry<String, Schema> propSchema:schema.getProperties()) {
-
         }
 
         return vg;

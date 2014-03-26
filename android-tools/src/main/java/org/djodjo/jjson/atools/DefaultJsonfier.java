@@ -8,11 +8,11 @@ import org.djodjo.json.JsonElementWrapper;
 import org.djodjo.json.JsonObjectWrapper;
 import org.djodjo.json.schema.Schema;
 
-public abstract class AbstractJsonfier implements Jsonfier {
+public class DefaultJsonfier implements Jsonfier {
 
 
-    protected abstract String getPrefix4All();
-    protected abstract String getPostfix4All();
+    private String prefix4All = "";
+    private String postfix4All = "";
 
     @Override
     public JsonObjectWrapper jsonfy(View form, JsonObjectWrapper container, boolean validate) {
