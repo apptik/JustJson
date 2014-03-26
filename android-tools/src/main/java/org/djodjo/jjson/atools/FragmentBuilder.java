@@ -4,8 +4,6 @@ package org.djodjo.jjson.atools;
 import android.app.Fragment;
 import android.os.Bundle;
 
-import org.djodjo.json.JsonElement;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -18,6 +16,7 @@ import java.util.HashSet;
  */
 public class FragmentBuilder {
 
+    public static final int DISPLAY_TYPE_TEXT= 0;
     public static final int DISPLAY_TYPE_RADIO = 1;
     public static final int DISPLAY_TYPE_SPINNER = 2;
     public static final int DISPLAY_TYPE_LISTVIEW = 3;
@@ -45,6 +44,7 @@ public class FragmentBuilder {
     private HashSet<String> type = new HashSet<String>();
     private ArrayList<String> options = new ArrayList<String>();
 
+
     protected Bundle args = new Bundle();
     private String title;
     private String description;
@@ -59,6 +59,15 @@ public class FragmentBuilder {
 
     public FragmentBuilder addType(String type) {
         this.type.add(type);
+        return this;
+    }
+
+    public FragmentBuilder addType(ArrayList<String> types) {
+        if(types != null) {
+            for (String propType:types) {
+                this.type.add(propType);
+            }
+        }
         return this;
     }
 

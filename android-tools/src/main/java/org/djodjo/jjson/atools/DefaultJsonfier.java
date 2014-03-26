@@ -14,6 +14,8 @@ public class DefaultJsonfier implements Jsonfier {
     private String prefix4All = "";
     private String postfix4All = "";
 
+
+
     @Override
     public JsonObjectWrapper jsonfy(View form, JsonObjectWrapper container, boolean validate) {
         return null;
@@ -21,8 +23,7 @@ public class DefaultJsonfier implements Jsonfier {
 
     @Override
     public ViewGroup inflateJson(Schema schema, ViewGroup container) {
-
-        return new LayoutBuilder(schema).build(container);
+        return container;
     }
 
     @Override

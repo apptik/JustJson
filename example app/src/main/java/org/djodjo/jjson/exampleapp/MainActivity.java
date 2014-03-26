@@ -1,36 +1,26 @@
 package org.djodjo.jjson.exampleapp;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+
+import java.util.HashMap;
 
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
+
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
     private CharSequence mTitle;
+
+    private FragmentPutter putter = new FragmentPutter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +35,14 @@ public class MainActivity extends Activity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+       putter.put(position, R.id.container);
     }
 
     public void onSectionAttached(int number) {
@@ -104,45 +93,67 @@ public class MainActivity extends Activity
     }
 
     /**
-     * A placeholder fragment containing a simple view.
+     * Used for non argument Fragments
      */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+    public class FragmentPutter {
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
+        public static final String JSON_PARSE = "json_parse";
+        public static final String JSON_POJO = "json_pojo";
+        public static final String JSON_WRAPPERS = "json_wrappers";
+        public static final String JSON_SCHEMA = "json_schema";
+        public static final String SCHEMA_FORM_BUILDER = "schema_form_builder";
+        public static final String JSON_FORM_FITTER = "json_form_fitter";
+        //form2json
+        public static final String JSONFY = "jsonfy";
+
+
+        HashMap<String, Class> fragments;
+
+        public FragmentPutter() {
+            fragments = new HashMap<String, Class>();
+            fragments.put(JSON_PARSE, JsonParseFragment.class);
+            fragments.put(JSON_POJO, JsonPojoFragment.class);
+            fragments.put(JSON_WRAPPERS, JsonWrappersFragment.class);
+            fragments.put(JSON_SCHEMA, JsonSchemaFragment.class);
+            fragments.put(SCHEMA_FORM_BUILDER, SchemaFormBuilderFragment.class);
+            fragments.put(JSON_FORM_FITTER, JsonFormFitterFragment.class);
+            fragments.put(JSONFY, JsonfyFragment.class);
+        }
+
+        public Fragment put(int i, int container) {
+            String tag = "";
+            switch (i) {
+                case 0: tag = JSON_PARSE;  break;
+                case 1: tag = JSON_POJO; break;
+                case 2: tag = JSON_WRAPPERS; break;
+                case 3: tag = JSON_SCHEMA; break;
+                case 4: tag = SCHEMA_FORM_BUILDER; break;
+                case 5: tag = JSON_FORM_FITTER; break;
+                case 6: tag = JSONFY; break;
+            }
+
+            return put(tag, container);
+        }
+
+        public Fragment put(String tag, int container) {
+            FragmentManager fragmentManager = getFragmentManager();
+
+            Fragment fragment= fragmentManager.findFragmentByTag(tag);
+            if(fragment == null) try {
+                fragment = (Fragment)fragments.get(tag).newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            fragmentManager.beginTransaction()
+                    .replace(container, fragment)
+                    .commit();
+
             return fragment;
         }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
     }
+
 
 }

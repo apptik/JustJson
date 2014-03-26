@@ -2,11 +2,15 @@ package org.djodjo.jjson.atools;
 
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 
+import org.djodjo.json.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -37,6 +41,11 @@ public class LayoutBuilder<T extends Schema> {
     private LinkedHashSet<String> allOfControllers = new LinkedHashSet<String>();
     private LinkedHashSet<String> oneOfControllers = new LinkedHashSet<String>();
 
+    //map for custom layouts for specific properties for this object
+    private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
+
+    private LinkedTreeMap<String, Fragment> propFragments =  new LinkedTreeMap<String, Fragment>();
+
     public LayoutBuilder(T schema, Activity activity) {
         this.activity = activity;
         this.schema = schema;
@@ -57,14 +66,43 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
+    public LayoutBuilder<T> addCustomLayout (String propertyName, int layoutId) {
+        customLayouts.put(propertyName, layoutId);
+        return this;
+    }
+
 
     public ViewGroup build(ViewGroup vg) {
-        for(Map.Entry<String, Schema> propSchema:schema.getProperties()) {
+        for(Map.Entry<String, Schema> property:schema.getProperties()) {
+            FragmentBuilder fragBuilder  = new FragmentBuilder(property.getKey());
+
+            Schema propSchema = property.getValue();
+
+            propFragments.put(property.getKey(),
+            fragBuilder.addType(propSchema.getType())
+                    .withTitle(propSchema.getTitle())
+                    .withDescription(propSchema.getDescription())
+                    .withDisplayType(chooseDisplayType(propSchema.getType()))
+                    .withLayoutId(getCustomLayoutId(property.getKey()))
+                    .build());
         }
 
         return vg;
     }
 
 
+    private int getCustomLayoutId(String propertyName) {
+        int res = 0;
+        if(customLayouts.containsKey(propertyName)) {
+            res = customLayouts.get(propertyName);
+        }
+        return res;
+    }
+
+    private int chooseDisplayType(ArrayList<String> types) {
+        int res = 0;
+
+        return res;
+    }
 
 }
