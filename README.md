@@ -4,7 +4,8 @@ jjson
 JSON helper library for Android and Java
 --
 
-It started as a mixture of https://android.googlesource.com/platform/libcore/+/master/json/ and the Json utils from https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/util .
+It came of the need for simple and lightweight Json parser for Android(unlinke Jackson), however fast and performant(unlike smart/simple json).
+The code started as a mixture of https://android.googlesource.com/platform/libcore/+/master/json/ and the Json utils from https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/util .
 
 JJson is quite fast when generating a Json Map Objects form String or Reader.
 
