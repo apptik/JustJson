@@ -1,8 +1,9 @@
 package org.djodjo.jjson.atools;
 
 
-import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 
@@ -17,7 +18,8 @@ import java.util.Map;
 public class LayoutBuilder<T extends Schema> {
 
 
-    private final Activity activity;
+   // private final Activity activity;
+    private final FragmentManager fragmentManager;
     private final T schema;
     private boolean mergeAnyOf = false;
     private boolean mergeAllOf = false;
@@ -44,10 +46,11 @@ public class LayoutBuilder<T extends Schema> {
     //map for custom layouts for specific properties for this object
     private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
 
-    private LinkedTreeMap<String, Fragment> propFragments =  new LinkedTreeMap<String, Fragment>();
 
-    public LayoutBuilder(T schema, Activity activity) {
-        this.activity = activity;
+    private LinkedTreeMap<String, FragmentBuilder> fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
+
+    public LayoutBuilder(T schema, FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
         this.schema = schema;
     }
 
@@ -71,23 +74,50 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
-
-    public ViewGroup build(ViewGroup vg) {
+    public void build(ViewGroup vg, boolean append) {
+        build(vg.getId(), append);
+    }
+    public void build(ViewGroup vg) {
+        build(vg.getId());
+    }
+    public void build(int containerId) {
+        build(containerId, false);
+    }
+    public void build(int containerId, boolean append) {
         for(Map.Entry<String, Schema> property:schema.getProperties()) {
             FragmentBuilder fragBuilder  = new FragmentBuilder(property.getKey());
 
             Schema propSchema = property.getValue();
 
-            propFragments.put(property.getKey(),
-            fragBuilder.addType(propSchema.getType())
-                    .withTitle(propSchema.getTitle())
-                    .withDescription(propSchema.getDescription())
-                    .withDisplayType(chooseDisplayType(propSchema.getType()))
-                    .withLayoutId(getCustomLayoutId(property.getKey()))
-                    .build());
+            fragBuilders.put(property.getKey(),
+                    fragBuilder.addType(propSchema.getType())
+                            .withTitle(propSchema.getTitle())
+                            .withDescription(propSchema.getDescription())
+                            .withDisplayType(chooseDisplayType(propSchema.getType()))
+                            .withLayoutId(getCustomLayoutId(property.getKey()))
+            );
         }
 
-        return vg;
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        boolean clean = !append;
+
+        for (Map.Entry<String, FragmentBuilder> builder:fragBuilders.entrySet()) {
+            Fragment fragment = builder.getValue().build();
+            if(clean)  {
+                transaction.replace(containerId, fragment, builder.getKey());
+                clean = false;
+
+            }
+            else {
+                transaction.add(containerId, fragment, builder.getKey());
+            }
+
+        }
+
+        transaction.commit();
+
+
     }
 
 
@@ -100,7 +130,7 @@ public class LayoutBuilder<T extends Schema> {
     }
 
     private int chooseDisplayType(ArrayList<String> types) {
-        int res = 0;
+        int res = -1;
 
         return res;
     }

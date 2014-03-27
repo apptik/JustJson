@@ -1,7 +1,6 @@
 package org.djodjo.jjson.atools;
 
 
-import android.app.Fragment;
 import android.os.Bundle;
 
 import java.util.ArrayList;
@@ -22,8 +21,9 @@ public class FragmentBuilder {
     public static final int DISPLAY_TYPE_LISTVIEW = 3;
     public static final int DISPLAY_TYPE_TOGGLE = 4;
     public static final int DISPLAY_TYPE_SWITCH = 5;
-    public static final int DISPLAY_TYPE_SLIDER = 6;
-    public static final int DISPLAY_TYPE_NUMBER_PICKER = 7;
+    public static final int DISPLAY_TYPE_CHECKBOX = 6;
+    public static final int DISPLAY_TYPE_SLIDER = 7;
+    public static final int DISPLAY_TYPE_NUMBER_PICKER = 8;
 
     public static final String TYPE_STRING = "string";
     public static final String TYPE_ENUM = "enum";
@@ -96,7 +96,7 @@ public class FragmentBuilder {
         return this;
     }
 
-    public Fragment build() {
+    public BasePropertyFragment build() {
         BasePropertyFragment fragment = null;
         args.putStringArrayList(ARG_OPTIONS, options);
 
@@ -106,9 +106,15 @@ public class FragmentBuilder {
 
         if(type.size()==1) {
             if(type.contains(TYPE_STRING)) {
-
+                fragment = new StringFragment();
             }
-            if(type.contains(TYPE_ENUM)) {
+            else if(type.contains(TYPE_NUMBER)) {
+                fragment = new NumberFragment();
+            }
+            else if(type.contains(TYPE_BOOLEAN)) {
+                fragment = new BooleanFragment();
+            }
+            else if(type.contains(TYPE_ENUM)) {
                 fragment = new EnumFragment();
             }
         } else {

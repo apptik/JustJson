@@ -1,41 +1,64 @@
 package org.djodjo.jjson.exampleapp;
 
 
-
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import org.djodjo.jjson.atools.LayoutBuilder;
+import org.djodjo.json.JsonElement;
+import org.djodjo.json.JsonException;
+import org.djodjo.json.schema.SchemaV4;
 
-public class SchemaFormBuilderFragment extends Fragment {
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.util.Scanner;
 
+public class SchemaFormBuilderFragment extends BlankFragment {
 
+    TextView txtInput;
 
-
-    public static SchemaFormBuilderFragment newInstance(String param1, String param2) {
-        SchemaFormBuilderFragment fragment = new SchemaFormBuilderFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
     public SchemaFormBuilderFragment() {
-        // Required empty public constructor
+        layout = R.layout.fragment_formbuilder;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+    public void execGo() {
+        SchemaV4 schema = new SchemaV4();
+        try {
+            schema.wrap(JsonElement.readFrom(txtInput.getText().toString()));
+        } catch (JsonException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
+            lb.build(R.id.form_container);
+
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_blank, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        v.findViewById(R.id.txt_input);
+        InputStream is = null;
+        try {
+            is = getActivity().getAssets().open("schema1.json");
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader bufferReader = new BufferedReader(isr);
+            StringWriter sw = new StringWriter();
+            txtInput = (TextView)v.findViewById(R.id.txt_input);
+            txtInput.setText(new Scanner(is, "UTF-8").useDelimiter("\\A").next());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return v;
     }
-
-
 }

@@ -12,17 +12,16 @@ import android.view.ViewGroup;
 
 public class BlankFragment extends Fragment {
 
+    protected int layout = 0;
 
-
-
-    public static BlankFragment newInstance(String param1, String param2) {
+    public static BlankFragment newInstance() {
         BlankFragment fragment = new BlankFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
     public BlankFragment() {
-        // Required empty public constructor
+        layout = R.layout.fragment_blank;
     }
 
     @Override
@@ -35,7 +34,19 @@ public class BlankFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_blank, container, false);
+        View v = inflater.inflate(layout, container, false);
+        v.findViewById(R.id.btn_go).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                execGo();
+            }
+        });
+
+        return v;
+    }
+
+    public void execGo() {
+        //do nothing here
     }
 
 

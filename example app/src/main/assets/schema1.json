@@ -1,0 +1,18 @@
+{
+"properties" : {
+    "propString" : {
+		"type" : "string",
+		"title" : "string prop"
+	},
+	"propNumber" : {
+		"type" : "number",
+		"title" : "number prop",
+		"description" : "description for a number"
+	},
+	"propBool" : {
+		"type" : "boolean",
+		"title" : "bool prop"
+	}
+}
+
+}

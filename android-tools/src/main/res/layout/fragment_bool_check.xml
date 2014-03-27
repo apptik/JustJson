@@ -7,12 +7,12 @@
 
     <include layout="@layout/frag_header" />
 
-    <NumberPicker
+    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text=""
         android:id="@+id/prop_value"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal"/>
+        android:layout_gravity="center_horizontal"/>
 
     <include layout="@layout/frag_footer" />
 
