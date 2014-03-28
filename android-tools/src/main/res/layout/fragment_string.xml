@@ -3,7 +3,10 @@
                   android:orientation="vertical"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  tools:context="org.djodjo.jjson.atools.JsonFragment">
+                  tools:context="org.djodjo.jjson.atools.JsonFragment"
+                  android:paddingLeft="20dp"
+                  android:paddingRight="20dp"
+    >
 
 <include layout="@layout/frag_header" />
 

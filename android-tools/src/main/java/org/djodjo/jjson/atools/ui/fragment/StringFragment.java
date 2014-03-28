@@ -1,7 +1,9 @@
-package org.djodjo.jjson.atools;
+package org.djodjo.jjson.atools.ui.fragment;
 
 
 import android.os.Bundle;
+
+import org.djodjo.jjson.atools.R;
 
 import java.util.ArrayList;
 
@@ -24,7 +26,7 @@ public class StringFragment extends BasePropertyFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            options = getArguments().getStringArrayList(FragmentBuilder.ARG_OPTIONS);
+
         }
     }
 

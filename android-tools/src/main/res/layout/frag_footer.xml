@@ -4,14 +4,17 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
     >
 
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_margin="6dp"
-        android:visibility="gone"
-        android:background="@android:color/holo_blue_light"/>
+        android:layout_margin="10dp"
+
+        android:visibility="invisible"
+        android:background="#bebebe"/>
 
 </LinearLayout>

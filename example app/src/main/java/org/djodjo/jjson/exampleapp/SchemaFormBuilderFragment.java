@@ -29,7 +29,7 @@ public class SchemaFormBuilderFragment extends BlankFragment {
 
     @Override
     public void execGo() {
-        SchemaV4 schema = new SchemaV4();
+        final SchemaV4 schema = new SchemaV4();
         try {
             schema.wrap(JsonElement.readFrom(txtInput.getText().toString()));
         } catch (JsonException e) {
@@ -38,8 +38,15 @@ public class SchemaFormBuilderFragment extends BlankFragment {
             e.printStackTrace();
         }
 
-        LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
-            lb.build(R.id.form_container);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
+                lb.build(R.id.form_container);
+            }
+        }).start();
+
 
     }
 

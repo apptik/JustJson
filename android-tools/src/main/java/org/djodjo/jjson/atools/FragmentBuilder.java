@@ -3,6 +3,12 @@ package org.djodjo.jjson.atools;
 
 import android.os.Bundle;
 
+import org.djodjo.jjson.atools.ui.fragment.BasePropertyFragment;
+import org.djodjo.jjson.atools.ui.fragment.BooleanFragment;
+import org.djodjo.jjson.atools.ui.fragment.EnumFragment;
+import org.djodjo.jjson.atools.ui.fragment.NumberFragment;
+import org.djodjo.jjson.atools.ui.fragment.StringFragment;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -35,11 +41,18 @@ public class FragmentBuilder {
     public static final String ARG_LABEL = "label";
     public static final String ARG_TITLE = "title";
     public static final String ARG_DESC = "description";
+    public static final String ARG_DEFAULT_VAL = "default_val";
     public static final String ARG_LAYOUT = "layout_id";
 
     public static final String ARG_DISPLAY_TYPE = "display_type";
 
-    public static final String ARG_OPTIONS = "options";
+    //for enum, anyOf,allOf, oneOF
+
+
+    //for range
+
+
+
 
     private HashSet<String> type = new HashSet<String>();
     private ArrayList<String> options = new ArrayList<String>();
@@ -98,7 +111,7 @@ public class FragmentBuilder {
 
     public BasePropertyFragment build() {
         BasePropertyFragment fragment = null;
-        args.putStringArrayList(ARG_OPTIONS, options);
+        //args.putStringArrayList(EnumFragment.ARG_OPTIONS, options);
 
         if(type.isEmpty()) {
             throw new RuntimeException("No type defined. Fragment builder needs at least one defined type for a property");

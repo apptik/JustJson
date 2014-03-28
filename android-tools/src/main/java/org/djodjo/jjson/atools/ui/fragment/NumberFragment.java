@@ -1,7 +1,10 @@
-package org.djodjo.jjson.atools;
+package org.djodjo.jjson.atools.ui.fragment;
 
 
 import android.os.Bundle;
+
+import org.djodjo.jjson.atools.R;
+import org.djodjo.jjson.atools.FragmentBuilder;
 
 import java.util.ArrayList;
 
@@ -32,7 +35,7 @@ public class NumberFragment extends BasePropertyFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            options = getArguments().getStringArrayList(FragmentBuilder.ARG_OPTIONS);
+
         }
     }
 

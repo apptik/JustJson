@@ -18,7 +18,7 @@ import java.util.Map;
 public class LayoutBuilder<T extends Schema> {
 
 
-   // private final Activity activity;
+    // private final Activity activity;
     private final FragmentManager fragmentManager;
     private final T schema;
     private boolean mergeAnyOf = false;
@@ -100,23 +100,22 @@ public class LayoutBuilder<T extends Schema> {
 
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        boolean clean = !append;
 
+        if(!append) {
+            //FragmentTransaction.replace does not replace all the fragments in the container but only one  thus we need to remove them all one by one
+            Fragment currFrag =  fragmentManager.findFragmentById(containerId);
+            while(currFrag!=null) {
+                fragmentManager.beginTransaction().remove(currFrag).commit();
+                currFrag =  fragmentManager.findFragmentById(containerId);
+            }
+        }
         for (Map.Entry<String, FragmentBuilder> builder:fragBuilders.entrySet()) {
             Fragment fragment = builder.getValue().build();
-            if(clean)  {
-                transaction.replace(containerId, fragment, builder.getKey());
-                clean = false;
-
-            }
-            else {
-                transaction.add(containerId, fragment, builder.getKey());
-            }
+            transaction.add(containerId, fragment, builder.getKey());
 
         }
 
         transaction.commit();
-
 
     }
 

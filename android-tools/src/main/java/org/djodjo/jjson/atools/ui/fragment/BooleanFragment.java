@@ -1,9 +1,10 @@
-package org.djodjo.jjson.atools;
+package org.djodjo.jjson.atools.ui.fragment;
 
 
 import android.os.Bundle;
 
-import java.util.ArrayList;
+import org.djodjo.jjson.atools.FragmentBuilder;
+import org.djodjo.jjson.atools.R;
 
 
 public class BooleanFragment extends BasePropertyFragment {
@@ -12,7 +13,6 @@ public class BooleanFragment extends BasePropertyFragment {
     public final static int LAYOUT_BOOL_SWITCH = R.layout.fragment_bool_switch;
     public final static int LAYOUT_BOOL_TOGGLE = R.layout.fragment_bool_toggle;
 
-    private ArrayList<String> options;
 
     public BooleanFragment() {
         // Required empty public constructor
@@ -32,7 +32,7 @@ public class BooleanFragment extends BasePropertyFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            options = getArguments().getStringArrayList(FragmentBuilder.ARG_OPTIONS);
+
         }
     }
 

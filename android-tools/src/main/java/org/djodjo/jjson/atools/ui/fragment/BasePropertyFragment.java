@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.jjson.atools;
+package org.djodjo.jjson.atools.ui.fragment;
 
 
 import android.app.Fragment;
@@ -23,6 +23,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import org.djodjo.jjson.atools.FragmentBuilder;
+import org.djodjo.jjson.atools.R;
 
 
 public abstract class BasePropertyFragment extends Fragment {
