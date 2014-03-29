@@ -32,7 +32,7 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
         return get(getJson().get(key));
     }
 
-    public T optValue(String key) throws JsonException{
+    public T optValue(String key) {
         return get(getJson().opt(key));
     }
 
