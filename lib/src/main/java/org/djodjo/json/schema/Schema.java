@@ -17,6 +17,7 @@ public abstract class Schema extends JsonObjectWrapper {
 
     public static final String TYPE_OBJECT = "object";
     public static final String TYPE_ARRAY = "array";
+    public static final String TYPE_ENUM = "enum";
     public static final String TYPE_STRING = "string";
     public static final String TYPE_NUMBER = "number";
     public static final String TYPE_BOOLEAN = "boolean";
@@ -206,5 +207,10 @@ public abstract class Schema extends JsonObjectWrapper {
         return (Schema)getEmptySchema().wrap(getJson().optJsonObject("not"));
     }
 
+
+    //TODO
+    public Schema merge(Schema schema) {
+        return this;
+    }
 
 }
