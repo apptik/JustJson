@@ -16,11 +16,14 @@ import org.djodjo.jjson.atools.ui.widget.RangeSlider;
 public class RangeFragment<T extends Number> extends BasePropertyFragment {
 
     public final static int LAYOUT_RANGE_SLIDER = R.layout.fragment_range_slider;
-    public static final String ARG_MINVAL = "min_val";
-    public static final String ARG_MAXVAL = "max_val";
+    public static final String ARG_MIN_BUNDLE = "min";
+    public static final String ARG_MAX_BUNDLE = "max";
 
-    private T minVal;
-    private T maxVal;
+    private T minVal1;
+    private T maxVal1;
+
+    private T minVal2;
+    private T maxVal2;
 
     public RangeFragment() {
         // Required empty public constructor
@@ -38,8 +41,10 @@ public class RangeFragment<T extends Number> extends BasePropertyFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            minVal = (T) getArguments().get(ARG_MINVAL);
-            maxVal = (T) getArguments().get(ARG_MAXVAL);
+            minVal1 = (T) getArguments().getBundle(ARG_MIN_BUNDLE).get(NumberFragment.ARG_MINIMUM);
+            maxVal1 = (T) getArguments().getBundle(ARG_MIN_BUNDLE).get(NumberFragment.ARG_MAXIMUM);
+            minVal2 = (T) getArguments().getBundle(ARG_MAX_BUNDLE).get(NumberFragment.ARG_MINIMUM);
+            maxVal2 = (T) getArguments().getBundle(ARG_MAX_BUNDLE).get(NumberFragment.ARG_MAXIMUM);
         }
     }
 
@@ -50,7 +55,7 @@ public class RangeFragment<T extends Number> extends BasePropertyFragment {
         final TextView max = (TextView) v.findViewById(R.id.maxValue);
 
 
-        RangeSlider<T> seekBar = new RangeSlider<T>(minVal, maxVal, getActivity());
+        RangeSlider<T> seekBar = new RangeSlider<T>(minVal1, maxVal2, getActivity());
 
         seekBar.setOnRangeSeekBarChangeListener(new RangeSlider.OnRangeSeekBarChangeListener<T>() {
             @Override

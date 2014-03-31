@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.view.ViewGroup;
-import android.widget.Spinner;
 
 import org.djodjo.json.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
@@ -26,9 +25,9 @@ public class LayoutBuilder<T extends Schema> {
     private boolean mergeOneOf = false;
 
     //othe options are radio or other selector buttons alike
-    private Class typeChooser4AnyOf = Spinner.class;
-    private Class typeChooser4AllOf = Spinner.class;
-    private Class typeChooser4OneOf = Spinner.class;
+    private int typeChooser4AnyOf = FragmentBuilder.DISPLAY_TYPE_SPINNER;
+    private int typeChooser4AllOf = FragmentBuilder.DISPLAY_TYPE_SPINNER;
+    private int typeChooser4OneOf = FragmentBuilder.DISPLAY_TYPE_SPINNER;
 
 
     //the following controllers are used instead of a general selector
@@ -85,20 +84,21 @@ public class LayoutBuilder<T extends Schema> {
     }
     public void build(int containerId, boolean append) {
         for(Map.Entry<String, Schema> property:schema.getProperties()) {
-            FragmentBuilder fragBuilder  = new FragmentBuilder(property.getKey());
+
 
             Schema propSchema = property.getValue();
+            FragmentBuilder fragBuilder  = new FragmentBuilder(property.getKey(), propSchema);
 
             fragBuilders.put(property.getKey(),
-                    fragBuilder.addType(propSchema.getType())
-                            .withTitle(propSchema.getTitle())
-                            .withDescription(propSchema.getDescription())
+                    fragBuilder
                             .withDisplayType(chooseDisplayType(propSchema.getType()))
                             .withLayoutId(getCustomLayoutId(property.getKey()))
             );
         }
 
 
+
+        // --> The TRANSACTION
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         if(!append) {

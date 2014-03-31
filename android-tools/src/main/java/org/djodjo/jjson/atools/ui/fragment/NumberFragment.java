@@ -11,6 +11,9 @@ import java.util.ArrayList;
 
 public class NumberFragment extends BasePropertyFragment {
 
+    public static final String ARG_MINIMUM = "minimum";
+    public static final String ARG_MAXIMUM = "maximum";
+
     public final static int LAYOUT_NUMBER_TEXT = R.layout.fragment_number_text;
     public final static int LAYOUT_NUMBER_PICKER = R.layout.fragment_number_picker;
     public final static int LAYOUT_NUMBER_SLIDER = R.layout.fragment_number_slider;

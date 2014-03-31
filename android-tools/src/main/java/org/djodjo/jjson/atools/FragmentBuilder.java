@@ -7,10 +7,19 @@ import org.djodjo.jjson.atools.ui.fragment.BasePropertyFragment;
 import org.djodjo.jjson.atools.ui.fragment.BooleanFragment;
 import org.djodjo.jjson.atools.ui.fragment.EnumFragment;
 import org.djodjo.jjson.atools.ui.fragment.NumberFragment;
+import org.djodjo.jjson.atools.ui.fragment.RangeFragment;
 import org.djodjo.jjson.atools.ui.fragment.StringFragment;
+import org.djodjo.json.LinkedTreeMap;
+import org.djodjo.json.schema.Schema;
+import org.hamcrest.Matcher;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Map;
+
+import static org.djodjo.jjson.atools.matcher.SchemaDefMatchers.isBooleanType;
+import static org.djodjo.jjson.atools.matcher.SchemaDefMatchers.isEnum;
+import static org.djodjo.jjson.atools.matcher.SchemaDefMatchers.isNumberType;
+import static org.djodjo.jjson.atools.matcher.SchemaDefMatchers.isRangeObject;
+import static org.djodjo.jjson.atools.matcher.SchemaDefMatchers.isStringType;
 
 /**
  * View Builder that is used to generate all vies from JsonSchema describing a JsonObject
@@ -31,33 +40,13 @@ public class FragmentBuilder {
     public static final int DISPLAY_TYPE_SLIDER = 7;
     public static final int DISPLAY_TYPE_NUMBER_PICKER = 8;
 
-    public static final String TYPE_STRING = "string";
-    public static final String TYPE_ENUM = "enum";
-    public static final String TYPE_NUMBER = "number";
-    public static final String TYPE_BOOLEAN = "boolean";
-    public static final String TYPE_ARRAY = "array";
-    public static final String TYPE_OBJECT = "object";
-
-    public static final String ARG_LABEL = "label";
-    public static final String ARG_TITLE = "title";
-    public static final String ARG_DESC = "description";
-    public static final String ARG_DEFAULT_VAL = "default_val";
-    public static final String ARG_LAYOUT = "layout_id";
-
-    public static final String ARG_DISPLAY_TYPE = "display_type";
-
-    //for enum, anyOf,allOf, oneOF
-
-
-    //for range
 
 
 
-
-    private HashSet<String> type = new HashSet<String>();
-    private ArrayList<String> options = new ArrayList<String>();
+    private Schema propertySchema;
 
 
+    //arguments to be loaded to the created fragment
     protected Bundle args = new Bundle();
     private String title;
     private String description;
@@ -66,76 +55,90 @@ public class FragmentBuilder {
 
     private Object value;
 
-    public FragmentBuilder(String label) {
-        args.putString(ARG_LABEL, label);
+
+    private static LinkedTreeMap<Matcher<Schema>, Class> commonPropertyMatchers;
+
+    static {
+        commonPropertyMatchers = new LinkedTreeMap<Matcher<Schema>, Class>();
+        commonPropertyMatchers.put(isStringType(), StringFragment.class);
+        commonPropertyMatchers.put(isBooleanType(),BooleanFragment.class);
+        commonPropertyMatchers.put(isEnum(),EnumFragment.class);
+        commonPropertyMatchers.put(isNumberType(), NumberFragment.class);
+        commonPropertyMatchers.put(isRangeObject(), RangeFragment.class);
+
     }
 
-    public FragmentBuilder addType(String type) {
-        this.type.add(type);
-        return this;
-    }
-
-    public FragmentBuilder addType(ArrayList<String> types) {
-        if(types != null) {
-            for (String propType:types) {
-                this.type.add(propType);
-            }
-        }
-        return this;
-    }
-
-    public FragmentBuilder addOption(String option) {
-        this.options.add(option);
-        return this;
-    }
-
-    public FragmentBuilder withTitle(String title) {
-        args.putString(ARG_TITLE, title);
-        return this;
-    }
-
-    public FragmentBuilder withDescription(String description) {
-        args.putString(ARG_DESC, description);
-        return this;
+    public FragmentBuilder(String label, Schema schema) {
+        //label cannot change
+        args.putString(BasePropertyFragment.ARG_LABEL, label);
+        propertySchema = schema;
     }
 
     public FragmentBuilder withLayoutId(int layoutId) {
-        args.putInt(ARG_LAYOUT, layoutId);
+        args.putInt(BasePropertyFragment.ARG_LAYOUT, layoutId);
         return this;
     }
 
     public FragmentBuilder withDisplayType(int displayType) {
-        args.putInt(ARG_DISPLAY_TYPE, displayType);
+        args.putInt(BasePropertyFragment.ARG_DISPLAY_TYPE, displayType);
         return this;
     }
 
     public BasePropertyFragment build() {
         BasePropertyFragment fragment = null;
-        //args.putStringArrayList(EnumFragment.ARG_OPTIONS, options);
 
-        if(type.isEmpty()) {
+
+        if(propertySchema.getType().isEmpty()) {
             throw new RuntimeException("No type defined. Fragment builder needs at least one defined type for a property");
         }
 
-        if(type.size()==1) {
-            if(type.contains(TYPE_STRING)) {
-                fragment = new StringFragment();
+        //generate all available arguments, depending on the property type some may not be used
+        genFragmentArgs(args, propertySchema);
+
+        //TODO use MIXED fragment
+
+        for(Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
+            if(entry.getKey().matches(propertySchema)) {
+                try {
+                    fragment = (BasePropertyFragment) entry.getValue().newInstance();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
-            else if(type.contains(TYPE_NUMBER)) {
-                fragment = new NumberFragment();
-            }
-            else if(type.contains(TYPE_BOOLEAN)) {
-                fragment = new BooleanFragment();
-            }
-            else if(type.contains(TYPE_ENUM)) {
-                fragment = new EnumFragment();
-            }
-        } else {
-            //TODO use MIXED fragment
         }
 
-        fragment.setArguments(args);
+        //fragment can be null in some cases
+        if(fragment != null) {
+            fragment.setArguments(args);
+        }
         return fragment;
     }
+
+    private static Bundle genFragmentArgs(Bundle args, Schema schema) {
+        if(schema == null) return args;
+
+        //args.putStringArrayList(EnumFragment.ARG_OPTIONS, schema.getEnum());
+        args.putString(BasePropertyFragment.ARG_TITLE, schema.getTitle());
+        args.putString(BasePropertyFragment.ARG_DESC, schema.getDescription());
+        args.putString(BasePropertyFragment.ARG_DEFAULT_VAL, schema.getDefault());
+        args.putDouble(NumberFragment.ARG_MINIMUM, schema.getMinimum());
+        args.putDouble(NumberFragment.ARG_MAXIMUM, schema.getMaximum());
+
+        // --> loop inner(property schemas), used for complex(Object) properties
+        // to deliver all sub-arguments to the created fragment
+
+        if(schema.getProperties() != null) {
+            for (Map.Entry<String, Schema> property : schema.getProperties()) {
+                args.putBundle(property.getKey(), genFragmentArgs(new Bundle(), property.getValue()));
+            }
+        }
+
+        return args;
+    }
+
+
 
 }

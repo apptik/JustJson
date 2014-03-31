@@ -12,6 +12,23 @@
 	"propBool" : {
 		"type" : "boolean",
 		"title" : "bool prop"
+	},
+	"propPriceRange" : {
+	    "type" : "object",
+	    "title" : "Price",
+	    "description" : "Price range",
+	    "properties" : {
+	        "min" : {
+	            "type" : "number",
+	            "minimum" : 10,
+	            "maximum" : 150
+	        },
+	        "max" : {
+				"type" : "number",
+	            "minimum" : 50,
+	            "maximum" : 200
+	        }
+	    }
 	}
 }
 

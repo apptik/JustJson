@@ -24,11 +24,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.djodjo.jjson.atools.FragmentBuilder;
 import org.djodjo.jjson.atools.R;
 
 
 public abstract class BasePropertyFragment extends Fragment {
+
+    public static final String ARG_LABEL = "label";
+    public static final String ARG_TITLE = "title";
+    public static final String ARG_DESC = "description";
+    public static final String ARG_DEFAULT_VAL = "default_val";
+    public static final String ARG_LAYOUT = "layout_id";
+
+    public static final String ARG_DISPLAY_TYPE = "display_type";
+
 
     public String getLabel() {
         return label;
@@ -51,11 +59,11 @@ public abstract class BasePropertyFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            label = getArguments().getString(FragmentBuilder.ARG_LABEL);
-            title = getArguments().getString(FragmentBuilder.ARG_TITLE);
-            description = getArguments().getString(FragmentBuilder.ARG_DESC);
-            layoutId = getArguments().getInt(FragmentBuilder.ARG_LAYOUT);
-            displayType = getArguments().getInt(FragmentBuilder.ARG_DISPLAY_TYPE, -1);
+            label = getArguments().getString(ARG_LABEL);
+            title = getArguments().getString(ARG_TITLE);
+            description = getArguments().getString(ARG_DESC);
+            layoutId = getArguments().getInt(ARG_LAYOUT);
+            displayType = getArguments().getInt(ARG_DISPLAY_TYPE, -1);
 
         }
     }
