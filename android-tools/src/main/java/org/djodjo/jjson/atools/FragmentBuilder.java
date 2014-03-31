@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2014 Kalin Maldzhanski
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.djodjo.jjson.atools;
 
 
@@ -9,6 +25,7 @@ import org.djodjo.jjson.atools.ui.fragment.EnumFragment;
 import org.djodjo.jjson.atools.ui.fragment.NumberFragment;
 import org.djodjo.jjson.atools.ui.fragment.RangeFragment;
 import org.djodjo.jjson.atools.ui.fragment.StringFragment;
+import org.djodjo.jjson.atools.util.FragmentTools;
 import org.djodjo.json.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
 import org.hamcrest.Matcher;
@@ -88,12 +105,13 @@ public class FragmentBuilder {
         BasePropertyFragment fragment = null;
 
 
-        if(propertySchema.getType().isEmpty()) {
-            throw new RuntimeException("No type defined. Fragment builder needs at least one defined type for a property");
+        if((propertySchema.getType()==null || propertySchema.getType().isEmpty()) && propertySchema.getEnum() == null) {
+            //("No type defined. Fragment builder needs at least one defined type for a property");
+            return null;
         }
 
         //generate all available arguments, depending on the property type some may not be used
-        genFragmentArgs(args, propertySchema);
+        FragmentTools.genFragmentArgs(args, propertySchema);
 
         //TODO use MIXED fragment
 
@@ -116,29 +134,6 @@ public class FragmentBuilder {
         }
         return fragment;
     }
-
-    private static Bundle genFragmentArgs(Bundle args, Schema schema) {
-        if(schema == null) return args;
-
-        //args.putStringArrayList(EnumFragment.ARG_OPTIONS, schema.getEnum());
-        args.putString(BasePropertyFragment.ARG_TITLE, schema.getTitle());
-        args.putString(BasePropertyFragment.ARG_DESC, schema.getDescription());
-        args.putString(BasePropertyFragment.ARG_DEFAULT_VAL, schema.getDefault());
-        args.putDouble(NumberFragment.ARG_MINIMUM, schema.getMinimum());
-        args.putDouble(NumberFragment.ARG_MAXIMUM, schema.getMaximum());
-
-        // --> loop inner(property schemas), used for complex(Object) properties
-        // to deliver all sub-arguments to the created fragment
-
-        if(schema.getProperties() != null) {
-            for (Map.Entry<String, Schema> property : schema.getProperties()) {
-                args.putBundle(property.getKey(), genFragmentArgs(new Bundle(), property.getValue()));
-            }
-        }
-
-        return args;
-    }
-
 
 
 }

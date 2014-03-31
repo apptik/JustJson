@@ -10,8 +10,12 @@
 		"description" : "description for a number"
 	},
 	"propBool" : {
-		"type" : "boolean",
-		"title" : "bool prop"
+    		"type" : "boolean",
+    		"title" : "bool prop"
+    	},
+    "propEnum" : {
+		"title" : "enum prop",
+		"enum" : ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", 345, 567, 890]
 	},
 	"propPriceRange" : {
 	    "type" : "object",
