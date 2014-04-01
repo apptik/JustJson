@@ -56,9 +56,8 @@ public class LayoutBuilder<T extends Schema> {
     //i.e the first controller will get all possible values displayed,
     //the next one just the ones under the specific schema and sub-schemas, etc.
 
-    private LinkedHashSet<String> anyOfControllers = new LinkedHashSet<String>();
-    private LinkedHashSet<String> allOfControllers = new LinkedHashSet<String>();
-    private LinkedHashSet<String> oneOfControllers = new LinkedHashSet<String>();
+    private ArrayList<String> oneOfControllers = new ArrayList<String>();
+    private ArrayList<String> ignoredProperties = new ArrayList<String>();
 
     //map for custom layouts for specific properties for this object
     private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
@@ -71,18 +70,13 @@ public class LayoutBuilder<T extends Schema> {
         this.schema = schema;
     }
 
-    public LayoutBuilder<T> addAnyOfController(String propertyName) {
-        anyOfControllers.add(propertyName);
-        return this;
-    }
-
-    public LayoutBuilder<T> addAllOfController(String propertyName) {
-        allOfControllers.add(propertyName);
-        return this;
-    }
-
     public LayoutBuilder<T> addOneOfController(String propertyName) {
         oneOfControllers.add(propertyName);
+        return this;
+    }
+
+    public LayoutBuilder<T> ignoreProperty(String propertyName) {
+        ignoredProperties.add(propertyName);
         return this;
     }
 
@@ -107,6 +101,7 @@ public class LayoutBuilder<T extends Schema> {
         SchemaMap schemaTopProperties =  schema.getProperties();
         // --> First find basic properties
         for(Map.Entry<String, Schema> property:schemaTopProperties) {
+            if(ignoredProperties.contains(property.getKey())) continue;
             Schema propSchema = property.getValue();
             FragmentBuilder fragBuilder  = new FragmentBuilder(property.getKey(), propSchema);
             fragBuilders.put(property.getKey(),
@@ -135,7 +130,7 @@ public class LayoutBuilder<T extends Schema> {
                 stringSchemas.add(oneOfSchema.getJson().toString());
             }
             //
-            oneOfFragment = OneOfFragment.newInstance(stringSchemas);
+            oneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers);
         }
 
 
@@ -163,7 +158,7 @@ public class LayoutBuilder<T extends Schema> {
 
         }
 
-        //add oneOf fragment if any
+        //add oneOf fragment if exists
         if(oneOfFragment != null) {
             transaction.add(containerId, oneOfFragment, "oneOf");
         }

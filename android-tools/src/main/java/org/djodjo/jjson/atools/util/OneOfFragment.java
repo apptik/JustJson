@@ -25,15 +25,18 @@ import java.util.LinkedHashMap;
 public class OneOfFragment extends Fragment {
 
     private static final String ARG_SCHEMAS = "schemas";
+    private static final String ARG_CONTROLLERS = "controllers";
 
 
+    private ArrayList<String> controllers = null;
     private ArrayList<Schema> schemas =  new ArrayList<Schema>();
     private ArrayList<LayoutBuilder<Schema>> layoutBuilders = new ArrayList<LayoutBuilder<Schema>>();
 
-    public static OneOfFragment newInstance(ArrayList<String> schemas) {
+    public static OneOfFragment newInstance(ArrayList<String> schemas, ArrayList<String> controllers) {
         OneOfFragment fragment = new OneOfFragment();
         Bundle args = new Bundle();
         args.putStringArrayList(ARG_SCHEMAS, schemas);
+        args.putStringArrayList(ARG_CONTROLLERS, controllers);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,6 +48,7 @@ public class OneOfFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            controllers = getArguments().getStringArrayList(ARG_CONTROLLERS);
             ArrayList<String> stringSchemas = getArguments().getStringArrayList(ARG_SCHEMAS);
             for(String schema:stringSchemas) {
                 try {
@@ -63,24 +67,33 @@ public class OneOfFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_one_of_radio, container, false);
 
+
         RadioGroup oneOfRadioGroup = (RadioGroup) v.findViewById(R.id.oneOfRadioGroup);
-        oneOfRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group,final int checkedId) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        layoutBuilders.get(checkedId - 1).build(R.id.oneOfContainer);
-                    }
-                }).start();
+        if(controllers!=null && controllers.size()>0) {
+            oneOfRadioGroup.setVisibility(View.GONE);
+        } else {
+            // --> Prepare default controller
+            oneOfRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, final int checkedId) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            layoutBuilders.get(checkedId - 1).build(R.id.oneOfContainer);
+                        }
+                    }).start();
+                }
+            });
+        }
+
+
+        // --> buildup options and create layout builders
+        for(Schema schema:schemas) {
+            if(oneOfRadioGroup.getVisibility() == View.VISIBLE) {
+                RadioButton button = new RadioButton(getActivity());
+                button.setText(schema.getTitle());
+                oneOfRadioGroup.addView(button);
             }
-        });
-
-
-            for(Schema schema:schemas) {
-            RadioButton button = new RadioButton(getActivity());
-            button.setText(schema.getTitle());
-            oneOfRadioGroup.addView(button);
             layoutBuilders.add(new LayoutBuilder<Schema>(schema, getFragmentManager()));
         }
 

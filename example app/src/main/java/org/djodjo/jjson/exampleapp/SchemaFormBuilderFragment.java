@@ -43,7 +43,8 @@ public class SchemaFormBuilderFragment extends BlankFragment {
             @Override
             public void run() {
                 LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
-                lb.build(R.id.form_container);
+                lb.ignoreProperty("ignorableOption1")
+                        .build(R.id.form_container);
             }
         }).start();
 
@@ -56,7 +57,7 @@ public class SchemaFormBuilderFragment extends BlankFragment {
         v.findViewById(R.id.txt_input);
         InputStream is = null;
         try {
-            is = getActivity().getAssets().open("schema2.json");
+            is = getActivity().getAssets().open("schema3.json");
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader bufferReader = new BufferedReader(isr);
             StringWriter sw = new StringWriter();
