@@ -22,15 +22,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
-import org.djodjo.jjson.atools.R;
 import org.djodjo.jjson.atools.FragmentBuilder;
+import org.djodjo.jjson.atools.R;
 
 import java.util.ArrayList;
 

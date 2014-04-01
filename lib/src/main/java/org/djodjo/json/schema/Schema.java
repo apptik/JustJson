@@ -193,15 +193,15 @@ public abstract class Schema extends JsonObjectWrapper {
     }
 
     public JsonObjectArrayWrapper<Schema> getAllOf() {
-        return (JsonObjectArrayWrapper<Schema>)new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("allOf"));
+        return new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("allOf"), (Class)this.getClass());
     }
 
     public JsonObjectArrayWrapper<Schema> getAnyOf() {
-        return (JsonObjectArrayWrapper<Schema>)new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("anyOf"));
+        return new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("anyOf"), (Class)this.getClass());
     }
 
     public JsonObjectArrayWrapper<Schema> getOneOf() {
-        return (JsonObjectArrayWrapper<Schema>)new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("oneOf"));
+        return new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("oneOf"), (Class)this.getClass() );
     }
 
     public Schema getNot() {
@@ -209,8 +209,14 @@ public abstract class Schema extends JsonObjectWrapper {
     }
 
 
-    //TODO
-    public Schema merge(Schema schema) {
+    /**
+     * Merges schema with another.
+     * If values are already present they are not changed.
+     * @param anotherSchema
+     * @return
+     */
+    public Schema merge(Schema anotherSchema) {
+        this.getJson().merge(anotherSchema.getJson());
         return this;
     }
 

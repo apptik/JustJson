@@ -753,6 +753,22 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
 
     @Override
     public Iterator<Map.Entry<String, JsonElement>> iterator() {
-            return nameValuePairs.entrySet().iterator();
+        return nameValuePairs.entrySet().iterator();
+    }
+
+    public JsonObject merge(JsonObject another) {
+        for(Map.Entry<String, JsonElement> anotherEntry:another) {
+            JsonElement curr = this.opt(anotherEntry.getKey());
+            if(curr == null) {
+                try {
+                    this.put(anotherEntry.getKey(), anotherEntry.getValue());
+                } catch (JsonException e) {
+                    e.printStackTrace();
+                }
+            } else if(curr.isJsonObject() || anotherEntry.getValue().isJsonObject()) {
+                curr.asJsonObject().merge(anotherEntry.getValue().asJsonObject());
+            }
+        }
+        return this;
     }
 }

@@ -56,7 +56,7 @@ public class SchemaFormBuilderFragment extends BlankFragment {
         v.findViewById(R.id.txt_input);
         InputStream is = null;
         try {
-            is = getActivity().getAssets().open("schema1.json");
+            is = getActivity().getAssets().open("schema2.json");
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader bufferReader = new BufferedReader(isr);
             StringWriter sw = new StringWriter();
