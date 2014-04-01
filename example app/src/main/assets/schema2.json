@@ -1,32 +1,35 @@
 {
     "type": "object",
     "properties": {
-        "conditionalProperty": {
+        "baseProperty1": {
+            "title" : "baseProperty1",
             "type": "boolean"
+        },
+        "baseProperty2": {
+            "title" : "baseProperty2",
+            "enum" : [1,2,3,4,5,6]
         }
     },
-    "required": [
-        "conditionalProperty"
-    ],
-    "additionalProperties": false,
     "oneOf": [
         {
-            "title": "Condition ON",
+            "title": "Option 1",
             "properties": {
-                "conditionalProperty": {
-                    "enum": [
-                        true
-                    ]
+                "additionalOption1": {
+                    "title" : "additionalOption1",
+                    "enum": ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"]
                 }
             }
         },
         {
-            "title": "Condition OFF",
+            "title": "option 2",
             "properties": {
-                "conditionalProperty": {
-                    "enum": [
-                        false
-                    ]
+                "additionalOption1": {
+                    "title" : "additionalOption1",
+                    "type" : "number"
+                },
+                "additionalOption2": {
+                    "title" : "additionalOption2",
+                    "type": "boolean"
                 }
             }
         }

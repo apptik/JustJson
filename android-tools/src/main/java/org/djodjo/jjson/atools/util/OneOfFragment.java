@@ -9,14 +9,17 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import org.djodjo.jjson.atools.LayoutBuilder;
 import org.djodjo.jjson.atools.R;
 import org.djodjo.json.JsonException;
 import org.djodjo.json.JsonObject;
+import org.djodjo.json.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 
 public class OneOfFragment extends Fragment {
@@ -25,6 +28,7 @@ public class OneOfFragment extends Fragment {
 
 
     private ArrayList<Schema> schemas =  new ArrayList<Schema>();
+    private ArrayList<LayoutBuilder<Schema>> layoutBuilders = new ArrayList<LayoutBuilder<Schema>>();
 
     public static OneOfFragment newInstance(ArrayList<String> schemas) {
         OneOfFragment fragment = new OneOfFragment();
@@ -60,14 +64,25 @@ public class OneOfFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_one_of_radio, container, false);
 
         RadioGroup oneOfRadioGroup = (RadioGroup) v.findViewById(R.id.oneOfRadioGroup);
+        oneOfRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group,final int checkedId) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        layoutBuilders.get(checkedId - 1).build(R.id.oneOfContainer);
+                    }
+                }).start();
+            }
+        });
 
-        for(Schema schema:schemas) {
+
+            for(Schema schema:schemas) {
             RadioButton button = new RadioButton(getActivity());
             button.setText(schema.getTitle());
             oneOfRadioGroup.addView(button);
+            layoutBuilders.add(new LayoutBuilder<Schema>(schema, getFragmentManager()));
         }
-
-        ViewGroup vgcontainer = (ViewGroup)v.findViewById(R.id.oneOfContainer);
 
         return v;
     }
