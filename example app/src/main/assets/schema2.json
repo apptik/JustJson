@@ -1,0 +1,34 @@
+{
+    "type": "object",
+    "properties": {
+        "conditionalProperty": {
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "conditionalProperty"
+    ],
+    "additionalProperties": false,
+    "oneOf": [
+        {
+            "title": "Condition ON",
+            "properties": {
+                "conditionalProperty": {
+                    "enum": [
+                        true
+                    ]
+                }
+            }
+        },
+        {
+            "title": "Condition OFF",
+            "properties": {
+                "conditionalProperty": {
+                    "enum": [
+                        false
+                    ]
+                }
+            }
+        }
+    ]
+}
