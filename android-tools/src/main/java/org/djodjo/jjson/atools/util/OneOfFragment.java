@@ -2,6 +2,7 @@ package org.djodjo.jjson.atools.util;
 
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,6 +94,12 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
 
 
         HashMap<String, ArrayList<String>> controllerOptions =  new HashMap<String, ArrayList<String>>();
+        //init controllers
+        if(controllers!=null && controllers.size()>0) {
+            for (String controller : controllers) {
+                controllerOptions.put(controller, new ArrayList<String>());
+            }
+        }
 
         // --> buildup options and create layout builders
         for(Schema schema:schemas) {
@@ -107,7 +114,7 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
                 //build custom controller
                 for(String controller:controllers) {
                     try {
-                        controllerOptions.put(controller,FragmentTools.genEnumStringList(schema.getProperties().getValue(controller)));
+                        controllerOptions.get(controller).addAll(FragmentTools.genEnumStringList(schema.getProperties().getValue(controller)));
                     } catch (JsonException e) {
                         e.printStackTrace();
                     }
@@ -119,7 +126,16 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
                             .ignoreProperties(controllers)
             );
         }
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        for(String controller:controllers) {
+            Fragment frag = new EnumFragment();
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList(EnumFragment.ARG_OPTIONS, controllerOptions.get(controller));
+            frag.setArguments(bundle);
+            transaction.add(container.getId(), frag, controller);
+        }
 
+        transaction.commit();
         return v;
     }
 
