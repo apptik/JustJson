@@ -29,7 +29,6 @@ import org.djodjo.json.schema.SchemaMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class LayoutBuilder<T extends Schema> {
@@ -61,6 +60,7 @@ public class LayoutBuilder<T extends Schema> {
 
     //map for custom layouts for specific properties for this object
     private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
+    private HashMap<String, Integer> displayTypes = new HashMap<String, Integer>();
 
 
     private LinkedTreeMap<String, FragmentBuilder> fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
@@ -96,6 +96,11 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
+    public LayoutBuilder<T> withDisplayType (String propertyName, int displayType) {
+        displayTypes.put(propertyName, displayType);
+        return this;
+    }
+
     public void reset() {
         fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
     }
@@ -110,19 +115,24 @@ public class LayoutBuilder<T extends Schema> {
         build(containerId, false);
     }
     public void build(int containerId, boolean append) {
-        if(fragBuilders == null || fragBuilders.size()<1) {
+        if(fragmentManager==null) return;
+        if(fragBuilders == null || fragBuilders.size()<1)
+        {
 
             SchemaMap schemaTopProperties = schema.getProperties();
+
             // --> First find basic properties
-            for (Map.Entry<String, Schema> property : schemaTopProperties) {
-                if (ignoredProperties.contains(property.getKey())) continue;
-                Schema propSchema = property.getValue();
-                FragmentBuilder fragBuilder = new FragmentBuilder(property.getKey(), propSchema);
-                fragBuilders.put(property.getKey(),
-                        fragBuilder
-                                .withDisplayType(chooseDisplayType(propSchema.getType()))
-                                .withLayoutId(getCustomLayoutId(property.getKey()))
-                );
+            if(schemaTopProperties!=null) {
+                for (Map.Entry<String, Schema> property : schemaTopProperties) {
+                    if (ignoredProperties.contains(property.getKey())) continue;
+                    Schema propSchema = property.getValue();
+                    FragmentBuilder fragBuilder = new FragmentBuilder(property.getKey(), propSchema);
+                    fragBuilders.put(property.getKey(),
+                            fragBuilder
+                                    .withDisplayType(chooseDisplayType(property.getKey(), propSchema.getType()))
+                                    .withLayoutId(getCustomLayoutId(property.getKey()))
+                    );
+                }
             }
 
             // --> check for oneOf
@@ -131,12 +141,14 @@ public class LayoutBuilder<T extends Schema> {
                 ArrayList<String> stringSchemas = new ArrayList<String>();
                 for (Schema oneOfSchema : oneOfSchemas) {
                     //before sending schemas to the oneOf fragment check if they are not already defined in here. if so merge and remove from common Layout
-                    SchemaMap propSchemas = oneOfSchema.getProperties();
-                    for (Map.Entry<String, Schema> property : propSchemas) {
-                        Schema topPropertySchema = schemaTopProperties.optValue(property.getKey());
-                        if (topPropertySchema != null) {
-                            property.getValue().merge(topPropertySchema);
-                            fragBuilders.remove(property.getKey());
+                    if(schemaTopProperties!=null) {
+                        SchemaMap propSchemas = oneOfSchema.getProperties();
+                        for (Map.Entry<String, Schema> property : propSchemas) {
+                            Schema topPropertySchema = schemaTopProperties.optValue(property.getKey());
+                            if (topPropertySchema != null) {
+                                property.getValue().merge(topPropertySchema);
+                                fragBuilders.remove(property.getKey());
+                            }
                         }
                     }
 
@@ -158,10 +170,13 @@ public class LayoutBuilder<T extends Schema> {
             //FragmentTransaction.replace does not replace all the fragments in the container but only one  thus we need to remove them all one by one
             Fragment currFrag =  fragmentManager.findFragmentById(containerId);
             while(currFrag!=null) {
-                fragmentManager.beginTransaction().remove(currFrag).commit();
                 try {
+                    fragmentManager.beginTransaction().remove(currFrag).commit();
+
                     currFrag = fragmentManager.findFragmentById(containerId);
-                } catch(Exception ex){}
+                } catch(Exception ex){
+                    currFrag = null;
+                    ex.printStackTrace();}
             }
         }
 
@@ -192,8 +207,11 @@ public class LayoutBuilder<T extends Schema> {
         return res;
     }
 
-    private int chooseDisplayType(ArrayList<String> types) {
+    private int chooseDisplayType(String property, ArrayList<String> types) {
         int res = -1;
+
+        if(displayTypes.containsKey(property))
+            res = displayTypes.get(property);
 
         return res;
     }

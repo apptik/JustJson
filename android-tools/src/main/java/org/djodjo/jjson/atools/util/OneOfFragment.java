@@ -16,14 +16,12 @@ import org.djodjo.jjson.atools.R;
 import org.djodjo.jjson.atools.ui.fragment.EnumFragment;
 import org.djodjo.json.JsonException;
 import org.djodjo.json.JsonObject;
-import org.djodjo.json.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 
 public class OneOfFragment extends Fragment implements EnumControllerCallback {
@@ -31,6 +29,8 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
     private static final String ARG_SCHEMAS = "schemas";
     private static final String ARG_CONTROLLERS = "controllers";
 
+
+    RadioGroup oneOfRadioGroup;
 
     private ArrayList<String> controllers = null;
     private ArrayList<Schema> schemas =  new ArrayList<Schema>();
@@ -67,12 +67,22 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
     }
 
     @Override
+    public void onDestroyView() {
+        if(oneOfRadioGroup!=null && oneOfRadioGroup.getVisibility() == View.VISIBLE) {
+            oneOfRadioGroup.setOnCheckedChangeListener(null);
+        }
+        super.onDestroyView();
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_one_of_radio, container, false);
 
 
-        RadioGroup oneOfRadioGroup = (RadioGroup) v.findViewById(R.id.oneOfRadioGroup);
+        oneOfRadioGroup = (RadioGroup) v.findViewById(R.id.oneOfRadioGroup);
+        oneOfRadioGroup.removeAllViews();
         if(controllers!=null && controllers.size()>0) {
             oneOfRadioGroup.setVisibility(View.GONE);
         } else {
@@ -80,6 +90,7 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
             oneOfRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, final int checkedId) {
+
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -126,16 +137,18 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
                             .ignoreProperties(controllers)
             );
         }
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        for(String controller:controllers) {
-            Fragment frag = new EnumFragment();
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList(EnumFragment.ARG_OPTIONS, controllerOptions.get(controller));
-            frag.setArguments(bundle);
-            transaction.add(container.getId(), frag, controller);
-        }
+        if(controllers != null && controllers.size()>0) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            for (String controller : controllers) {
+                Fragment frag = new EnumFragment();
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList(EnumFragment.ARG_OPTIONS, controllerOptions.get(controller));
+                frag.setArguments(bundle);
+                transaction.add(container.getId(), frag, controller);
+            }
 
-        transaction.commit();
+            transaction.commit();
+        }
         return v;
     }
 

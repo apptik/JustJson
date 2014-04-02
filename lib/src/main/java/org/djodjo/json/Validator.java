@@ -35,5 +35,9 @@ public interface Validator {
 
     boolean validate(JsonElement el, StringBuilder sb);
 
+    /**
+     *
+     * @return Title to identify this validator
+     */
     String getTitle();
 }
