@@ -20,6 +20,7 @@ package org.djodjo.jjson.atools;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import org.djodjo.jjson.atools.util.OneOfFragment;
@@ -157,12 +158,16 @@ public class LayoutBuilder<T extends Schema> {
         if(!append) {
             //FragmentTransaction.replace does not replace all the fragments in the container but only one  thus we need to remove them all one by one
             Fragment currFrag =  fragmentManager.findFragmentById(containerId);
+            Log.d(this.getClass().toString(), "start fragment removal");
             while(currFrag!=null) {
                 fragmentManager.beginTransaction().remove(currFrag).commit();
                 try {
                     currFrag = fragmentManager.findFragmentById(containerId);
-                } catch(Exception ex){}
+                } catch(Exception ex){
+                    ex.printStackTrace();
+                }
             }
+            Log.d(this.getClass().toString(), "complete fragment removal");
         }
 
         // --> build and add fragments

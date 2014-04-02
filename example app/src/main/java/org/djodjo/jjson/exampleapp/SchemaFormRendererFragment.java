@@ -17,6 +17,7 @@
 package org.djodjo.jjson.exampleapp;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,20 @@ public class SchemaFormRendererFragment extends BlankFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
+
+
+        return v;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         final SchemaV4 schema = new SchemaV4();
         try {
             schema.wrap(JsonElement.readFrom(new InputStreamReader(getActivity().getAssets().open("schema4.json"))));
@@ -66,7 +81,5 @@ public class SchemaFormRendererFragment extends BlankFragment {
                         .build(R.id.form_container);
             }
         }).start();
-
-        return v;
     }
 }
