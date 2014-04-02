@@ -55,7 +55,7 @@ public class EnumFragment extends BasePropertyFragment {
             case FragmentBuilder.DISPLAY_TYPE_RADIO: return LAYOUT_ENUM_RADIO;
         }
 
-        if(options.size()>4)
+        if(options.size()>5)
             return LAYOUT_ENUM_SPINNER;
             //return LAYOUT_ENUM_LISTVIEW;
         else

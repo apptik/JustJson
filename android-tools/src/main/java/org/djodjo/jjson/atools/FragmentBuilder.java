@@ -77,6 +77,8 @@ public class FragmentBuilder {
 
     private static LinkedTreeMap<Matcher<Schema>, Class> commonPropertyMatchers;
 
+
+
     static {
         commonPropertyMatchers = new LinkedTreeMap<Matcher<Schema>, Class>();
         commonPropertyMatchers.put(isStringType(), StringFragment.class);

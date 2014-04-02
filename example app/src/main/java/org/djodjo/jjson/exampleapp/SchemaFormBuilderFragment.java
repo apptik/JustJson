@@ -44,7 +44,7 @@ public class SchemaFormBuilderFragment extends BlankFragment {
             public void run() {
                 LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
                 lb
-                        .addOneOfController("controller1")
+                        //.addOneOfController("controller1")
                         .build(R.id.form_container);
             }
         }).start();

@@ -21,4 +21,9 @@ public abstract class AbstractValidator implements Validator {
     }
 
     protected abstract boolean doValidate(JsonElement el, StringBuilder sb);
+
+    @Override
+    public String getTitle() {
+        return getClass().getCanonicalName();
+    }
 }
