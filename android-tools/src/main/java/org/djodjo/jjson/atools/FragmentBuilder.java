@@ -62,18 +62,11 @@ public class FragmentBuilder {
 
 
     private Schema propertySchema;
-    private WeakReference< BasePropertyFragment > fragmentWeakReference =null;
+    private WeakReference<BasePropertyFragment> fragmentWeakReference = null;
 
 
     //arguments to be loaded to the created fragment
     protected Bundle args = new Bundle();
-    private String title;
-    private String description;
-
-    private FragmentBuilder dependsOn;
-
-    private Object value;
-
 
     private static LinkedTreeMap<Matcher<Schema>, Class> commonPropertyMatchers;
 

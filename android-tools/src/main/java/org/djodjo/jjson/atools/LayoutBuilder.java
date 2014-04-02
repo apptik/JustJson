@@ -168,7 +168,7 @@ public class LayoutBuilder<T extends Schema> {
 
         // --> clean fragments if not appending
         if(!append) {
-            //FragmentTransaction.replace does not replace all the fragments in the container but only one  thus we need to remove them all one by one
+            //FragmentTransaction.replace does not replace all the fragments in the container but only one thus we need to remove them all one by one
             Fragment currFrag =  fragmentManager.findFragmentById(containerId);
             Log.d(this.getClass().toString(), "start fragment removal");
             while(currFrag!=null) {
