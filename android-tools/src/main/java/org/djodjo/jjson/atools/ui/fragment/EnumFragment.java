@@ -85,6 +85,7 @@ public class EnumFragment extends BasePropertyFragment {
             Spinner enumSpinner = (Spinner) v.findViewById(R.id.enumSpinner);
             SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, options);
             enumSpinner.setAdapter(adapter);
+
         }
         else if(layoutId == LAYOUT_ENUM_LISTVIEW) {
             ListView enumListView = (ListView) v.findViewById(R.id.enumListView);
@@ -109,6 +110,7 @@ public class EnumFragment extends BasePropertyFragment {
 
         return v;
     }
+
 
 
 }

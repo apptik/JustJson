@@ -30,6 +30,7 @@ import org.djodjo.json.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
 import org.hamcrest.Matcher;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 
 import static org.djodjo.jjson.atools.matcher.SchemaDefMatchers.isBooleanType;
@@ -61,6 +62,7 @@ public class FragmentBuilder {
 
 
     private Schema propertySchema;
+    private WeakReference< BasePropertyFragment > fragmentWeakReference =null;
 
 
     //arguments to be loaded to the created fragment
@@ -102,6 +104,10 @@ public class FragmentBuilder {
     }
 
     public BasePropertyFragment build() {
+//        if(fragmentWeakReference != null && fragmentWeakReference.get()!=null) {
+//            return fragmentWeakReference.get();
+//        }
+
         BasePropertyFragment fragment = null;
 
 
@@ -131,6 +137,7 @@ public class FragmentBuilder {
         //fragment can be null in some cases
         if(fragment != null) {
             fragment.setArguments(args);
+           // fragmentWeakReference =  new WeakReference<BasePropertyFragment>(fragment);
         }
         return fragment;
     }

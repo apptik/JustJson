@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import org.djodjo.jjson.atools.EnumControllerCallback;
 import org.djodjo.jjson.atools.LayoutBuilder;
 import org.djodjo.jjson.atools.R;
+import org.djodjo.jjson.atools.ui.fragment.EnumFragment;
 import org.djodjo.json.JsonException;
 import org.djodjo.json.JsonObject;
 import org.djodjo.json.LinkedTreeMap;
@@ -19,10 +21,11 @@ import org.djodjo.json.schema.SchemaV4;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 
-public class OneOfFragment extends Fragment {
+public class OneOfFragment extends Fragment implements EnumControllerCallback {
 
     private static final String ARG_SCHEMAS = "schemas";
     private static final String ARG_CONTROLLERS = "controllers";
@@ -30,7 +33,7 @@ public class OneOfFragment extends Fragment {
 
     private ArrayList<String> controllers = null;
     private ArrayList<Schema> schemas =  new ArrayList<Schema>();
-    private ArrayList<LayoutBuilder<Schema>> layoutBuilders = new ArrayList<LayoutBuilder<Schema>>();
+    private HashMap<Integer,LayoutBuilder<Schema>> layoutBuilders = new HashMap<Integer,LayoutBuilder<Schema>>();
 
     public static OneOfFragment newInstance(ArrayList<String> schemas, ArrayList<String> controllers) {
         OneOfFragment fragment = new OneOfFragment();
@@ -79,7 +82,8 @@ public class OneOfFragment extends Fragment {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            layoutBuilders.get(checkedId - 1).build(R.id.oneOfContainer);
+                            layoutBuilders.get(checkedId)
+                                    .build(R.id.oneOfContainer);
                         }
                     }).start();
                 }
@@ -87,18 +91,47 @@ public class OneOfFragment extends Fragment {
         }
 
 
+
+        HashMap<String, ArrayList<String>> controllerOptions =  new HashMap<String, ArrayList<String>>();
+
         // --> buildup options and create layout builders
         for(Schema schema:schemas) {
+            int selectionId = 0;
+            //build default controller
             if(oneOfRadioGroup.getVisibility() == View.VISIBLE) {
                 RadioButton button = new RadioButton(getActivity());
                 button.setText(schema.getTitle());
                 oneOfRadioGroup.addView(button);
+                selectionId = button.getId();
+            } else {
+                //build custom controller
+                for(String controller:controllers) {
+                    try {
+                        controllerOptions.put(controller,FragmentTools.genEnumStringList(schema.getProperties().getValue(controller)));
+                    } catch (JsonException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-            layoutBuilders.add(new LayoutBuilder<Schema>(schema, getFragmentManager()));
+
+            layoutBuilders.put(selectionId, new LayoutBuilder<Schema>(schema, getFragmentManager())
+                            //ignore properties that are controllers as they are handled directly from here
+                            .ignoreProperties(controllers)
+            );
         }
 
         return v;
     }
 
 
+    @Override
+    public void onValueChanged(final int position, String value) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                layoutBuilders.get(position)
+                        .build(R.id.oneOfContainer);
+            }
+        }).start();
+    }
 }

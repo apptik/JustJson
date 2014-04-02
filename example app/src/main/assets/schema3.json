@@ -1,5 +1,6 @@
 {
     "type": "object",
+    "description" : "shows how to ignore property using LayoutBuilder.ignoreProperty(\"ignorableOption1\")",
     "properties": {
         "baseProperty1": {
             "title" : "baseProperty1",

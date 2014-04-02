@@ -64,6 +64,7 @@ public class LayoutBuilder<T extends Schema> {
 
 
     private LinkedTreeMap<String, FragmentBuilder> fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
+    OneOfFragment oneOfFragment =  null;
 
     public LayoutBuilder(T schema, FragmentManager fragmentManager) {
         this.fragmentManager = fragmentManager;
@@ -75,14 +76,28 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
+    public LayoutBuilder<T> addOneOfControllers(ArrayList<String> propertyNames) {
+        oneOfControllers.addAll(propertyNames);
+        return this;
+    }
+
     public LayoutBuilder<T> ignoreProperty(String propertyName) {
         ignoredProperties.add(propertyName);
+        return this;
+    }
+
+    public LayoutBuilder<T> ignoreProperties(ArrayList<String> propertyNames) {
+        ignoredProperties.addAll(propertyNames);
         return this;
     }
 
     public LayoutBuilder<T> addCustomLayout (String propertyName, int layoutId) {
         customLayouts.put(propertyName, layoutId);
         return this;
+    }
+
+    public void reset() {
+        fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
     }
 
     public void build(ViewGroup vg, boolean append) {
@@ -95,45 +110,44 @@ public class LayoutBuilder<T extends Schema> {
         build(containerId, false);
     }
     public void build(int containerId, boolean append) {
+        if(fragBuilders == null || fragBuilders.size()<1) {
 
-        OneOfFragment oneOfFragment =  null;
-
-        SchemaMap schemaTopProperties =  schema.getProperties();
-        // --> First find basic properties
-        for(Map.Entry<String, Schema> property:schemaTopProperties) {
-            if(ignoredProperties.contains(property.getKey())) continue;
-            Schema propSchema = property.getValue();
-            FragmentBuilder fragBuilder  = new FragmentBuilder(property.getKey(), propSchema);
-            fragBuilders.put(property.getKey(),
-                    fragBuilder
-                            .withDisplayType(chooseDisplayType(propSchema.getType()))
-                            .withLayoutId(getCustomLayoutId(property.getKey()))
-            );
-        }
-
-        // --> check for oneOf
-        if(schema.getOneOf() != null && schema.getOneOf().getJson().length() > 0) {
-            ArrayList<Schema> oneOfSchemas = schema.getOneOf().getJsonWrappersList();
-            ArrayList<String> stringSchemas = new ArrayList<String>();
-            for(Schema oneOfSchema: oneOfSchemas) {
-                //before sending schemas to the oneOf fragment check if they are not already defined in here. if so merge and remove from common Layout
-               SchemaMap propSchemas =  oneOfSchema.getProperties();
-                for(Map.Entry<String, Schema> property : propSchemas) {
-                    Schema topPropertySchema = schemaTopProperties.optValue(property.getKey());
-                    if(topPropertySchema!=null) {
-                        property.getValue().merge(topPropertySchema);
-                        fragBuilders.remove(property.getKey());
-                    }
-                }
-
-                //now add the schema to send
-                stringSchemas.add(oneOfSchema.getJson().toString());
+            SchemaMap schemaTopProperties = schema.getProperties();
+            // --> First find basic properties
+            for (Map.Entry<String, Schema> property : schemaTopProperties) {
+                if (ignoredProperties.contains(property.getKey())) continue;
+                Schema propSchema = property.getValue();
+                FragmentBuilder fragBuilder = new FragmentBuilder(property.getKey(), propSchema);
+                fragBuilders.put(property.getKey(),
+                        fragBuilder
+                                .withDisplayType(chooseDisplayType(propSchema.getType()))
+                                .withLayoutId(getCustomLayoutId(property.getKey()))
+                );
             }
-            //
-            oneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers);
+
+            // --> check for oneOf
+            if (schema.getOneOf() != null && schema.getOneOf().getJson().length() > 0) {
+                ArrayList<Schema> oneOfSchemas = schema.getOneOf().getJsonWrappersList();
+                ArrayList<String> stringSchemas = new ArrayList<String>();
+                for (Schema oneOfSchema : oneOfSchemas) {
+                    //before sending schemas to the oneOf fragment check if they are not already defined in here. if so merge and remove from common Layout
+                    SchemaMap propSchemas = oneOfSchema.getProperties();
+                    for (Map.Entry<String, Schema> property : propSchemas) {
+                        Schema topPropertySchema = schemaTopProperties.optValue(property.getKey());
+                        if (topPropertySchema != null) {
+                            property.getValue().merge(topPropertySchema);
+                            fragBuilders.remove(property.getKey());
+                        }
+                    }
+
+                    //now add the schema to send
+                    stringSchemas.add(oneOfSchema.getJson().toString());
+                }
+                //
+                oneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers);
+            }
+
         }
-
-
 
 
         // --> The TRANSACTION
@@ -145,7 +159,9 @@ public class LayoutBuilder<T extends Schema> {
             Fragment currFrag =  fragmentManager.findFragmentById(containerId);
             while(currFrag!=null) {
                 fragmentManager.beginTransaction().remove(currFrag).commit();
-                currFrag = fragmentManager.findFragmentById(containerId);
+                try {
+                    currFrag = fragmentManager.findFragmentById(containerId);
+                } catch(Exception ex){}
             }
         }
 

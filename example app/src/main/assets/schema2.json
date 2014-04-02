@@ -1,5 +1,6 @@
 {
     "type": "object",
+    "description" : "ontOf example"
     "properties": {
         "baseProperty1": {
             "title" : "baseProperty1",

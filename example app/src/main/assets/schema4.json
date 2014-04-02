@@ -1,0 +1,59 @@
+{
+    "type": "object",
+    "description" : "ontOf example for custom controllers",
+    "properties": {
+        "baseProperty1": {
+            "title" : "baseProperty1",
+            "type": "boolean"
+        },
+        "baseProperty2": {
+            "title" : "baseProperty2",
+            "enum" : [1,2,3,4,5,6]
+        }
+    },
+    "oneOf": [
+        {
+            "title": "Option 1",
+            "properties": {
+                "controller1": {
+                    "title" : "controller1",
+                    "enum": ["bravo", "delta", "foxtrot"]
+                },
+                "additionalOption2": {
+                    "title" : "additionalOption2",
+                    "type": "string"
+                },
+                "additionalOption3": {
+                    "title" : "additionalOption3",
+                    "type": "boolean"
+                },
+                "additionalOption5": {
+                    "title" : "additionalOption5",
+                    "type": "number"
+                }
+
+            }
+        },
+        {
+            "title": "option 2",
+            "properties": {
+                "controller1": {
+                    "title" : "controller1",
+                    "enum": ["alpha","charlie", "echo"]
+                },
+                "additionalOption2": {
+                    "title" : "additionalOption2",
+                    "type": "boolean"
+                },
+                "additionalOption3": {
+                    "title" : "additionalOption3",
+                    "type": "number"
+                },
+                "additionalOption4": {
+                    "title" : "additionalOption4",
+                    "type": "string"
+                }
+            }
+        }
+    ]
+}
