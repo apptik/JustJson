@@ -93,6 +93,8 @@ public class MainActivity extends Activity
         //form2json
         public static final String JSONFY = "jsonfy";
 
+        public static final String FORM_RENDER = "schema_form_render";
+
 
         HashMap<String, Class> fragments;
 
@@ -105,6 +107,7 @@ public class MainActivity extends Activity
             fragments.put(SCHEMA_FORM_BUILDER, SchemaFormBuilderFragment.class);
             fragments.put(JSON_FORM_FITTER, JsonFormFitterFragment.class);
             fragments.put(JSONFY, JsonfyFragment.class);
+            fragments.put(FORM_RENDER, SchemaFormRendererFragment.class);
         }
 
         public Fragment put(int i, int container) {
@@ -117,6 +120,7 @@ public class MainActivity extends Activity
                 case 4: tag = SCHEMA_FORM_BUILDER; break;
                 case 5: tag = JSON_FORM_FITTER; break;
                 case 6: tag = JSONFY; break;
+                case 7: tag = FORM_RENDER; break;
             }
 
             return put(tag, container);

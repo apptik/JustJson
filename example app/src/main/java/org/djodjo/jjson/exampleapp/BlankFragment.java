@@ -35,12 +35,14 @@ public class BlankFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(layout, container, false);
-        v.findViewById(R.id.btn_go).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                execGo();
-            }
-        });
+       try {
+           v.findViewById(R.id.btn_go).setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   execGo();
+               }
+           });
+       } catch(Exception ex) {}
 
         return v;
     }
