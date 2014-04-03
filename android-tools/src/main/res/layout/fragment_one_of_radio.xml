@@ -9,11 +9,14 @@
         android:id="@+id/oneOfRadioGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:imeOptions="actionNext"
         android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/section_frame"
         >
 
     </RadioGroup>
+
+    <include layout="@layout/frag_footer" />
 
     <LinearLayout
         android:id="@+id/oneOfContainer"
