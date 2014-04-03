@@ -184,8 +184,12 @@ public class LayoutBuilder<T extends Schema> {
             while(currFrag!=null) {
                 try {
                     fragmentManager.beginTransaction().remove(currFrag).commit();
-
-                    currFrag = fragmentManager.findFragmentById(containerId);
+                    // fragment will not be removed instantly so we need to wait for the next one, otherwise too many commits buildup in the heap causing OutOfMemory
+                    Fragment nextFrag =  fragmentManager.findFragmentById(containerId);
+                    while (nextFrag != null && nextFrag==currFrag) {
+                        nextFrag =  fragmentManager.findFragmentById(containerId);
+                    }
+                    currFrag = nextFrag;
                 } catch(Exception ex){
                     ex.printStackTrace();
                 }
