@@ -4,8 +4,6 @@
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   tools:context="org.djodjo.jjson.atools.JsonFragment"
-                  android:paddingLeft="20dp"
-                  android:paddingRight="20dp"
     >
 
 <include layout="@layout/frag_header" />
@@ -13,8 +11,12 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:imeOptions="actionNext"
         android:id="@+id/prop_value"/>
 
-<include layout="@layout/frag_footer" />
+<include layout="@layout/frag_footer"
+         android:visibility="invisible"
+    />
 
 </LinearLayout>

@@ -76,7 +76,7 @@ public class EnumFragment extends BasePropertyFragment {
         if(layoutId == LAYOUT_ENUM_RADIO) {
             RadioGroup enumRadioGroup = (RadioGroup) v.findViewById(R.id.enumRadioGroup);
             for(String option:options) {
-                RadioButton button = new RadioButton(getActivity());
+                RadioButton button = (RadioButton)inflater.inflate(R.layout.radio_button, enumRadioGroup, false);
                 button.setText(option);
                 enumRadioGroup.addView(button);
             }

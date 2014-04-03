@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.djodjo.jjson.atools.JsonFragment"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
+
     >
 
     <!-- TODO: Update blank fragment layout -->

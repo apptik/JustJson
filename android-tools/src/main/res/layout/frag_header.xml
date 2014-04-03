@@ -4,7 +4,8 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginBottom="10dp"
+              android:layout_marginBottom="5dp"
+              android:gravity="center_vertical"
     >
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -12,23 +13,24 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:weightSum="3"
+
     >
 
     <TextView
-        android:id="@+id/txt_prop_title"
+        android:id="@+id/txtPropTitle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textStyle="bold"
-        android:textColor="@android:color/holo_blue_light"
         android:layout_weight="3"
+        android:gravity="center_vertical|left"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
         android:text="title" />
 
     <ImageView
-        android:id="@+id/btn_prop_help"
+        android:id="@+id/btnPropHelp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_menu_help"
-        android:gravity="right"
+        android:gravity="center"
         android:paddingLeft="20dp"
         android:visibility="gone"
         />
@@ -39,15 +41,16 @@
         android:layout_height="1dp"
         android:layout_margin="0dp"
 
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="@android:color/holo_blue_light"/>
 
 
     <TextView
-        android:id="@+id/txt_prop_description"
+        android:id="@+id/txtPropDescription"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:visibility="gone"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.SearchResult.Subtitle"
         android:text="description" />
 
     <View
@@ -55,7 +58,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="1dp"
 
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="@android:color/holo_blue_light"/>
 
 

@@ -24,17 +24,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.djodjo.jjson.atools.FragmentBuilder;
 import org.djodjo.jjson.atools.LayoutBuilder;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonException;
 import org.djodjo.json.schema.SchemaV4;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.util.Scanner;
 
 public class SchemaFormRendererFragment extends BlankFragment {
 
@@ -78,6 +75,8 @@ public class SchemaFormRendererFragment extends BlankFragment {
                 LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
                 lb
                         //.addOneOfController("controller1")
+                        .addDisplayType("additionalOption3", FragmentBuilder.DISPLAY_TYPE_CHECKBOX)
+                        .addDisplayType("baseProperty1", FragmentBuilder.DISPLAY_TYPE_TOGGLE)
                         .build(R.id.form_container);
             }
         }).start();

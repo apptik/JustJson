@@ -25,6 +25,7 @@
                 },
                 "additionalOption3": {
                     "title" : "additionalOption3",
+                    "description" : "additional property 3",
                     "type": "boolean"
                 },
                 "additionalOption5": {

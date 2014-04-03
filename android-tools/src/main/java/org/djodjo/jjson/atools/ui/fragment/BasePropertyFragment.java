@@ -62,7 +62,7 @@ public abstract class BasePropertyFragment extends Fragment {
             label = getArguments().getString(ARG_LABEL);
             title = getArguments().getString(ARG_TITLE);
             description = getArguments().getString(ARG_DESC);
-            layoutId = getArguments().getInt(ARG_LAYOUT);
+            layoutId = getArguments().getInt(ARG_LAYOUT, 0);
             displayType = getArguments().getInt(ARG_DISPLAY_TYPE, -1);
 
         }
@@ -76,12 +76,12 @@ public abstract class BasePropertyFragment extends Fragment {
         if(layoutId==0) layoutId = getLayoutId();
         v = inflater.inflate(layoutId, container, false);
         //set some view params: text, color, etc
-        ((TextView)v.findViewById(R.id.txt_prop_title)).setText(title);
+        ((TextView)v.findViewById(R.id.txtPropTitle)).setText(title);
         if(description != null && !description.trim().isEmpty()) {
-                  final TextView txtPropDesc =   (TextView)v.findViewById(R.id.txt_prop_description);
+                  final TextView txtPropDesc =   (TextView)v.findViewById(R.id.txtPropDescription);
                     txtPropDesc.setText(description);
-            v.findViewById(R.id.btn_prop_help).setVisibility(View.VISIBLE);
-            v.findViewById(R.id.btn_prop_help).setOnClickListener(new View.OnClickListener() {
+            v.findViewById(R.id.btnPropHelp).setVisibility(View.VISIBLE);
+            v.findViewById(R.id.btnPropHelp).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(txtPropDesc.isShown()) {

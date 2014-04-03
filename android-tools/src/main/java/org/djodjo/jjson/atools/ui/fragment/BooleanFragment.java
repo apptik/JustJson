@@ -17,8 +17,6 @@
 package org.djodjo.jjson.atools.ui.fragment;
 
 
-import android.os.Bundle;
-
 import org.djodjo.jjson.atools.FragmentBuilder;
 import org.djodjo.jjson.atools.R;
 
@@ -42,14 +40,6 @@ public class BooleanFragment extends BasePropertyFragment {
             case FragmentBuilder.DISPLAY_TYPE_TOGGLE: return LAYOUT_BOOL_TOGGLE;
         }
         return LAYOUT_BOOL_SWITCH;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
 }

@@ -97,8 +97,18 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
-    public LayoutBuilder<T> withDisplayType (String propertyName, int displayType) {
+    public LayoutBuilder<T> addCustomLayouts (Map<String, Integer> propertyLayouts) {
+        customLayouts.putAll(propertyLayouts);
+        return this;
+    }
+
+    public LayoutBuilder<T> addDisplayType (String propertyName, int displayType) {
         displayTypes.put(propertyName, displayType);
+        return this;
+    }
+
+    public LayoutBuilder<T> addDisplayTypes (Map<String, Integer> propertyDisplayTypes) {
+        displayTypes.putAll(propertyDisplayTypes);
         return this;
     }
 
@@ -130,7 +140,7 @@ public class LayoutBuilder<T extends Schema> {
                     FragmentBuilder fragBuilder = new FragmentBuilder(property.getKey(), propSchema);
                     fragBuilders.put(property.getKey(),
                             fragBuilder
-                                    .withDisplayType(chooseDisplayType(property.getKey(), propSchema.getType()))
+                                    .withDisplayType(chooseDisplayType(property.getKey()))
                                     .withLayoutId(getCustomLayoutId(property.getKey()))
                     );
                 }
@@ -157,7 +167,7 @@ public class LayoutBuilder<T extends Schema> {
                     stringSchemas.add(oneOfSchema.getJson().toString());
                 }
                 //
-                oneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers);
+                oneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers, displayTypes, customLayouts);
             }
 
         }
@@ -210,7 +220,7 @@ public class LayoutBuilder<T extends Schema> {
         return res;
     }
 
-    private int chooseDisplayType(String property, ArrayList<String> types) {
+    private int chooseDisplayType(String property) {
         int res = -1;
 
         if(displayTypes.containsKey(property))

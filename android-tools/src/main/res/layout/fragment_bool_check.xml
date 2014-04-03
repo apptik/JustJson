@@ -5,18 +5,30 @@
               android:layout_height="wrap_content"
               tools:context="org.djodjo.jjson.atools.JsonFragment"
 
-              android:paddingLeft="20dp"
-              android:paddingRight="20dp"
+
     >
 
-    <include layout="@layout/frag_header" />
-
-    <CheckBox
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/prop_value"
-        android:layout_gravity="center_horizontal"/>
+        android:weightSum="3"
+        >
+
+        <include layout="@layout/frag_header"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="3"
+                 android:layout_gravity="center_vertical"
+            />
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:text=""
+            android:id="@+id/prop_value"
+            android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
 
     <include layout="@layout/frag_footer" />
 
