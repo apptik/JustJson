@@ -77,15 +77,6 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
     }
 
     @Override
-    public void onDestroyView() {
-        if(oneOfRadioGroup!=null && oneOfRadioGroup.getVisibility() == View.VISIBLE) {
-            oneOfRadioGroup.setOnCheckedChangeListener(null);
-        }
-        super.onDestroyView();
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_one_of_radio, container, false);
@@ -101,6 +92,7 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
                 @Override
                 public void onCheckedChanged(RadioGroup group, final int checkedId) {
 
+                    if(checkedId!=-1)
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -115,6 +107,27 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
         }
 
 
+
+
+
+        return v;
+    }
+
+
+    @Override
+    public void onValueChanged(final int position, String value) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                layoutBuilders.get(position)
+                        .build(R.id.oneOfContainer);
+            }
+        }).start();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         HashMap<String, ArrayList<String>> controllerOptions =  new HashMap<String, ArrayList<String>>();
         //init controllers
@@ -149,6 +162,7 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
                             .ignoreProperties(controllers)
             );
         }
+
         if(controllers != null && controllers.size()>0) {
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             for (String controller : controllers) {
@@ -156,23 +170,10 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList(EnumFragment.ARG_OPTIONS, controllerOptions.get(controller));
                 frag.setArguments(bundle);
-                transaction.add(container.getId(), frag, controller);
+                transaction.add(((ViewGroup)getView().getParent()).getId(), frag, controller);
             }
 
             transaction.commit();
         }
-        return v;
-    }
-
-
-    @Override
-    public void onValueChanged(final int position, String value) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                layoutBuilders.get(position)
-                        .build(R.id.oneOfContainer);
-            }
-        }).start();
     }
 }
