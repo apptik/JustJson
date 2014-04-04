@@ -104,37 +104,37 @@ public class LayoutBuilder<T extends Schema> {
     }
 
     public LayoutBuilder<T> addCustomButtonColors(HashMap<String, Integer> customButtonColors) {
-        this.customButtonColors = customButtonColors;
+        this.customButtonColors.putAll(customButtonColors);
         return this;
     }
 
-    public LayoutBuilder<T> setCustomTitleTextAppearance(String propertyName, Integer customTitleTextAppearance) {
+    public LayoutBuilder<T> addCustomTitleTextAppearance(String propertyName, Integer customTitleTextAppearance) {
         this.customTitleTextAppearances.put(propertyName, customTitleTextAppearance);
         return this;
     }
 
-    public LayoutBuilder<T> setCustomTitleTextAppearances(HashMap<String, Integer> customTitleTextAppearances) {
-        this.customTitleTextAppearances = customTitleTextAppearances;
+    public LayoutBuilder<T> addCustomTitleTextAppearances(HashMap<String, Integer> customTitleTextAppearances) {
+        this.customTitleTextAppearances.putAll(customTitleTextAppearances);
         return this;
     }
 
-    public LayoutBuilder<T> setCustomDescTextAppearance(String propertyName, Integer customDescTextAppearance) {
+    public LayoutBuilder<T> addCustomDescTextAppearance(String propertyName, Integer customDescTextAppearance) {
         this.customDescTextAppearances.put(propertyName, customDescTextAppearance);
         return this;
     }
 
-    public LayoutBuilder<T> setCustomDescTextAppearances(HashMap<String, Integer> customDescTextAppearances) {
-        this.customDescTextAppearances = customDescTextAppearances;
+    public LayoutBuilder<T> addCustomDescTextAppearances(HashMap<String, Integer> customDescTextAppearances) {
+        this.customDescTextAppearances.putAll(customDescTextAppearances);
         return this;
     }
 
-    public LayoutBuilder<T> setCustomValueTextAppearance(String propertyName, Integer customValueTextAppearance) {
+    public LayoutBuilder<T> addCustomValueTextAppearance(String propertyName, Integer customValueTextAppearance) {
         this.customValueTextAppearances.put(propertyName, customValueTextAppearance);
         return this;
     }
 
-    public LayoutBuilder<T> setCustomValueTextAppearances(HashMap<String, Integer> customValueTextAppearances) {
-        this.customValueTextAppearances = customValueTextAppearances;
+    public LayoutBuilder<T> addCustomValueTextAppearances(HashMap<String, Integer> customValueTextAppearances) {
+        this.customValueTextAppearances.putAll(customValueTextAppearances);
         return this;
     }
 
