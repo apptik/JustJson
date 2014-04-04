@@ -75,6 +75,7 @@ public class SchemaFormRendererFragment extends BlankFragment {
                         .setGlobalNoDescription(true)
                         .setGlobalDisplayType(FragmentBuilder.DISPLAY_TYPE_CHECKBOX)
                         .setGlobalRadioButtonSelector(R.drawable.red_radio_selector)
+                        .setGlobalCheckBoxSelector(R.drawable.apptheme_btn_check_holo_light)
                         .build(R.id.form_container);
             }
         }).start();

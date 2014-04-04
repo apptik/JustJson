@@ -59,18 +59,18 @@ public class BooleanFragment extends BasePropertyFragment {
 
         CompoundButton button = (CompoundButton)v.findViewById(R.id.prop_value);
         if(buttonSelector!=0) {
-            button.setBackgroundResource(buttonSelector);
+            button.setButtonDrawable(buttonSelector);
         } else if (button instanceof CheckBox && customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR) != 0)
         {
-            button.setBackgroundResource(customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR));
+            button.setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR));
         }
         else if (button instanceof ToggleButton && customButtonSelectors.get(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR) != 0)
         {
-            button.setBackgroundResource(customButtonSelectors.get(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR));
+            button.setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR));
         }
         else if (button instanceof Switch && customButtonSelectors.get(ARG_GLOBAL_SWITCHBUTTON_SELECTOR) != 0)
         {
-            button.setBackgroundResource(customButtonSelectors.get(ARG_GLOBAL_SWITCHBUTTON_SELECTOR));
+            button.setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_SWITCHBUTTON_SELECTOR));
         }
 
         return v;
