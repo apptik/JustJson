@@ -79,7 +79,12 @@ public class EnumFragment extends BasePropertyFragment {
                 RadioButton button = (RadioButton)inflater.inflate(R.layout.radio_button, enumRadioGroup, false);
                 button.setText(option);
                 button.setTextAppearance(getActivity(), styleValue);
-
+                if(buttonSelector!=0) {
+                    button.setBackgroundResource(buttonSelector);
+                } else if (customButtonSelectors.get(ARG_GLOBAL_RADIOBUTTON_SELECTOR) != 0)
+                {
+                    button.setBackgroundResource(customButtonSelectors.get(ARG_GLOBAL_RADIOBUTTON_SELECTOR));
+                }
 
                 enumRadioGroup.addView(button);
             }

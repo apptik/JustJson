@@ -74,6 +74,7 @@ public class SchemaFormRendererFragment extends BlankFragment {
                         //.addOneOfController("controller1")
                         .setGlobalNoDescription(true)
                         .setGlobalDisplayType(FragmentBuilder.DISPLAY_TYPE_CHECKBOX)
+                        .setGlobalRadioButtonSelector(R.drawable.red_radio_selector)
                         .build(R.id.form_container);
             }
         }).start();

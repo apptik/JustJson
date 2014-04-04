@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import org.djodjo.jjson.atools.ui.fragment.BasePropertyFragment;
 import org.djodjo.jjson.atools.util.OneOfFragment;
 import org.djodjo.json.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
@@ -47,11 +48,10 @@ public class LayoutBuilder<T extends Schema> {
     private static final String ARG_NO_DESC = "noDescription";
 
     private static final String ARG_GLOBAL_DISPLAY_TYPE = "globalDisplayType";
-    private static final String ARG_GLOBAL_CHECKBOX_SELECTOR = "globalCheckBoxSelector";
-    private static final String ARG_GLOBAL_RADIOBUTTON_SELECTOR = "globalRadioButtonSelector";
-    private static final String ARG_GLOBAL_SLIDER_THUMB_SELECTOR = "globalSliderThumbSelector";
-    private static final String ARG_GLOBAL_TOGGLEBUTTON_SELECTOR = "globalToggleButtonSelector";
-    private static final String ARG_GLOBAL_SWITCHBUTTON_SELECTOR = "globalSwitchButtonSelector";
+
+
+    //used for the hashmap containing all posible global selectors
+    private static final String ARG_GLOBAL_BOTTON_SELECTORS = "globalButtonSelectors";
     private static final String ARG_GLOBAL_TITLE_STYLE = "globalTitleTextAppearance";
     private static final String ARG_GLOBAL_DESC_STYLE = "globalDescTextAppearance";
     private static final String ARG_GLOBAL_VALUE_TEXT_STYLE = "globalValuesTextAppearance";
@@ -87,7 +87,7 @@ public class LayoutBuilder<T extends Schema> {
     private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
 
     private HashMap<String, Integer> displayTypes = new HashMap<String, Integer>();
-    private HashMap<String, Integer> customButtonColors =  new HashMap<String, Integer>();
+    private HashMap<String, Integer> customButtonSelectors =  new HashMap<String, Integer>();
     private HashMap<String, Integer> customTitleTextAppearances = new HashMap<String, Integer>();
     private HashMap<String, Integer> customDescTextAppearances =  new HashMap<String, Integer>();
     private HashMap<String, Integer> customValueTextAppearances = new HashMap<String, Integer>();
@@ -98,11 +98,8 @@ public class LayoutBuilder<T extends Schema> {
      * a mask of the possible display types for all elements
      */
     private int globalDisplayType = -1;
-    private int globalCheckBoxSelector = 0;
-    private int globalRadioButtonSelector = 0;
-    private int globalSliderThumbSelector = 0;
-    private int globalToggleButtonSelector = 0;
-    private int globalSwitchButtonSelector = 0;
+
+    HashMap<String, Integer> globalButtonSelectors = new HashMap<String, Integer>();
     //style ref
     private int globalTitleTextAppearance = R.style.textTitle;
     //style ref
@@ -119,6 +116,12 @@ public class LayoutBuilder<T extends Schema> {
     public LayoutBuilder(T schema, FragmentManager fragmentManager) {
         this.fragmentManager = fragmentManager;
         this.schema = schema;
+        this.globalButtonSelectors =  new HashMap<String, Integer>();
+        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_CHECKBOX_SELECTOR,0);
+        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR,0);
+        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_THUMB_SELECTOR,0);
+        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_TOGGLEBUTTON_SELECTOR,0);
+        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SWITCHBUTTON_SELECTOR,0);
     }
 
     public LayoutBuilder<T> setSettingsBundle(Bundle args) {
@@ -126,7 +129,7 @@ public class LayoutBuilder<T extends Schema> {
         if(args == null) return this;
 
         displayTypes = (HashMap<String, Integer>)args.getSerializable(ARG_DISPLAY_TYPES);
-        customButtonColors =  (HashMap<String, Integer>)args.getSerializable(ARG_BUTTON_COLORS);
+        customButtonSelectors =  (HashMap<String, Integer>)args.getSerializable(ARG_BUTTON_COLORS);
         customTitleTextAppearances = (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_TITLE_STYLE);
         customDescTextAppearances =  (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_DESC_STYLE);
         customValueTextAppearances = (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_VALUE_TEXT_STYLE);
@@ -134,11 +137,7 @@ public class LayoutBuilder<T extends Schema> {
         noDescription = ( HashMap<String, Boolean>)args.getSerializable(ARG_NO_DESC);
 
         globalDisplayType = args.getInt(ARG_GLOBAL_DISPLAY_TYPE, -1);
-        globalCheckBoxSelector = args.getInt(ARG_GLOBAL_CHECKBOX_SELECTOR, 0);
-        globalRadioButtonSelector = args.getInt(ARG_GLOBAL_RADIOBUTTON_SELECTOR, 0);
-        globalSliderThumbSelector = args.getInt(ARG_GLOBAL_SLIDER_THUMB_SELECTOR, 0);
-        globalToggleButtonSelector = args.getInt(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR, 0);
-        globalSwitchButtonSelector = args.getInt(ARG_GLOBAL_SWITCHBUTTON_SELECTOR, 0);
+        globalButtonSelectors = (HashMap<String, Integer>) args.getSerializable(ARG_GLOBAL_BOTTON_SELECTORS);
         globalTitleTextAppearance = args.getInt(ARG_GLOBAL_TITLE_STYLE, R.style.textTitle);
         globalDescTextAppearance = args.getInt(ARG_GLOBAL_DESC_STYLE, R.style.textDesc);
         globalValuesTextAppearance = args.getInt(ARG_GLOBAL_VALUE_TEXT_STYLE, R.style.textValue);
@@ -151,7 +150,7 @@ public class LayoutBuilder<T extends Schema> {
     private Bundle bundleSettings() {
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_DISPLAY_TYPES, displayTypes);
-        bundle.putSerializable(ARG_BUTTON_COLORS, customButtonColors);
+        bundle.putSerializable(ARG_BUTTON_COLORS, customButtonSelectors);
         bundle.putSerializable(ARG_CUSTOM_TITLE_STYLE, customTitleTextAppearances);
         bundle.putSerializable(ARG_CUSTOM_DESC_STYLE, customDescTextAppearances);
         bundle.putSerializable(ARG_CUSTOM_VALUE_TEXT_STYLE, customValueTextAppearances);
@@ -159,11 +158,7 @@ public class LayoutBuilder<T extends Schema> {
         bundle.putSerializable(ARG_NO_DESC, noDescription);
 
         bundle.putInt(ARG_GLOBAL_DISPLAY_TYPE, globalDisplayType);
-        bundle.putInt(ARG_GLOBAL_CHECKBOX_SELECTOR, globalCheckBoxSelector);
-        bundle.putInt(ARG_GLOBAL_RADIOBUTTON_SELECTOR, globalRadioButtonSelector);
-        bundle.putInt(ARG_GLOBAL_SLIDER_THUMB_SELECTOR, globalSliderThumbSelector);
-        bundle.putInt(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR, globalToggleButtonSelector);
-        bundle.putInt(ARG_GLOBAL_SWITCHBUTTON_SELECTOR, globalSwitchButtonSelector);
+        bundle.putSerializable(ARG_GLOBAL_BOTTON_SELECTORS, globalButtonSelectors);
         bundle.putInt(ARG_GLOBAL_TITLE_STYLE, globalTitleTextAppearance);
         bundle.putInt(ARG_GLOBAL_DESC_STYLE, globalDescTextAppearance);
         bundle.putInt(ARG_GLOBAL_VALUE_TEXT_STYLE, globalValuesTextAppearance);
@@ -174,13 +169,19 @@ public class LayoutBuilder<T extends Schema> {
     }
 
 
-    public LayoutBuilder<T> addCustomButtonColor(String propertyName, Integer customButtonColor) {
-        this.customButtonColors.put(propertyName, customButtonColor);
+    /**
+     * Add cusotm selector for a specific property.
+     * @param propertyName the property to have this selector
+     * @param customButtonSelector the style id of the selector
+     * @return
+     */
+    public LayoutBuilder<T> addCustomButtonSelector(String propertyName, Integer customButtonSelector) {
+        this.customButtonSelectors.put(propertyName, customButtonSelector);
         return this;
     }
 
-    public LayoutBuilder<T> addCustomButtonColors(HashMap<String, Integer> customButtonColors) {
-        this.customButtonColors.putAll(customButtonColors);
+    public LayoutBuilder<T> addCustomButtonSelectors(HashMap<String, Integer> customButtonColors) {
+        this.customButtonSelectors.putAll(customButtonColors);
         return this;
     }
 
@@ -239,28 +240,28 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
-    public LayoutBuilder<T> setGlobalButtonColor(int globalButtonColor) {
-        this.globalButtonColor = globalButtonColor;
+    public LayoutBuilder<T> setGlobalCheckBoxSelector(int globalCheckBoxSelector) {
+        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_CHECKBOX_SELECTOR, globalCheckBoxSelector);
         return this;
     }
 
-    public LayoutBuilder<T> setGlobalButtonColor(int globalButtonColor) {
-        this.globalButtonColor = globalButtonColor;
+    public LayoutBuilder<T> setGlobalRadioButtonSelector(int globalRadioButtonSelector) {
+        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR, globalRadioButtonSelector);
         return this;
     }
 
-    public LayoutBuilder<T> setGlobalButtonColor(int globalButtonColor) {
-        this.globalButtonColor = globalButtonColor;
+    public LayoutBuilder<T> setGlobalSliderThumbSelector(int globalSliderThumbSelector) {
+        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_THUMB_SELECTOR, globalSliderThumbSelector);
         return this;
     }
 
-    public LayoutBuilder<T> setGlobalButtonColor(int globalButtonColor) {
-        this.globalButtonColor = globalButtonColor;
+    public LayoutBuilder<T> setGlobalToggleButtonSelector(int globalToggleButtonSelector) {
+        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_TOGGLEBUTTON_SELECTOR, globalToggleButtonSelector);
         return this;
     }
 
-    public LayoutBuilder<T> setGlobalButtonColor(int globalButtonColor) {
-        this.globalButtonColor = globalButtonColor;
+    public LayoutBuilder<T> setGlobalSwitchButtonSelector(int globalSwitchButtonSelector) {
+        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SWITCHBUTTON_SELECTOR, globalSwitchButtonSelector);
         return this;
     }
 
@@ -361,13 +362,14 @@ public class LayoutBuilder<T extends Schema> {
                             fragBuilder
                                     .withLayoutId(getCustomLayoutId(property.getKey()))
                                     .withDisplayType(chooseDisplayType(property.getKey()))
-                                    .withButtonColor(chooseButtonColor(property.getKey()))
+
+                                    .withButtonSelector(chooseButtonSelectors(property.getKey()))
                                     .withTitleTextAppearance(chooseTitleTextAppearance(property.getKey()))
                                     .withDescTextAppearance(chooseDescTextAppearance(property.getKey()))
                                     .withValueTextAppearance(chooseValueTextAppearance(property.getKey()))
                                     .withNoTitle(isNoTile(property.getKey()))
                                     .withNoDescription(isNoDescription(property.getKey()))
-
+                                    .withGlobalButtonSelectors(globalButtonSelectors)
                     );
                 }
             }
@@ -463,15 +465,11 @@ public class LayoutBuilder<T extends Schema> {
         return res;
     }
 
-    private int chooseButtonColor(String property, String propType) {
-        int res = -1;
-
-        if(customButtonColors.containsKey(property)) {
-            res = customButtonColors.get(property);
-        } else {
-            res = globalButtonColor;
+    private int chooseButtonSelectors(String property) {
+        int res = 0;
+        if(customButtonSelectors.containsKey(property)) {
+            res = customButtonSelectors.get(property);
         }
-
         return res;
     }
 

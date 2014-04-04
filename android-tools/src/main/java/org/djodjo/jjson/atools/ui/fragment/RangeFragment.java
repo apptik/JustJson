@@ -70,12 +70,15 @@ public class RangeFragment<T extends Number> extends BasePropertyFragment {
         final TextView min = (TextView) v.findViewById(R.id.minValue);
         final TextView max = (TextView) v.findViewById(R.id.maxValue);
 
+        min.setTextAppearance(getActivity(), styleValue);
+        max.setTextAppearance(getActivity(), styleValue);
 
-        RangeSlider<T> seekBar = new RangeSlider<T>(minVal1, maxVal2, getActivity());
 
-        seekBar.setOnRangeSeekBarChangeListener(new RangeSlider.OnRangeSeekBarChangeListener<T>() {
+        RangeSlider<Integer> seekBar = new RangeSlider<Integer>(minVal1.intValue(), maxVal2.intValue(), getActivity());
+
+        seekBar.setOnRangeSeekBarChangeListener(new RangeSlider.OnRangeSeekBarChangeListener<Integer>() {
             @Override
-            public void onRangeSeekBarValuesChanged(RangeSlider<?> bar, T minValue, T maxValue) {
+            public void onRangeSeekBarValuesChanged(RangeSlider<?> bar, Integer minValue, Integer maxValue) {
                 //TODO logging
                 Log.i("", "User selected new range values: MIN=" + minValue + ", MAX=" + maxValue);
 
@@ -84,6 +87,7 @@ public class RangeFragment<T extends Number> extends BasePropertyFragment {
 
             }
         });
+
 
         // add RangeSeekBar to pre-defined layout
         ViewGroup layout = (ViewGroup) v.findViewById(R.id.range_slider);

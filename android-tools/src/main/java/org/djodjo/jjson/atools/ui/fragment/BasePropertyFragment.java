@@ -26,6 +26,8 @@ import android.widget.TextView;
 
 import org.djodjo.jjson.atools.R;
 
+import java.util.HashMap;
+
 
 public abstract class BasePropertyFragment extends Fragment {
 
@@ -37,11 +39,17 @@ public abstract class BasePropertyFragment extends Fragment {
 
     public static final String ARG_DISPLAY_TYPE = "display_type";
     public static final String ARG_BUTTON_SELECTOR = "button_selector";
+    public static final String ARG_CUSTOM_BUTTON_SELECTORS = "custom_button_selectors";
     public static final String ARG_TITLE_TEXT_APPEARANCE = "title_text_style";
     public static final String ARG_DESC_TEXT_APPEARANCE = "desc_text_style";
     public static final String ARG_VALUE_TEXT_APPEARANCE = "value_text_style";
     public static final String ARG_NO_TITLE = "no_title";
     public static final String ARG_NO_DESC = "no_desc";
+    public static final String ARG_GLOBAL_CHECKBOX_SELECTOR = "globalCheckBoxSelector";
+    public static final String ARG_GLOBAL_RADIOBUTTON_SELECTOR = "globalRadioButtonSelector";
+    public static final String ARG_GLOBAL_SLIDER_THUMB_SELECTOR = "globalSliderThumbSelector";
+    public static final String ARG_GLOBAL_TOGGLEBUTTON_SELECTOR = "globalToggleButtonSelector";
+    public static final String ARG_GLOBAL_SWITCHBUTTON_SELECTOR = "globalSwitchButtonSelector";
 
 
     public String getLabel() {
@@ -55,7 +63,8 @@ public abstract class BasePropertyFragment extends Fragment {
     protected int layoutId;
 
     protected int displayType;
-    protected int buttonColor;
+    protected int buttonSelector;
+    protected HashMap<String,Integer> customButtonSelectors;
     protected int styleTitle;
     protected int styleDesc;
     protected int styleValue;
@@ -77,7 +86,9 @@ public abstract class BasePropertyFragment extends Fragment {
             layoutId = getArguments().getInt(ARG_LAYOUT, 0);
 
             displayType = getArguments().getInt(ARG_DISPLAY_TYPE);
-            buttonColor = getArguments().getInt(ARG_BUTTON_SELECTOR);
+            buttonSelector = getArguments().getInt(ARG_BUTTON_SELECTOR);
+            customButtonSelectors = (HashMap<String,Integer>)getArguments().getSerializable(ARG_CUSTOM_BUTTON_SELECTORS);
+
             styleTitle =  getArguments().getInt(ARG_TITLE_TEXT_APPEARANCE);
             styleDesc =  getArguments().getInt(ARG_DESC_TEXT_APPEARANCE);
             styleValue = getArguments().getInt(ARG_VALUE_TEXT_APPEARANCE);

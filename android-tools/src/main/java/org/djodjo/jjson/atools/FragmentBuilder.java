@@ -31,6 +31,7 @@ import org.djodjo.json.schema.Schema;
 import org.hamcrest.Matcher;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.djodjo.jjson.atools.matcher.SchemaDefMatchers.isBooleanType;
@@ -98,7 +99,7 @@ public class FragmentBuilder {
         return this;
     }
 
-    public FragmentBuilder withButtonColor(int buttonColor) {
+    public FragmentBuilder withButtonSelector(int buttonColor) {
         args.putInt(BasePropertyFragment.ARG_BUTTON_SELECTOR, buttonColor);
         return this;
     }
@@ -169,4 +170,8 @@ public class FragmentBuilder {
     }
 
 
+    public FragmentBuilder withGlobalButtonSelectors(HashMap<String, Integer> globalButtonSelectors) {
+        args.putSerializable(BasePropertyFragment.ARG_CUSTOM_BUTTON_SELECTORS, globalButtonSelectors);
+        return this;
+    }
 }

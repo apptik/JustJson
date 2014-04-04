@@ -24,7 +24,6 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
             android:text=""
             android:id="@+id/prop_value"
             android:layout_gravity="center_horizontal"/>

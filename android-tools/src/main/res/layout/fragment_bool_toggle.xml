@@ -24,8 +24,7 @@
     <ToggleButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:imeOptions="actionNext"
-        android:text="New ToggleButton"
+        android:text=""
         android:id="@+id/prop_value"
 
         />

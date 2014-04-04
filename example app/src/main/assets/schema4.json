@@ -30,7 +30,19 @@
                 },
                 "additionalOption5": {
                     "title" : "additionalOption5",
-                    "type": "number"
+                    "type": "object",
+                    "properties" : {
+                        "min" : {
+                            "type" : "number",
+                            "minimum" : 0,
+                            "maximum" : 500
+                        },
+                        "max" : {
+                            "type" : "number",
+                            "minimum" : 50,
+                            "maximum" : 600
+                        }
+                    }
                 }
 
             }
