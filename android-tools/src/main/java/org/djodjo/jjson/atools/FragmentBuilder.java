@@ -98,6 +98,37 @@ public class FragmentBuilder {
         return this;
     }
 
+    public FragmentBuilder withButtonColor(int buttonColor) {
+        args.putInt(BasePropertyFragment.ARG_BUTTON_COLOR, buttonColor);
+        return this;
+    }
+
+    public FragmentBuilder withTitleTextAppearance(int style) {
+        args.putInt(BasePropertyFragment.ARG_TITLE_TEXT_APPEARANCE, style);
+        return this;
+    }
+
+    public FragmentBuilder withDescTextAppearance(int style) {
+        args.putInt(BasePropertyFragment.ARG_DESC_TEXT_APPEARANCE, style);
+        return this;
+    }
+
+    public FragmentBuilder withValueTextAppearance(int style) {
+        args.putInt(BasePropertyFragment.ARG_VALUE_TEXT_APPEARANCE, style);
+        return this;
+    }
+
+
+    public FragmentBuilder withNoTitle(boolean noType) {
+        args.putBoolean(BasePropertyFragment.ARG_NO_TITLE, noType);
+        return this;
+    }
+
+    public FragmentBuilder withNoDescription(boolean noDescription) {
+        args.putBoolean(BasePropertyFragment.ARG_NO_DESC, noDescription);
+        return this;
+    }
+
     public BasePropertyFragment build() {
 //        if(fragmentWeakReference != null && fragmentWeakReference.get()!=null) {
 //            return fragmentWeakReference.get();
