@@ -22,7 +22,11 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.Switch;
+import android.widget.TextView;
 
+import org.djodjo.jjson.atools.ui.fragment.BooleanFragment;
 import org.djodjo.jjson.atools.util.OneOfFragment;
 import org.djodjo.json.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
@@ -62,6 +66,27 @@ public class LayoutBuilder<T extends Schema> {
     //map for custom layouts for specific properties for this object
     private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
     private HashMap<String, Integer> displayTypes = new HashMap<String, Integer>();
+    //TODO specific custom settings
+    private HashMap<String, Integer> customButtonColors =  new HashMap<String, Integer>();
+    private HashMap<String, Integer> customTitleTextAppearances = new HashMap<String, Integer>();
+    private HashMap<String, Integer> customDescTextAppearances =  new HashMap<String, Integer>();
+    private HashMap<String, Integer> customValueTextAppearances = new HashMap<String, Integer>();
+    private HashMap<String, Boolean> showTitle =  new HashMap<String, Boolean>();
+    private HashMap<String, Boolean> showDescription = new HashMap<String, Boolean>();
+
+
+
+    //TODO global custom settings
+    /**
+     * a mask of the possible display types for all elements
+     */
+    private int globalDisplayTypes;
+    private int globalButtonColor;
+    private int globalTitleTextAppearance;
+    private int globalDescTextAppearance;
+    private int globalValuesTextAppearance;
+    private boolean globalShowDescription;
+    private boolean globalShowTitle;
 
 
     private LinkedTreeMap<String, FragmentBuilder> fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
@@ -71,6 +96,94 @@ public class LayoutBuilder<T extends Schema> {
         this.fragmentManager = fragmentManager;
         this.schema = schema;
     }
+
+
+    public LayoutBuilder<T> addCustomButtonColor(String propertyName, Integer customButtonColor) {
+        this.customButtonColors.put(propertyName, customButtonColor);
+        return this;
+    }
+
+    public LayoutBuilder<T> addCustomButtonColors(HashMap<String, Integer> customButtonColors) {
+        this.customButtonColors = customButtonColors;
+        return this;
+    }
+
+    public LayoutBuilder<T> setCustomTitleTextAppearance(String propertyName, Integer customTitleTextAppearance) {
+        this.customTitleTextAppearances.put(propertyName, customTitleTextAppearance);
+        return this;
+    }
+
+    public LayoutBuilder<T> setCustomTitleTextAppearances(HashMap<String, Integer> customTitleTextAppearances) {
+        this.customTitleTextAppearances = customTitleTextAppearances;
+        return this;
+    }
+
+    public LayoutBuilder<T> setCustomDescTextAppearance(String propertyName, Integer customDescTextAppearance) {
+        this.customDescTextAppearances.put(propertyName, customDescTextAppearance);
+        return this;
+    }
+
+    public LayoutBuilder<T> setCustomDescTextAppearances(HashMap<String, Integer> customDescTextAppearances) {
+        this.customDescTextAppearances = customDescTextAppearances;
+        return this;
+    }
+
+    public LayoutBuilder<T> setCustomValueTextAppearance(String propertyName, Integer customValueTextAppearance) {
+        this.customValueTextAppearances.put(propertyName, customValueTextAppearance);
+        return this;
+    }
+
+    public LayoutBuilder<T> setCustomValueTextAppearances(HashMap<String, Integer> customValueTextAppearances) {
+        this.customValueTextAppearances = customValueTextAppearances;
+        return this;
+    }
+
+    public LayoutBuilder<T> setShowTitle(HashMap<String, Boolean> showTitle) {
+        this.showTitle = showTitle;
+        return this;
+    }
+
+    public LayoutBuilder<T> setShowDescription(HashMap<String, Boolean> showDescription) {
+        this.showDescription = showDescription;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalDisplayTypes(int globalDisplayTypes) {
+        this.globalDisplayTypes = globalDisplayTypes;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalButtonColor(int globalButtonColor) {
+        this.globalButtonColor = globalButtonColor;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalTitleTextAppearance(int globalTitleTextAppearance) {
+        this.globalTitleTextAppearance = globalTitleTextAppearance;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalDescTextAppearance(int globalDescTextAppearance) {
+        this.globalDescTextAppearance = globalDescTextAppearance;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalValuesTextAppearance(int globalValuesTextAppearance) {
+        this.globalValuesTextAppearance = globalValuesTextAppearance;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalShowDescription(boolean globalShowDescription) {
+        this.globalShowDescription = globalShowDescription;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalShowTitle(boolean globalShowTitle) {
+        this.globalShowTitle = globalShowTitle;
+        return this;
+    }
+
+
 
     public LayoutBuilder<T> addOneOfController(String propertyName) {
         oneOfControllers.add(propertyName);
@@ -232,5 +345,30 @@ public class LayoutBuilder<T extends Schema> {
 
         return res;
     }
+
+    private int chooseTitleTextAppearance(String property) {
+        int res = 0;
+
+        return res;
+    }
+
+    private int chooseDescTextAppearance(String property) {
+        int res = 0;
+
+        return res;
+    }
+
+    private int chooseValueTextAppearance(String property) {
+        int res = 0;
+
+        return res;
+    }
+
+    private int chooseButtonColor(String property) {
+        int res = 0;
+
+        return res;
+    }
+
 
 }
