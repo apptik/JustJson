@@ -28,27 +28,30 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
 
     private static final String ARG_SCHEMAS = "schemas";
     private static final String ARG_CONTROLLERS = "controllers";
-    private static final String ARG_DISPLAY_TYPES = "displayTypes";
-    private static final String ARG_CUSTOM_LAYOUTS = "customLayouts";
 
+
+    private static final String ARG_SETTING_BUNDLE = "settingsBundle";
 
 
     RadioGroup oneOfRadioGroup;
 
     private ArrayList<String> controllers = null;
     private ArrayList<Schema> schemas =  new ArrayList<Schema>();
-    HashMap<String, Integer> displayTypes = null;
-    HashMap<String, Integer> customLayputs = null;
+
+    /**
+     * Bundle used only for property settings.
+     * these are normally only passed to the other Layout builders
+     */
+    Bundle settingsArgs = null;
 
     private HashMap<Integer,LayoutBuilder<Schema>> layoutBuilders = new HashMap<Integer,LayoutBuilder<Schema>>();
 
-    public static OneOfFragment newInstance(ArrayList<String> schemas, ArrayList<String> controllers, HashMap<String, Integer> displayTypes, HashMap<String, Integer> customLayputs) {
+    public static OneOfFragment newInstance(ArrayList<String> schemas, ArrayList<String> controllers, Bundle settingsBundle) {
         OneOfFragment fragment = new OneOfFragment();
         Bundle args = new Bundle();
         args.putStringArrayList(ARG_SCHEMAS, schemas);
         args.putStringArrayList(ARG_CONTROLLERS, controllers);
-        args.putSerializable(ARG_DISPLAY_TYPES, displayTypes);
-        args.putSerializable(ARG_CUSTOM_LAYOUTS, customLayputs);
+        args.putBundle(ARG_SETTING_BUNDLE, settingsBundle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,9 +63,10 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            settingsArgs = getArguments().getBundle(ARG_SETTING_BUNDLE);
+
             controllers = getArguments().getStringArrayList(ARG_CONTROLLERS);
-            displayTypes = (HashMap<String, Integer>) getArguments().getSerializable(ARG_DISPLAY_TYPES);
-            customLayputs = (HashMap<String, Integer>) getArguments().getSerializable(ARG_CUSTOM_LAYOUTS);
+
             ArrayList<String> stringSchemas = getArguments().getStringArrayList(ARG_SCHEMAS);
             for(String schema:stringSchemas) {
                 try {
@@ -97,8 +101,7 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
                         @Override
                         public void run() {
                             layoutBuilders.get(checkedId)
-                                    .addCustomLayouts(customLayputs)
-                                    .addDisplayTypes(displayTypes)
+
                                     .build(R.id.oneOfContainer);
                         }
                     }).start();
@@ -159,6 +162,7 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
 
             layoutBuilders.put(selectionId, new LayoutBuilder<Schema>(schema, getFragmentManager())
                             //ignore properties that are controllers as they are handled directly from here
+                            .setSettingsBundle(settingsArgs)
                             .ignoreProperties(controllers)
             );
         }

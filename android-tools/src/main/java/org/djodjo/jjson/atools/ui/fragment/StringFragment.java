@@ -17,7 +17,8 @@
 package org.djodjo.jjson.atools.ui.fragment;
 
 
-import android.os.Bundle;
+import android.app.Activity;
+import android.widget.TextView;
 
 import org.djodjo.jjson.atools.R;
 
@@ -39,11 +40,10 @@ public class StringFragment extends BasePropertyFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        TextView propValue =  (TextView)activity.findViewById(R.id.prop_value);
 
-        }
+        propValue.setTextAppearance(activity, styleValue);
     }
-
 }

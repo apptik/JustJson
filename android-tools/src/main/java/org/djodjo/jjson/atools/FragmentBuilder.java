@@ -99,7 +99,7 @@ public class FragmentBuilder {
     }
 
     public FragmentBuilder withButtonColor(int buttonColor) {
-        args.putInt(BasePropertyFragment.ARG_BUTTON_COLOR, buttonColor);
+        args.putInt(BasePropertyFragment.ARG_BUTTON_SELECTOR, buttonColor);
         return this;
     }
 

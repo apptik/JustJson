@@ -72,8 +72,8 @@ public class SchemaFormRendererFragment extends BlankFragment {
                 LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
                 lb
                         //.addOneOfController("controller1")
-                        .addDisplayType("additionalOption3", FragmentBuilder.DISPLAY_TYPE_CHECKBOX)
-                        .addDisplayType("baseProperty1", FragmentBuilder.DISPLAY_TYPE_TOGGLE)
+                        .setGlobalNoDescription(true)
+                        .setGlobalDisplayType(FragmentBuilder.DISPLAY_TYPE_CHECKBOX)
                         .build(R.id.form_container);
             }
         }).start();

@@ -17,10 +17,11 @@
 package org.djodjo.jjson.atools.ui.fragment;
 
 
-import android.os.Bundle;
+import android.app.Activity;
+import android.widget.TextView;
 
-import org.djodjo.jjson.atools.R;
 import org.djodjo.jjson.atools.FragmentBuilder;
+import org.djodjo.jjson.atools.R;
 
 import java.util.ArrayList;
 
@@ -51,10 +52,11 @@ public class NumberFragment extends BasePropertyFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(displayType == LAYOUT_NUMBER_TEXT) {
+            TextView propValue = (TextView) activity.findViewById(R.id.prop_value);
+            propValue.setTextAppearance(activity, styleValue);
         }
     }
 

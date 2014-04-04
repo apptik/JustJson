@@ -20,13 +20,10 @@ package org.djodjo.jjson.atools;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
-import android.widget.Switch;
-import android.widget.TextView;
 
-import org.djodjo.jjson.atools.ui.fragment.BooleanFragment;
 import org.djodjo.jjson.atools.util.OneOfFragment;
 import org.djodjo.json.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
@@ -37,6 +34,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LayoutBuilder<T extends Schema> {
+
+
+    //setings bundle args
+    private static final String ARG_DISPLAY_TYPES = "displayTypes";
+
+    private static final String ARG_BUTTON_COLORS = "customButtonSelectors";
+    private static final String ARG_CUSTOM_TITLE_STYLE = "customTitleTextAppearances";
+    private static final String ARG_CUSTOM_DESC_STYLE = "customDescTextAppearances";
+    private static final String ARG_CUSTOM_VALUE_TEXT_STYLE = "customValueTextAppearances";
+    private static final String ARG_NO_TITLE = "noTitle";
+    private static final String ARG_NO_DESC = "noDescription";
+
+    private static final String ARG_GLOBAL_DISPLAY_TYPE = "globalDisplayType";
+    private static final String ARG_GLOBAL_CHECKBOX_SELECTOR = "globalCheckBoxSelector";
+    private static final String ARG_GLOBAL_RADIOBUTTON_SELECTOR = "globalRadioButtonSelector";
+    private static final String ARG_GLOBAL_SLIDER_THUMB_SELECTOR = "globalSliderThumbSelector";
+    private static final String ARG_GLOBAL_TOGGLEBUTTON_SELECTOR = "globalToggleButtonSelector";
+    private static final String ARG_GLOBAL_SWITCHBUTTON_SELECTOR = "globalSwitchButtonSelector";
+    private static final String ARG_GLOBAL_TITLE_STYLE = "globalTitleTextAppearance";
+    private static final String ARG_GLOBAL_DESC_STYLE = "globalDescTextAppearance";
+    private static final String ARG_GLOBAL_VALUE_TEXT_STYLE = "globalValuesTextAppearance";
+    private static final String ARG_GLOBAL_NO_DESC = "globalNoDescription";
+    private static final String ARG_GLOBAL_NO_TITLE = "globalNoTitle";
 
 
     // private final Activity activity;
@@ -65,28 +85,32 @@ public class LayoutBuilder<T extends Schema> {
 
     //map for custom layouts for specific properties for this object
     private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
+
     private HashMap<String, Integer> displayTypes = new HashMap<String, Integer>();
-    //TODO specific custom settings
     private HashMap<String, Integer> customButtonColors =  new HashMap<String, Integer>();
     private HashMap<String, Integer> customTitleTextAppearances = new HashMap<String, Integer>();
     private HashMap<String, Integer> customDescTextAppearances =  new HashMap<String, Integer>();
     private HashMap<String, Integer> customValueTextAppearances = new HashMap<String, Integer>();
-    private HashMap<String, Boolean> showTitle =  new HashMap<String, Boolean>();
-    private HashMap<String, Boolean> showDescription = new HashMap<String, Boolean>();
+    private HashMap<String, Boolean> noTitle =  new HashMap<String, Boolean>();
+    private HashMap<String, Boolean> noDescription = new HashMap<String, Boolean>();
 
-
-
-    //TODO global custom settings
     /**
      * a mask of the possible display types for all elements
      */
-    private int globalDisplayTypes;
-    private int globalButtonColor;
-    private int globalTitleTextAppearance;
-    private int globalDescTextAppearance;
-    private int globalValuesTextAppearance;
-    private boolean globalShowDescription;
-    private boolean globalShowTitle;
+    private int globalDisplayType = -1;
+    private int globalCheckBoxSelector = 0;
+    private int globalRadioButtonSelector = 0;
+    private int globalSliderThumbSelector = 0;
+    private int globalToggleButtonSelector = 0;
+    private int globalSwitchButtonSelector = 0;
+    //style ref
+    private int globalTitleTextAppearance = R.style.textTitle;
+    //style ref
+    private int globalDescTextAppearance = R.style.textDesc;
+    //style ref
+    private int globalValuesTextAppearance = R.style.textValue;
+    private boolean globalNoDescription = false;
+    private boolean globalNoTitle = false;
 
 
     private LinkedTreeMap<String, FragmentBuilder> fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
@@ -95,6 +119,58 @@ public class LayoutBuilder<T extends Schema> {
     public LayoutBuilder(T schema, FragmentManager fragmentManager) {
         this.fragmentManager = fragmentManager;
         this.schema = schema;
+    }
+
+    public LayoutBuilder<T> setSettingsBundle(Bundle args) {
+        //populate hashmaps and values
+        if(args == null) return this;
+
+        displayTypes = (HashMap<String, Integer>)args.getSerializable(ARG_DISPLAY_TYPES);
+        customButtonColors =  (HashMap<String, Integer>)args.getSerializable(ARG_BUTTON_COLORS);
+        customTitleTextAppearances = (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_TITLE_STYLE);
+        customDescTextAppearances =  (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_DESC_STYLE);
+        customValueTextAppearances = (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_VALUE_TEXT_STYLE);
+        noTitle =   (HashMap<String, Boolean>)args.getSerializable(ARG_NO_TITLE);
+        noDescription = ( HashMap<String, Boolean>)args.getSerializable(ARG_NO_DESC);
+
+        globalDisplayType = args.getInt(ARG_GLOBAL_DISPLAY_TYPE, -1);
+        globalCheckBoxSelector = args.getInt(ARG_GLOBAL_CHECKBOX_SELECTOR, 0);
+        globalRadioButtonSelector = args.getInt(ARG_GLOBAL_RADIOBUTTON_SELECTOR, 0);
+        globalSliderThumbSelector = args.getInt(ARG_GLOBAL_SLIDER_THUMB_SELECTOR, 0);
+        globalToggleButtonSelector = args.getInt(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR, 0);
+        globalSwitchButtonSelector = args.getInt(ARG_GLOBAL_SWITCHBUTTON_SELECTOR, 0);
+        globalTitleTextAppearance = args.getInt(ARG_GLOBAL_TITLE_STYLE, R.style.textTitle);
+        globalDescTextAppearance = args.getInt(ARG_GLOBAL_DESC_STYLE, R.style.textDesc);
+        globalValuesTextAppearance = args.getInt(ARG_GLOBAL_VALUE_TEXT_STYLE, R.style.textValue);
+        globalNoDescription = args.getBoolean(ARG_GLOBAL_NO_DESC, false);
+        globalNoTitle = args.getBoolean(ARG_GLOBAL_NO_TITLE, false);
+
+        return this;
+    }
+
+    private Bundle bundleSettings() {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_DISPLAY_TYPES, displayTypes);
+        bundle.putSerializable(ARG_BUTTON_COLORS, customButtonColors);
+        bundle.putSerializable(ARG_CUSTOM_TITLE_STYLE, customTitleTextAppearances);
+        bundle.putSerializable(ARG_CUSTOM_DESC_STYLE, customDescTextAppearances);
+        bundle.putSerializable(ARG_CUSTOM_VALUE_TEXT_STYLE, customValueTextAppearances);
+        bundle.putSerializable(ARG_NO_TITLE, noTitle);
+        bundle.putSerializable(ARG_NO_DESC, noDescription);
+
+        bundle.putInt(ARG_GLOBAL_DISPLAY_TYPE, globalDisplayType);
+        bundle.putInt(ARG_GLOBAL_CHECKBOX_SELECTOR, globalCheckBoxSelector);
+        bundle.putInt(ARG_GLOBAL_RADIOBUTTON_SELECTOR, globalRadioButtonSelector);
+        bundle.putInt(ARG_GLOBAL_SLIDER_THUMB_SELECTOR, globalSliderThumbSelector);
+        bundle.putInt(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR, globalToggleButtonSelector);
+        bundle.putInt(ARG_GLOBAL_SWITCHBUTTON_SELECTOR, globalSwitchButtonSelector);
+        bundle.putInt(ARG_GLOBAL_TITLE_STYLE, globalTitleTextAppearance);
+        bundle.putInt(ARG_GLOBAL_DESC_STYLE, globalDescTextAppearance);
+        bundle.putInt(ARG_GLOBAL_VALUE_TEXT_STYLE, globalValuesTextAppearance);
+        bundle.putBoolean(ARG_GLOBAL_NO_DESC, globalNoDescription);
+        bundle.putBoolean(ARG_GLOBAL_NO_TITLE, globalNoTitle);
+
+        return bundle;
     }
 
 
@@ -138,18 +214,48 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
-    public LayoutBuilder<T> setShowTitle(HashMap<String, Boolean> showTitle) {
-        this.showTitle = showTitle;
+    public LayoutBuilder<T> addNoTitle(String propertyName) {
+        this.noTitle.put(propertyName, true);
         return this;
     }
 
-    public LayoutBuilder<T> setShowDescription(HashMap<String, Boolean> showDescription) {
-        this.showDescription = showDescription;
+    public LayoutBuilder<T> addNoTitles(HashMap<String, Boolean> noTitles) {
+        this.noTitle.putAll(noTitles);
         return this;
     }
 
-    public LayoutBuilder<T> setGlobalDisplayTypes(int globalDisplayTypes) {
-        this.globalDisplayTypes = globalDisplayTypes;
+    public LayoutBuilder<T> addNoDescription(String propertyName) {
+        this.noDescription.put(propertyName, true);
+        return this;
+    }
+
+    public LayoutBuilder<T> addNoDescriptions(HashMap<String, Boolean> noDescriptions) {
+        this.noDescription.putAll(noDescriptions);
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalDisplayType(int globalDisplayType) {
+        this.globalDisplayType = globalDisplayType;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalButtonColor(int globalButtonColor) {
+        this.globalButtonColor = globalButtonColor;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalButtonColor(int globalButtonColor) {
+        this.globalButtonColor = globalButtonColor;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalButtonColor(int globalButtonColor) {
+        this.globalButtonColor = globalButtonColor;
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalButtonColor(int globalButtonColor) {
+        this.globalButtonColor = globalButtonColor;
         return this;
     }
 
@@ -173,13 +279,13 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
-    public LayoutBuilder<T> setGlobalShowDescription(boolean globalShowDescription) {
-        this.globalShowDescription = globalShowDescription;
+    public LayoutBuilder<T> setGlobalNoDescription(boolean globalNoDescription) {
+        this.globalNoDescription = globalNoDescription;
         return this;
     }
 
-    public LayoutBuilder<T> setGlobalShowTitle(boolean globalShowTitle) {
-        this.globalShowTitle = globalShowTitle;
+    public LayoutBuilder<T> setGlobalNoTitle(boolean globalNoTitle) {
+        this.globalNoTitle = globalNoTitle;
         return this;
     }
 
@@ -253,8 +359,15 @@ public class LayoutBuilder<T extends Schema> {
                     FragmentBuilder fragBuilder = new FragmentBuilder(property.getKey(), propSchema);
                     fragBuilders.put(property.getKey(),
                             fragBuilder
-                                    .withDisplayType(chooseDisplayType(property.getKey()))
                                     .withLayoutId(getCustomLayoutId(property.getKey()))
+                                    .withDisplayType(chooseDisplayType(property.getKey()))
+                                    .withButtonColor(chooseButtonColor(property.getKey()))
+                                    .withTitleTextAppearance(chooseTitleTextAppearance(property.getKey()))
+                                    .withDescTextAppearance(chooseDescTextAppearance(property.getKey()))
+                                    .withValueTextAppearance(chooseValueTextAppearance(property.getKey()))
+                                    .withNoTitle(isNoTile(property.getKey()))
+                                    .withNoDescription(isNoDescription(property.getKey()))
+
                     );
                 }
             }
@@ -280,7 +393,7 @@ public class LayoutBuilder<T extends Schema> {
                     stringSchemas.add(oneOfSchema.getJson().toString());
                 }
                 //
-                oneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers, displayTypes, customLayouts);
+                oneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers, bundleSettings());
             }
 
         }
@@ -340,14 +453,37 @@ public class LayoutBuilder<T extends Schema> {
     private int chooseDisplayType(String property) {
         int res = -1;
 
-        if(displayTypes.containsKey(property))
+        if(displayTypes.containsKey(property)) {
             res = displayTypes.get(property);
+        }
+        else {
+            res = globalDisplayType;
+        }
 
         return res;
     }
 
+    private int chooseButtonColor(String property, String propType) {
+        int res = -1;
+
+        if(customButtonColors.containsKey(property)) {
+            res = customButtonColors.get(property);
+        } else {
+            res = globalButtonColor;
+        }
+
+        return res;
+    }
+
+
     private int chooseTitleTextAppearance(String property) {
         int res = 0;
+
+        if(customTitleTextAppearances.containsKey(property)) {
+            res = customTitleTextAppearances.get(property);
+        } else {
+            res = globalTitleTextAppearance;
+        }
 
         return res;
     }
@@ -355,18 +491,44 @@ public class LayoutBuilder<T extends Schema> {
     private int chooseDescTextAppearance(String property) {
         int res = 0;
 
+        if(customDescTextAppearances.containsKey(property)) {
+            res = customDescTextAppearances.get(property);
+        } else {
+            res = globalDescTextAppearance;
+        }
+
         return res;
     }
 
     private int chooseValueTextAppearance(String property) {
         int res = 0;
 
+        if(customValueTextAppearances.containsKey(property)) {
+            res = customValueTextAppearances.get(property);
+        } else {
+            res = globalValuesTextAppearance;
+        }
+
         return res;
     }
 
-    private int chooseButtonColor(String property) {
-        int res = 0;
+    private boolean isNoTile(String property) {
+        boolean res = false;
+        if(noTitle.containsKey(property)) {
+            res = noTitle.get(property);
+        } else {
+            res = globalNoTitle;
+        }
+        return res;
+    }
 
+    private boolean isNoDescription(String property) {
+        boolean res = false;
+        if(noDescription.containsKey(property)) {
+            res = noDescription.get(property);
+        } else {
+            res = globalNoDescription;
+        }
         return res;
     }
 
