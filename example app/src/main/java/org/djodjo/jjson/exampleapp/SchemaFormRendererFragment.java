@@ -76,6 +76,8 @@ public class SchemaFormRendererFragment extends BlankFragment {
                         .setGlobalDisplayType(FragmentBuilder.DISPLAY_TYPE_CHECKBOX)
                         .setGlobalRadioButtonSelector(R.drawable.red_radio_selector)
                         .setGlobalCheckBoxSelector(R.drawable.apptheme_btn_check_holo_light)
+                        .setGlobalSliderThumbSelector(R.drawable.apptheme_scrubber_control_selector_holo_light)
+                        .setGlobalSliderProgressDrawable(R.drawable.apptheme_scrubber_progress_horizontal_holo_light)
                         .build(R.id.form_container);
             }
         }).start();

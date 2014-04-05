@@ -94,6 +94,11 @@ public class FragmentBuilder {
         return this;
     }
 
+    public FragmentBuilder withThemeColor(int themeColor) {
+        args.putInt(BasePropertyFragment.ARG_THEME_COLOR, themeColor);
+        return this;
+    }
+
     public FragmentBuilder withDisplayType(int displayType) {
         args.putInt(BasePropertyFragment.ARG_DISPLAY_TYPE, displayType);
         return this;

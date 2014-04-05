@@ -18,6 +18,11 @@ package org.djodjo.jjson.atools.ui.fragment;
 
 
 import android.app.Activity;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.djodjo.jjson.atools.FragmentBuilder;
@@ -54,10 +59,30 @@ public class NumberFragment extends BasePropertyFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if(displayType == LAYOUT_NUMBER_TEXT) {
-            TextView propValue = (TextView) activity.findViewById(R.id.prop_value);
-            propValue.setTextAppearance(activity, styleValue);
-        }
+
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        if(layoutId == LAYOUT_NUMBER_SLIDER) {
+            SeekBar seekBar = (SeekBar)v.findViewById(R.id.prop_value);
+            if(buttonSelector!=0){
+                seekBar.setThumb(getActivity().getResources().getDrawable(buttonSelector));
+            } else if (customButtonSelectors.get(ARG_GLOBAL_SLIDER_THUMB_SELECTOR) != 0)
+            {
+                seekBar.setThumb(getActivity().getResources().getDrawable(customButtonSelectors.get(ARG_GLOBAL_SLIDER_THUMB_SELECTOR)));
+            }
+
+            if(customButtonSelectors.get(ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE) != 0)
+            {
+                seekBar.setProgressDrawable(getActivity().getResources().getDrawable(customButtonSelectors.get(ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE)));
+            }
+        } else if(displayType == LAYOUT_NUMBER_TEXT) {
+            TextView propValue = (TextView) v.findViewById(R.id.prop_value);
+            propValue.setTextAppearance(getActivity(), styleValue);
+        }
+
+        return v;
+    }
 }

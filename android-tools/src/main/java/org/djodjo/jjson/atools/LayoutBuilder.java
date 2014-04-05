@@ -40,7 +40,7 @@ public class LayoutBuilder<T extends Schema> {
     //setings bundle args
     private static final String ARG_DISPLAY_TYPES = "displayTypes";
 
-    private static final String ARG_BUTTON_COLORS = "customButtonSelectors";
+    private static final String ARG_BUTTON_SELECTORS = "customButtonSelectors";
     private static final String ARG_CUSTOM_TITLE_STYLE = "customTitleTextAppearances";
     private static final String ARG_CUSTOM_DESC_STYLE = "customDescTextAppearances";
     private static final String ARG_CUSTOM_VALUE_TEXT_STYLE = "customValueTextAppearances";
@@ -48,6 +48,8 @@ public class LayoutBuilder<T extends Schema> {
     private static final String ARG_NO_DESC = "noDescription";
 
     private static final String ARG_GLOBAL_DISPLAY_TYPE = "globalDisplayType";
+
+    private static final String ARG_GLOBAL_THEME_COLOR = "globalThemeColor";
 
 
     //used for the hashmap containing all posible global selectors
@@ -99,6 +101,9 @@ public class LayoutBuilder<T extends Schema> {
      */
     private int globalDisplayType = -1;
 
+
+    private int globalThemeColor = -1;
+
     HashMap<String, Integer> globalButtonSelectors = new HashMap<String, Integer>();
     //style ref
     private int globalTitleTextAppearance = R.style.textTitle;
@@ -120,6 +125,7 @@ public class LayoutBuilder<T extends Schema> {
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_CHECKBOX_SELECTOR,0);
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR,0);
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_THUMB_SELECTOR,0);
+        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE,0);
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_TOGGLEBUTTON_SELECTOR,0);
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SWITCHBUTTON_SELECTOR,0);
     }
@@ -129,7 +135,7 @@ public class LayoutBuilder<T extends Schema> {
         if(args == null) return this;
 
         displayTypes = (HashMap<String, Integer>)args.getSerializable(ARG_DISPLAY_TYPES);
-        customButtonSelectors =  (HashMap<String, Integer>)args.getSerializable(ARG_BUTTON_COLORS);
+        customButtonSelectors =  (HashMap<String, Integer>)args.getSerializable(ARG_BUTTON_SELECTORS);
         customTitleTextAppearances = (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_TITLE_STYLE);
         customDescTextAppearances =  (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_DESC_STYLE);
         customValueTextAppearances = (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_VALUE_TEXT_STYLE);
@@ -137,6 +143,7 @@ public class LayoutBuilder<T extends Schema> {
         noDescription = ( HashMap<String, Boolean>)args.getSerializable(ARG_NO_DESC);
 
         globalDisplayType = args.getInt(ARG_GLOBAL_DISPLAY_TYPE, -1);
+        globalThemeColor = args.getInt(ARG_GLOBAL_THEME_COLOR, -1);
         globalButtonSelectors = (HashMap<String, Integer>) args.getSerializable(ARG_GLOBAL_BOTTON_SELECTORS);
         globalTitleTextAppearance = args.getInt(ARG_GLOBAL_TITLE_STYLE, R.style.textTitle);
         globalDescTextAppearance = args.getInt(ARG_GLOBAL_DESC_STYLE, R.style.textDesc);
@@ -150,7 +157,7 @@ public class LayoutBuilder<T extends Schema> {
     private Bundle bundleSettings() {
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_DISPLAY_TYPES, displayTypes);
-        bundle.putSerializable(ARG_BUTTON_COLORS, customButtonSelectors);
+        bundle.putSerializable(ARG_BUTTON_SELECTORS, customButtonSelectors);
         bundle.putSerializable(ARG_CUSTOM_TITLE_STYLE, customTitleTextAppearances);
         bundle.putSerializable(ARG_CUSTOM_DESC_STYLE, customDescTextAppearances);
         bundle.putSerializable(ARG_CUSTOM_VALUE_TEXT_STYLE, customValueTextAppearances);
@@ -158,6 +165,7 @@ public class LayoutBuilder<T extends Schema> {
         bundle.putSerializable(ARG_NO_DESC, noDescription);
 
         bundle.putInt(ARG_GLOBAL_DISPLAY_TYPE, globalDisplayType);
+        bundle.putInt(ARG_GLOBAL_THEME_COLOR, globalThemeColor);
         bundle.putSerializable(ARG_GLOBAL_BOTTON_SELECTORS, globalButtonSelectors);
         bundle.putInt(ARG_GLOBAL_TITLE_STYLE, globalTitleTextAppearance);
         bundle.putInt(ARG_GLOBAL_DESC_STYLE, globalDescTextAppearance);
@@ -240,6 +248,11 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
+    public LayoutBuilder<T> setGlobalThemeColor(int globalThemeColor) {
+        this.globalThemeColor = globalThemeColor;
+        return this;
+    }
+
     public LayoutBuilder<T> setGlobalCheckBoxSelector(int globalCheckBoxSelector) {
         this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_CHECKBOX_SELECTOR, globalCheckBoxSelector);
         return this;
@@ -252,6 +265,11 @@ public class LayoutBuilder<T extends Schema> {
 
     public LayoutBuilder<T> setGlobalSliderThumbSelector(int globalSliderThumbSelector) {
         this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_THUMB_SELECTOR, globalSliderThumbSelector);
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalSliderProgressDrawable(int globalSliderProgressDrawable) {
+        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE, globalSliderProgressDrawable);
         return this;
     }
 
@@ -362,7 +380,7 @@ public class LayoutBuilder<T extends Schema> {
                             fragBuilder
                                     .withLayoutId(getCustomLayoutId(property.getKey()))
                                     .withDisplayType(chooseDisplayType(property.getKey()))
-
+                                    .withThemeColor(globalThemeColor)
                                     .withButtonSelector(chooseButtonSelectors(property.getKey()))
                                     .withTitleTextAppearance(chooseTitleTextAppearance(property.getKey()))
                                     .withDescTextAppearance(chooseDescTextAppearance(property.getKey()))
