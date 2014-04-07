@@ -13,9 +13,10 @@ It can be used on Android and Java in general.
 
 Features
 ==
-- Fast and easy Json Pasrser and Writer (comparable or better performance than Android Native, GSON and Jackson libraries)
+- Fast and easy Json Parser and Writer (comparable or better performance than Android Native, GSON and Jackson libraries)
 - Flexible Json Wrapper helper implementations that hold json data and media type. Ideal for Model classes.
-- Json-Schema validation and UI generation for Android (TODO)
+- Json-Schema validation 
+- Android UI generation 
 
 Examples
 ==
