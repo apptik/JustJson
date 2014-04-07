@@ -78,6 +78,7 @@ public class SchemaFormRendererFragment extends BlankFragment {
                         .setGlobalCheckBoxSelector(R.drawable.apptheme_btn_check_holo_light)
                         .setGlobalSliderThumbSelector(R.drawable.apptheme_scrubber_control_selector_holo_light)
                         .setGlobalSliderProgressDrawable(R.drawable.apptheme_scrubber_progress_horizontal_holo_light)
+                        .setGlobalThemeColor(getResources().getColor(R.color.apptheme_color))
                         .build(R.id.form_container);
             }
         }).start();

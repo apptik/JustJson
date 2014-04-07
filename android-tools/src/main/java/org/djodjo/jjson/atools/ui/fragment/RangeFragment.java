@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import org.djodjo.jjson.atools.FragmentBuilder;
 import org.djodjo.jjson.atools.R;
+import org.djodjo.jjson.atools.ui.widget.MultiSlider;
 import org.djodjo.jjson.atools.ui.widget.RangeSlider;
 
 
@@ -74,24 +75,26 @@ public class RangeFragment<T extends Number> extends BasePropertyFragment {
         max.setTextAppearance(getActivity(), styleValue);
 
 
-        RangeSlider<Integer> seekBar = new RangeSlider<Integer>(minVal1.intValue(), maxVal2.intValue(), getActivity());
+        MultiSlider seekBar = (MultiSlider)v.findViewById(R.id.range_slider);
 
-        seekBar.setOnRangeSeekBarChangeListener(new RangeSlider.OnRangeSeekBarChangeListener<Integer>() {
-            @Override
-            public void onRangeSeekBarValuesChanged(RangeSlider<?> bar, Integer minValue, Integer maxValue) {
-                //TODO logging
-                Log.i("", "User selected new range values: MIN=" + minValue + ", MAX=" + maxValue);
-
-                min.setText(minValue.toString());
-                max.setText(maxValue.toString());
-
-            }
-        });
+//        RangeSlider<Integer> seekBar = new RangeSlider<Integer>(minVal1.intValue(), maxVal2.intValue(), getActivity());
+//
+//        seekBar.setOnRangeSeekBarChangeListener(new RangeSlider.OnRangeSeekBarChangeListener<Integer>() {
+//            @Override
+//            public void onRangeSeekBarValuesChanged(RangeSlider<?> bar, Integer minValue, Integer maxValue) {
+//                //TODO logging
+//                Log.i("", "User selected new range values: MIN=" + minValue + ", MAX=" + maxValue);
+//
+//                min.setText(minValue.toString());
+//                max.setText(maxValue.toString());
+//
+//            }
+//        });
 
 
         // add RangeSeekBar to pre-defined layout
-        ViewGroup layout = (ViewGroup) v.findViewById(R.id.range_slider);
-        layout.addView(seekBar);
+//        ViewGroup layout = (ViewGroup) v.findViewById(R.id.range_slider);
+//        layout.addView(seekBar);
 
         return v;
     }

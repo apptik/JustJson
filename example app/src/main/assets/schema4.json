@@ -45,7 +45,8 @@
                     }
                 }
 
-            }
+            },
+            "required" : ["baseProperty1", "baseProperty2", "controller1", "additionalOption2"]
         },
         {
             "title": "option 2",
@@ -66,7 +67,8 @@
                     "title" : "additionalOption4",
                     "type": "string"
                 }
-            }
+            },
+            "required" : ["baseProperty1", "baseProperty2", "controller1", "additionalOption2", "additionalOption3"]
         }
     ]
 }

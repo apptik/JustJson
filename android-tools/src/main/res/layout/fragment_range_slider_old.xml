@@ -31,10 +31,12 @@
             android:text="TextView" />
     </LinearLayout>
 
-    <org.djodjo.jjson.atools.ui.widget.MultiSlider
+    <LinearLayout
         android:id="@+id/range_slider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"/>
 
     <include layout="@layout/frag_footer" />
 
