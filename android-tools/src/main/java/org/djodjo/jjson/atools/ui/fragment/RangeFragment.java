@@ -18,7 +18,6 @@ package org.djodjo.jjson.atools.ui.fragment;
 
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import android.widget.TextView;
 import org.djodjo.jjson.atools.FragmentBuilder;
 import org.djodjo.jjson.atools.R;
 import org.djodjo.jjson.atools.ui.widget.MultiSlider;
-import org.djodjo.jjson.atools.ui.widget.RangeSlider;
 
 
 public class RangeFragment<T extends Number> extends BasePropertyFragment {

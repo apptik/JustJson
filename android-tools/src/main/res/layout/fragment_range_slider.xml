@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -34,7 +35,21 @@
     <org.djodjo.jjson.atools.ui.widget.MultiSlider
         android:id="@+id/range_slider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:orientation="horizontal"
+        app:limitThumbRange="true"
+        app:scaleMax="100"
+        app:scaleMin="0"
+        app:scaleStep="10"
+
+        app:thumb="@drawable/multislider_scrubber_control_selector_holo_light"
+        app:thumbs="2"
+        app:thumbWidth="50dp"
+        app:thumbHeight="50dp"
+
+        app:track="@drawable/multislider_scrubber_track_holo_light"
+        app:range="@drawable/multislider_scrubber_primary_holo"
+        />
 
     <include layout="@layout/frag_footer" />
 

@@ -21,570 +21,625 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.os.Bundle;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.View;
 
 import org.djodjo.jjson.atools.R;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
-public class MultiSlider extends android.widget.ProgressBar {
+public class MultiSlider extends View {
+    private static final String TAG = "MultiSlider";
 
-    //todo set different drawables
-    private Drawable mThumb;
-    private int mThumbOffset;
+    public static final int HORIZONTAL = 0;
+    public static final int VERTICAL = 1;
 
-    /**
-     * On touch, this offset plus the scaled value from the position of the
-     * touch will form the progress value. Usually 0.
-     */
-    float mTouchProgressOffset;
+    private static final int DEFAULT_THUMBS = 2;
+    private static final float DEFAULT_STEP = 5.0f;
 
-    /**
-     * Whether this is user seekable.
-     */
-    boolean mIsUserSeekable = true;
+    private List<RangeSeekBarListener> listeners;
 
-    /**
-     * On key presses (right or left), the amount to increment/decrement the
-     * progress.
-     */
-    private int mKeyProgressIncrement = 1;
+    private List<Thumb> thumbs;
+    private float thumbWidth;
+    private float thumbHeight;
+    private float thumbHalf;
+    private float pixelRangeMin;
+    private float pixelRangeMax;
+    private int orientation;
+    private boolean limitThumbRange;
+    private int viewWidth;
+    private int viewHeight;
+    private float scaleRangeMin;
+    private float scaleRangeMax;
+    private float scaleStep;
 
-    private static final int NO_ALPHA = 0xFF;
-    private float mDisabledAlpha = 0.5f;
+    private Drawable track;
+    private Drawable range;
+    private Drawable thumb;
 
-    private int mScaledTouchSlop;
-    private float mTouchDownX;
-    private boolean mIsDragging;
+    private boolean firstRun;
+
+    private void init(Context context) {
+        orientation = HORIZONTAL;
+        limitThumbRange = true;
+        scaleRangeMin = 0;
+        scaleRangeMax = 100;
+        scaleStep = DEFAULT_STEP;
+
+        viewWidth = 0;
+        viewHeight = 0;
+
+        thumbWidth = 50;
+        thumbHeight = 100;
+
+        thumbs = new Vector<Thumb>();
+        listeners = new Vector<RangeSeekBarListener>();
+
+        this.setFocusable(true);
+        this.setFocusableInTouchMode(true);
+
+        firstRun = true;
+    }
 
     public MultiSlider(Context context) {
-        this(context, null);
+        super(context);
+        init(context);
+
     }
 
+    /**
+     * Construct object, initializing with any attributes we understand from a
+     * layout file. These attributes are defined in
+     * SDK/assets/res/any/classes.xml.
+     *
+     * @see android.view.View#View(android.content.Context, android.util.AttributeSet)
+     */
     public MultiSlider(Context context, AttributeSet attrs) {
-        this(context, attrs, R.attr.multiSliderStyle);
-    }
+        super(context, attrs);
+        init(context);
 
-    public MultiSlider(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+        // Obtain our styled custom attributes from xml
+        TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.MultiSlider);
 
-        TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.MultiSlider, defStyle, 0);
-        Drawable thumb = a.getDrawable(R.styleable.MultiSlider_thumb);
-        setThumb(thumb); // will guess mThumbOffset if thumb != null...
-        // ...but allow layout to override this
-        int thumbOffset = a.getDimensionPixelOffset(R.styleable.MultiSlider_thumbOffset, getThumbOffset());
-        setThumbOffset(thumbOffset);
+
+        String s = a.getString(R.styleable.MultiSlider_orientation);
+        if(s != null)
+            orientation = s.toLowerCase().contains("vertical") ? VERTICAL : HORIZONTAL;
+
+        limitThumbRange = a.getBoolean(R.styleable.MultiSlider_limitThumbRange, true);
+
+        scaleRangeMin = a.getFloat(R.styleable.MultiSlider_scaleMin, 0);
+        scaleRangeMax = a.getFloat(R.styleable.MultiSlider_scaleMax, 100);
+        scaleStep = Math.abs(a.getFloat(R.styleable.MultiSlider_scaleStep, DEFAULT_STEP));
+
+        thumb = a.getDrawable(R.styleable.MultiSlider_thumb);
+
+        range = a.getDrawable(R.styleable.MultiSlider_range);
+
+        track = a.getDrawable(R.styleable.MultiSlider_track);
+
+        // Register desired amount of thumbs
+        int noThumbs = a.getInt(R.styleable.MultiSlider_thumbs, DEFAULT_THUMBS);
+        thumbWidth = a.getDimension(R.styleable.MultiSlider_thumbWidth, 50);
+        thumbHeight = a.getDimension(R.styleable.MultiSlider_thumbHeight, 100);
+        for(int i = 0; i < noThumbs; i++) {
+            Thumb th = new Thumb();
+            thumbs.add(th);
+        }
         a.recycle();
-
-//        a = context.obtainStyledAttributes(attrs,
-//                com.android.internal.R.styleable.Theme, 0, 0);
-//        mDisabledAlpha = a.getFloat(com.android.internal.R.styleable.Theme_disabledAlpha, 0.5f);
-//        a.recycle();
-
-        mScaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
     /**
-     * Sets the thumb that will be drawn at the end of the progress meter within the SeekBar.
-     * <p>
-     * If the thumb is a valid drawable (i.e. not null), half its width will be
-     * used as the new thumb offset (@see #setThumbOffset(int)).
-     *
-     * @param thumb Drawable representing the thumb
+     * {@inheritDoc}
+     * @see android.view.View#measure(int, int)
      */
-    public void setThumb(Drawable thumb) {
-        boolean needUpdate;
-        // This way, calling setThumb again with the same bitmap will result in
-        // it recalcuating mThumbOffset (if for example it the bounds of the
-        // drawable changed)
-        if (mThumb != null && thumb != mThumb) {
-            mThumb.setCallback(null);
-            needUpdate = true;
-        } else {
-            needUpdate = false;
-        }
-        if (thumb != null) {
-            thumb.setCallback(this);
-
-            // Assuming the thumb drawable is symmetric, set the thumb offset
-            // such that the thumb will hang halfway off either edge of the
-            // progress bar.
-            mThumbOffset = thumb.getIntrinsicWidth() / 2;
-
-            // If we're updating get the new states
-            if (needUpdate &&
-                    (thumb.getIntrinsicWidth() != mThumb.getIntrinsicWidth()
-                            || thumb.getIntrinsicHeight() != mThumb.getIntrinsicHeight())) {
-                requestLayout();
-            }
-        }
-        mThumb = thumb;
-        invalidate();
-        if (needUpdate) {
-            updateThumbPos(getWidth(), getHeight());
-            if (thumb != null && thumb.isStateful()) {
-                // Note that if the states are different this won't work.
-                // For now, let's consider that an app bug.
-                int[] state = getDrawableState();
-                thumb.setState(state);
-            }
-        }
-    }
-
-    /**
-     * Return the drawable used to represent the scroll thumb - the component that
-     * the user can drag back and forth indicating the current value by its position.
-     *
-     * @return The current thumb drawable
-     */
-    public Drawable getThumb() {
-        return mThumb;
-    }
-
-    /**
-     * @see #setThumbOffset(int)
-     */
-    public int getThumbOffset() {
-        return mThumbOffset;
-    }
-
-    /**
-     * Sets the thumb offset that allows the thumb to extend out of the range of
-     * the track.
-     *
-     * @param thumbOffset The offset amount in pixels.
-     */
-    public void setThumbOffset(int thumbOffset) {
-        mThumbOffset = thumbOffset;
-        invalidate();
-    }
-
-    /**
-     * Sets the amount of progress changed via the arrow keys.
-     *
-     * @param increment The amount to increment or decrement when the user
-     *            presses the arrow keys.
-     */
-    public void setKeyProgressIncrement(int increment) {
-        mKeyProgressIncrement = increment < 0 ? -increment : increment;
-    }
-
-    /**
-     * Returns the amount of progress changed via the arrow keys.
-     * <p>
-     * By default, this will be a value that is derived from the max progress.
-     *
-     * @return The amount to increment or decrement when the user presses the
-     *         arrow keys. This will be positive.
-     */
-    public int getKeyProgressIncrement() {
-        return mKeyProgressIncrement;
-    }
-
     @Override
-    public synchronized void setMax(int max) {
-        super.setMax(max);
-
-        if ((mKeyProgressIncrement == 0) || (getMax() / mKeyProgressIncrement > 20)) {
-            // It will take the user too long to change this via keys, change it
-            // to something more reasonable
-            setKeyProgressIncrement(Math.max(1, Math.round((float) getMax() / 20)));
-        }
-    }
-
-    @Override
-    protected boolean verifyDrawable(Drawable who) {
-        return who == mThumb || super.verifyDrawable(who);
-    }
-
-    @Override
-    public void jumpDrawablesToCurrentState() {
-        super.jumpDrawablesToCurrentState();
-        if (mThumb != null) mThumb.jumpToCurrentState();
-    }
-
-    @Override
-    protected void drawableStateChanged() {
-        super.drawableStateChanged();
-
-        Drawable progressDrawable = getProgressDrawable();
-        if (progressDrawable != null) {
-            progressDrawable.setAlpha(isEnabled() ? NO_ALPHA : (int) (NO_ALPHA * mDisabledAlpha));
-        }
-
-        if (mThumb != null && mThumb.isStateful()) {
-            int[] state = getDrawableState();
-            mThumb.setState(state);
-        }
-    }
-
-    void onProgressRefresh(float scale, boolean fromUser) {
-        Drawable thumb = mThumb;
-        if (thumb != null) {
-            setThumbPos(getWidth(), thumb, scale, Integer.MIN_VALUE);
-            /*
-             * Since we draw translated, the drawable's bounds that it signals
-             * for invalidation won't be the actual bounds we want invalidated,
-             * so just invalidate this whole view.
-             */
-            invalidate();
-        }
-    }
-
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        updateThumbPos(w, h);
-    }
-
-    private void updateThumbPos(int w, int h) {
-        Drawable d = getProgressDrawable();
-        Drawable thumb = mThumb;
-        int thumbHeight = thumb == null ? 0 : thumb.getIntrinsicHeight();
-        // The max height does not incorporate padding, whereas the height
-        // parameter does
-        int trackHeight = h - getPaddingTop() - getPaddingBottom();
-
-        int max = getMax();
-        float scale = max > 0 ? (float) getProgress() / (float) max : 0;
-
-        if (thumbHeight > trackHeight) {
-            if (thumb != null) {
-                setThumbPos(w, thumb, scale, 0);
-            }
-            int gapForCenteringTrack = (thumbHeight - trackHeight) / 2;
-            if (d != null) {
-                // Canvas will be translated by the padding, so 0,0 is where we start drawing
-                d.setBounds(0, gapForCenteringTrack,
-                        w - getPaddingRight() - getPaddingLeft(), h - getPaddingBottom() - gapForCenteringTrack
-                                - getPaddingTop());
-            }
-        } else {
-            if (d != null) {
-                // Canvas will be translated by the padding, so 0,0 is where we start drawing
-                d.setBounds(0, 0, w - getPaddingRight() - getPaddingLeft(), h - getPaddingBottom()
-                        - getPaddingTop());
-            }
-            int gap = (trackHeight - thumbHeight) / 2;
-            if (thumb != null) {
-                setThumbPos(w, thumb, scale, gap);
-            }
-        }
-    }
-
-    /**
-     * @param gap If set to {@link Integer#MIN_VALUE}, this will be ignored and
-     */
-    private void setThumbPos(int w, Drawable thumb, float scale, int gap) {
-        int available = w - getPaddingLeft() - getPaddingRight();
-        int thumbWidth = thumb.getIntrinsicWidth();
-        int thumbHeight = thumb.getIntrinsicHeight();
-        available -= thumbWidth;
-
-        // The extra space for the thumb to move on the track
-        available += mThumbOffset * 2;
-
-        int thumbPos = (int) (scale * available + 0.5f);
-
-        int topBound, bottomBound;
-        if (gap == Integer.MIN_VALUE) {
-            Rect oldBounds = thumb.getBounds();
-            topBound = oldBounds.top;
-            bottomBound = oldBounds.bottom;
-        } else {
-            topBound = gap;
-            bottomBound = gap + thumbHeight;
-        }
-
-        // Canvas will be translated, so 0,0 is where we start drawing
-        final int left = (isLayoutRtl()) ? available - thumbPos : thumbPos;
-        thumb.setBounds(left, topBound, left + thumbWidth, bottomBound);
-    }
-
-    @Override
-    protected synchronized void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        if (mThumb != null) {
-            canvas.save();
-            // Translate the padding. For the x, we need to allow the thumb to
-            // draw in its extra space
-            canvas.translate(getPaddingLeft() - mThumbOffset, getPaddingTop());
-            mThumb.draw(canvas);
-            canvas.restore();
-        }
-    }
-
-    @Override
-    protected synchronized void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int dw =  getMeasuredWidthAndState();
-        int dh= 0;
-        //get already measured height and add larger thumb into account
-        int mh = getMeasuredHeightAndState();
-        if(mThumb != null) {
-            int maxThumbHeight = mThumb.getIntrinsicHeight() + getPaddingTop() + getPaddingBottom();
+        viewWidth = measureWidth(widthMeasureSpec);
+        viewHeight = measureHeight(heightMeasureSpec);
+        setMeasuredDimension(viewWidth,viewHeight);
 
-            dh = Math.max(maxThumbHeight, mh);
+        //
+        thumbHalf = (orientation == VERTICAL) ? (thumbHeight/2) : (thumbWidth/2);
+        pixelRangeMin = 0 + thumbHalf;
+        pixelRangeMax = (orientation == VERTICAL) ? viewHeight : viewWidth;
+        pixelRangeMax -= thumbHalf;
 
-            setMeasuredDimension(resolveSizeAndState(dw, widthMeasureSpec, 0),
-                    resolveSizeAndState(dh, heightMeasureSpec, 0));
+        if(firstRun) {
+            distributeThumbsEvenly();
+            // Fire listener callback
+            if(listeners != null && listeners.size() > 0) {
+                for(RangeSeekBarListener l : listeners) {
+                    l.onCreate(currentThumb,getThumbValue(currentThumb));
+                }
+            }
+            firstRun = false;
         }
     }
-    public boolean isInScrollingContainer() {
-        ViewParent p = getParent();
-        while (p != null && p instanceof ViewGroup) {
-            if (((ViewGroup) p).shouldDelayChildPressedState()) {
-                return true;
+
+    /**
+     * Draw
+     *
+     * @see android.view.View#onDraw(android.graphics.Canvas)
+     */
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);	// 1. Make sure parent view get to draw it's components
+
+        drawGutter(canvas);		// 2. Draw slider gutter
+        drawRange(canvas);		// 3. Draw range in gutter
+        drawThumbs(canvas);		// 4. Draw thumbs
+
+    }
+
+    private int currentThumb = 0;
+    private float lowLimit = pixelRangeMin;
+    private float highLimit = pixelRangeMax;
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
+    public boolean onTouchEvent (MotionEvent event) {
+        if(!thumbs.isEmpty()) {
+
+            //boolean testFocus = this.requestFocus();
+            //Log.d(TAG,"Focus: "+testFocus);
+            float coordinate = (orientation == VERTICAL) ? event.getY() : event.getX();
+
+            // Find thumb closest to event coordinate on screen touch
+            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                currentThumb = getClosestThumb(coordinate);
+                Log.d(TAG, "Closest " + currentThumb);
+                lowLimit = getLowerThumbRangeLimit(currentThumb);
+                highLimit = getHigherThumbRangeLimit(currentThumb);
             }
-            p = p.getParent();
+
+            if(event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) {
+                //
+            }
+
+            // Update thumb position
+            // Make sure we stay in our tracks's bounds or limited by other thumbs
+            if(coordinate < lowLimit) {
+                if(lowLimit == highLimit && currentThumb >= thumbs.size()-1) {
+                    currentThumb = getUnstuckFrom(currentThumb);
+                    setThumbPos(currentThumb,coordinate);
+                    lowLimit = getLowerThumbRangeLimit(currentThumb);
+                    highLimit = getHigherThumbRangeLimit(currentThumb);
+                } else
+                    setThumbPos(currentThumb,lowLimit);
+                //Log.d(TAG,"Setting low "+low);
+            } else if(coordinate > highLimit) {
+                setThumbPos(currentThumb,highLimit);
+                //Log.d(TAG,"Setting high "+high);
+            } else {
+                coordinate = asStep(coordinate);
+                setThumbPos(currentThumb,coordinate);
+                //Log.d(TAG,"Setting coordinate "+coordinate);
+            }
+
+            // Fire listener callbacks
+            if(listeners != null && listeners.size() > 0) {
+                for(RangeSeekBarListener l : listeners) {
+                    l.onSeek(currentThumb,getThumbValue(currentThumb));
+                }
+            }
+
+            // Tell the view we want a complete redraw
+            //invalidate();
+
+            // Tell the system we've handled this event
+            return true;
         }
         return false;
     }
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (!mIsUserSeekable || !isEnabled()) {
-            return false;
+
+    private int getUnstuckFrom(int index) {
+        int unstuck = 0;
+        float lastVal = thumbs.get(index).val;
+        for(int i = index-1; i >= 0; i--) {
+            Thumb th = thumbs.get(i);
+            if(th.val != lastVal)
+                return i+1;
         }
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (isInScrollingContainer()) {
-                    mTouchDownX = event.getX();
-                } else {
-                    setPressed(true);
-                    if (mThumb != null) {
-                        invalidate(mThumb.getBounds()); // This may be within the padding region
-                    }
-                    onStartTrackingTouch();
-                    trackTouchEvent(event);
-                    attemptClaimDrag();
-                }
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-                if (mIsDragging) {
-                    trackTouchEvent(event);
-                } else {
-                    final float x = event.getX();
-                    if (Math.abs(x - mTouchDownX) > mScaledTouchSlop) {
-                        setPressed(true);
-                        if (mThumb != null) {
-                            invalidate(mThumb.getBounds()); // This may be within the padding region
-                        }
-                        onStartTrackingTouch();
-                        trackTouchEvent(event);
-                        attemptClaimDrag();
-                    }
-                }
-                break;
-
-            case MotionEvent.ACTION_UP:
-                if (mIsDragging) {
-                    trackTouchEvent(event);
-                    onStopTrackingTouch();
-                    setPressed(false);
-                } else {
-                    // Touch up when we never crossed the touch slop threshold should
-                    // be interpreted as a tap-seek to that location.
-                    onStartTrackingTouch();
-                    trackTouchEvent(event);
-                    onStopTrackingTouch();
-                }
-                // ProgressBar doesn't know to repaint the thumb drawable
-                // in its inactive state when the touch stops (because the
-                // value has not apparently changed)
-                invalidate();
-                break;
-
-            case MotionEvent.ACTION_CANCEL:
-                if (mIsDragging) {
-                    onStopTrackingTouch();
-                    setPressed(false);
-                }
-                invalidate(); // see above explanation
-                break;
-        }
-        return true;
+        return unstuck;
     }
 
-    private void trackTouchEvent(MotionEvent event) {
-        final int width = getWidth();
-        final int available = width - getPaddingLeft() - getPaddingRight();
-        int x = (int)event.getX();
-        float scale;
-        float progress = 0;
-        if (isLayoutRtl()) {
-            if (x > width - getPaddingRight()) {
-                scale = 0.0f;
-            } else if (x < getPaddingLeft()) {
-                scale = 1.0f;
-            } else {
-                scale = (float)(available - x + getPaddingLeft()) / (float)available;
-                progress = mTouchProgressOffset;
+    private float asStep(float pixelValue) {
+        return stepScaleToPixel(pixelToStep(pixelValue));
+    }
+
+    private float pixelToScale(float pixelValue) {
+        float pixelRange = (pixelRangeMax - pixelRangeMin);
+        float scaleRange = (scaleRangeMax - scaleRangeMin);
+        float scaleValue = (((pixelValue - pixelRangeMin) * scaleRange) / pixelRange) + scaleRangeMin;
+        return scaleValue;
+    }
+
+    private float scaleToPixel(float scaleValue) {
+        float pixelRange = (pixelRangeMax - pixelRangeMin);
+        float scaleRange = (scaleRangeMax - scaleRangeMin);
+        float pixelValue = (((scaleValue - scaleRangeMin) * pixelRange) / scaleRange) + pixelRangeMin;
+        return pixelValue;
+    }
+
+    private float pixelToStep(float pixelValue) {
+        float stepScaleMin = 0;
+        float stepScaleMax = (float) Math.floor((scaleRangeMax-scaleRangeMin)/scaleStep);
+        float pixelRange = (pixelRangeMax - pixelRangeMin);
+        float stepScaleRange = (stepScaleMax - stepScaleMin);
+        float stepScaleValue = (((pixelValue - pixelRangeMin) * stepScaleRange) / pixelRange) + stepScaleMin;
+        //Log.d(TAG,"scaleVal: "+scaleValue+" smin: "+scaleMin+" smax: "+scaleMax);
+        return Math.round(stepScaleValue);
+    }
+
+    private float stepScaleToPixel(float stepScaleValue) {
+        float stepScaleMin = 0;
+        float stepScaleMax = (float) Math.floor((scaleRangeMax-scaleRangeMin)/scaleStep);
+        float pixelRange = (pixelRangeMax - pixelRangeMin);
+        float stepScaleRange = (stepScaleMax - stepScaleMin);
+        float pixelValue = (((stepScaleValue - stepScaleMin) * pixelRange) / stepScaleRange) + pixelRangeMin;
+        //Log.d(TAG,"pixelVal: "+pixelValue+" smin: "+scaleMin+" smax: "+scaleMax);
+        return pixelValue;
+    }
+
+    private void calculateThumbValue(int index) {
+        if(index < thumbs.size() && !thumbs.isEmpty()) {
+            Thumb th = thumbs.get(index);
+            th.val = pixelToScale(th.pos);
+        }
+    }
+
+    private void calculateThumbPos(int index) {
+        if(index < thumbs.size() && !thumbs.isEmpty()) {
+            Thumb th = thumbs.get(index);
+            th.pos = scaleToPixel(th.val);
+        }
+    }
+
+    private float getLowerThumbRangeLimit(int index) {
+        float limit = pixelRangeMin;
+        if(limitThumbRange && index < thumbs.size() && !thumbs.isEmpty()) {
+            Thumb th = thumbs.get(index);
+            for(int i = 0; i < thumbs.size(); i++) {
+                if(i < index) {
+                    Thumb tht = thumbs.get(i);
+                    if(tht.pos <= th.pos && tht.pos > limit) {
+                        limit = tht.pos;
+                        //Log.d(TAG,"New low limit: "+limit+" i:"+i+" index: "+index);
+                    }
+                }
             }
+        }
+        return limit;
+    }
+
+    private float getHigherThumbRangeLimit(int index) {
+        float limit = pixelRangeMax;
+        if(limitThumbRange && index < thumbs.size() && !thumbs.isEmpty()) {
+            Thumb th = thumbs.get(index);
+            for(int i = 0; i < thumbs.size(); i++) {
+                if(i > index) {
+                    Thumb tht = thumbs.get(i);
+                    if(tht.pos >= th.pos && tht.pos < limit) {
+                        limit = tht.pos;
+                        //Log.d(TAG,"New high limit: "+limit+" i:"+i+" index: "+index);
+                    }
+                }
+            }
+        }
+        return limit;
+    }
+
+    public void distributeThumbsEvenly() {
+        if(!thumbs.isEmpty()) {
+            int noThumbs = thumbs.size();
+            float even = pixelRangeMax/noThumbs;
+            float lastPos = even/2;
+            for(int i = 0; i < thumbs.size(); i++) {
+                setThumbPos(i, asStep(lastPos));
+                //Log.d(TAG,"lp: "+lastPos);
+                lastPos += even;
+            }
+        }
+    }
+
+    public float getThumbValue(int index) {
+        return thumbs.get(index).val;
+    }
+
+    public void setThumbValue(int index, float value) {
+        thumbs.get(index).val = value;
+        calculateThumbPos(index);
+        // Tell the view we want a complete redraw
+        invalidate();
+    }
+
+    private void setThumbPos(int index, float pos) {
+        thumbs.get(index).pos = pos;
+        calculateThumbValue(index);
+        // Tell the view we want a complete redraw
+        invalidate();
+    }
+
+    private int getClosestThumb(float coordinate) {
+        int closest = 0;
+        if(!thumbs.isEmpty()) {
+            float shortestDistance = pixelRangeMax+thumbHalf+((orientation == VERTICAL) ? (getPaddingTop()+getPaddingBottom()) : (getPaddingLeft() + getPaddingRight()));
+            // Oldschool for-loop to have access to index
+            for(int i = 0; i < thumbs.size(); i++) {
+                // Find thumb closest to x coordinate
+                float tcoordinate = thumbs.get(i).pos;
+                float distance = Math.abs(coordinate-tcoordinate);
+                if(distance <= shortestDistance) {
+                    shortestDistance = distance;
+                    closest = i;
+                    //Log.d(TAG,"shDist: "+shortestDistance+" thumb i: "+closest);
+                }
+            }
+        }
+        return closest;
+    }
+
+    private void drawGutter(Canvas canvas) {
+        if(track != null) {
+            //Log.d(TAG,"gutterbg: "+gutterBackground.toString());
+            Rect area1 = new Rect();
+            area1.left = 0 + getPaddingLeft();
+            area1.top = 0 + getPaddingTop();
+            area1.right = getMeasuredWidth() - getPaddingRight();
+            area1.bottom = getMeasuredHeight() - getPaddingBottom();
+            track.setBounds(area1);
+            track.draw(canvas);
+        }
+    }
+
+    /*
+	RectF area = new RectF();
+	area.left = 0 + getPaddingLeft() + minPos;
+    area.top = 0 + getPaddingTop();
+    area.right = getMeasuredWidth() - getPaddingRight() + maxPos;
+    area.bottom = getMeasuredHeight() - getPaddingBottom();
+
+	Paint p = new Paint();
+	p.setAntiAlias(true);
+    p.setColor(gutterColor);
+    canvas.drawRoundRect(area, 7.5f, 7.5f, p);
+    */
+
+    private void drawRange(Canvas canvas) {
+        if(!thumbs.isEmpty()) {
+            Thumb thLow = thumbs.get(getClosestThumb(0));
+            Thumb thHigh = thumbs.get(getClosestThumb(pixelRangeMax));
+
+            // If we only have 1 thumb - choose to draw from 0 in scale
+            if(thumbs.size() == 1)
+                thLow = new Thumb();
+            //Log.d(TAG,"l: "+thLow.pos+" h: "+thHigh.pos);
+
+            if(range != null) {
+                Rect area1 = new Rect();
+
+                if(orientation == VERTICAL) {
+                    area1.left = 0 + getPaddingLeft();
+                    area1.top = (int) thLow.pos;
+                    area1.right = getMeasuredWidth() - getPaddingRight();
+                    area1.bottom = (int) thHigh.pos;
+                } else {
+                    area1.left = (int) thLow.pos;
+                    area1.top = 0 + getPaddingTop();
+                    area1.right = (int) thHigh.pos;
+                    area1.bottom = getMeasuredHeight() - getPaddingBottom();
+                }
+                range.setBounds(area1);
+                range.draw(canvas);
+            }
+        }
+    }
+
+    private void drawThumbs(Canvas canvas) {
+        if(!thumbs.isEmpty()) {
+            //Paint p = new Paint();
+
+
+            for(Thumb th : thumbs) {
+                Rect area1 = new Rect();
+                //Log.d(TAG,""+th.pos);
+                if(orientation == VERTICAL) {
+                    area1.left = 0 + getPaddingLeft();
+                    area1.top = (int) ((th.pos - thumbHalf) + getPaddingTop());
+                    area1.right = getMeasuredWidth() - getPaddingRight();
+                    area1.bottom = (int) ((th.pos + thumbHalf) - getPaddingBottom());
+                    //Log.d(TAG,"th: "+th.pos);
+                } else {
+                    area1.left = (int) ((th.pos - thumbHalf) + getPaddingLeft());
+                    area1.top = 0 + getPaddingTop();
+                    area1.right = (int) ((th.pos + thumbHalf) - getPaddingRight());
+                    area1.bottom = getMeasuredHeight() - getPaddingBottom();
+                    //Log.d(TAG,"th: "+area1.toString());
+                }
+
+                thumb.setBounds(area1);
+                thumb.draw(canvas);
+            }
+        }
+    }
+
+
+    /**
+     * Determines the width of this view
+     * @param measureSpec A measureSpec packed into an int
+     * @return The width of the view, honoring constraints from measureSpec
+     */
+    private int measureWidth(int measureSpec) {
+        int result = 0;
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        if (specMode == MeasureSpec.EXACTLY) {
+            // We were told how big to be
+            //Log.d(TAG,"measureWidth() EXACTLY");
+            result = specSize;
         } else {
-            if (x < getPaddingLeft()) {
-                scale = 0.0f;
-            } else if (x > width - getPaddingRight()) {
-                scale = 1.0f;
-            } else {
-                scale = (float)(x - getPaddingLeft()) / (float)available;
-                progress = mTouchProgressOffset;
-            }
-        }
-        final int max = getMax();
-        progress += scale * max;
-
-        //setProgress((int) progress, true);
-        setProgress((int) progress);
-        onProgressRefresh(scale, true);
-    }
-
-    /**
-     * Tries to claim the user's drag motion, and requests disallowing any
-     * ancestors from stealing events in the drag.
-     */
-    private void attemptClaimDrag() {
-        if (getParent() != null) {
-            getParent().requestDisallowInterceptTouchEvent(true);
-        }
-    }
-
-    /**
-     * This is called when the user has started touching this widget.
-     */
-    void onStartTrackingTouch() {
-        mIsDragging = true;
-    }
-
-    /**
-     * This is called when the user either releases his touch or the touch is
-     * canceled.
-     */
-    void onStopTrackingTouch() {
-        mIsDragging = false;
-    }
-
-    /**
-     * Called when the user changes the seekbar's progress by using a key event.
-     */
-    void onKeyChange() {
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (isEnabled()) {
-            int progress = getProgress();
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_DPAD_LEFT:
-                    if (progress <= 0) break;
-                    //setProgress(progress - mKeyProgressIncrement, true);
-                    onKeyChange();
-                    return true;
-
-                case KeyEvent.KEYCODE_DPAD_RIGHT:
-                    if (progress >= getMax()) break;
-                    //setProgress(progress + mKeyProgressIncrement, true);
-                    onKeyChange();
-                    return true;
-            }
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
-        super.onInitializeAccessibilityEvent(event);
-        event.setClassName(MultiSlider.class.getName());
-    }
-
-    @Override
-    public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
-        super.onInitializeAccessibilityNodeInfo(info);
-        info.setClassName(MultiSlider.class.getName());
-
-        if (isEnabled()) {
-            final int progress = getProgress();
-            if (progress > 0) {
-                info.addAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);
-            }
-            if (progress < getMax()) {
-                info.addAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
-            }
-        }
-    }
-
-    @Override
-    public boolean performAccessibilityAction(int action, Bundle arguments) {
-        if(Build.VERSION.SDK_INT>=16) {
-            if (super.performAccessibilityAction(action, arguments)) {
-                return true;
-            }
-        }
-        if (!isEnabled()) {
-            return false;
-        }
-        final int progress = getProgress();
-        final int increment = Math.max(1, Math.round((float) getMax() / 5));
-        switch (action) {
-            case AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD: {
-                if (progress <= 0) {
-                    return false;
+            // Measure
+            //Log.d(TAG,"measureWidth() not EXACTLY");
+            result = specSize + getPaddingLeft() + getPaddingRight();
+            if (specMode == MeasureSpec.AT_MOST) {
+                // Respect AT_MOST value if that was what is called for by measureSpec
+                //Log.d(TAG,"measureWidth() AT_MOST");
+                result = Math.min(result, specSize);
+                // Add our thumbWidth to the equation if we're vertical
+                if(orientation == VERTICAL) {
+                    int h = (int) (thumbWidth+ getPaddingLeft() + getPaddingRight());
+                    result = Math.min(result, h);
                 }
-                //setProgress(progress - increment, true);
-                onKeyChange();
-                return true;
             }
-            case AccessibilityNodeInfo.ACTION_SCROLL_FORWARD: {
-                if (progress >= getMax()) {
-                    return false;
+        }
+
+        return result;
+    }
+
+    /**
+     * Determines the height of this view
+     * @param measureSpec A measureSpec packed into an int
+     * @return The height of the view, honoring constraints from measureSpec
+     */
+    private int measureHeight(int measureSpec) {
+        int result = 0;
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        if (specMode == MeasureSpec.EXACTLY) {
+            // We were told how big to be
+            //Log.d(TAG,"measureHeight() EXACTLY");
+            result = specSize;
+        } else {
+            // Measure
+            //Log.d(TAG,"measureHeight() not EXACTLY");
+            result = specSize + getPaddingTop() + getPaddingBottom();
+            if (specMode == MeasureSpec.AT_MOST) {
+                // Respect AT_MOST value if that was what is called for by measureSpec
+                //Log.d(TAG,"measureHeight() AT_MOST");
+                result = Math.min(result, specSize);
+                // Add our thumbHeight to the equation if we're horizontal
+                if(orientation == HORIZONTAL) {
+                    int h = (int) (thumbHeight+ getPaddingTop() + getPaddingBottom());
+                    result = Math.min(result, h);
                 }
-                //setProgress(progress + increment, true);
-                onKeyChange();
-                return true;
             }
         }
-        return false;
+
+        return result;
     }
 
-    @Override
-    public void onRtlPropertiesChanged(int layoutDirection) {
-        if(Build.VERSION.SDK_INT>=17){
-            super.onRtlPropertiesChanged(layoutDirection);
-        }
+    public class Thumb {
+        public float val;
+        public float pos;
 
-        int max = getMax();
-        float scale = max > 0 ? (float) getProgress() / (float) max : 0;
-
-        Drawable thumb = mThumb;
-        if (thumb != null) {
-            setThumbPos(getWidth(), thumb, scale, Integer.MIN_VALUE);
-            /*
-             * Since we draw translated, the drawable's bounds that it signals
-             * for invalidation won't be the actual bounds we want invalidated,
-             * so just invalidate this whole view.
-             */
-            invalidate();
+        public Thumb() {
+            val = 0;
+            pos = 0;
         }
     }
 
-    public boolean isLayoutRtl() {
-        if(Build.VERSION.SDK_INT>=17){
-            return (getLayoutDirection() == LAYOUT_DIRECTION_RTL);
-        }
+    public interface RangeSeekBarListener {
+        public void onCreate(int index, float value);
+        public void onSeek(int index, float value);
+    }
 
-        return false;
+    public void setListener(RangeSeekBarListener listener) {
+        listeners.add(listener);
+    }
+
+    public int getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
+    }
+
+    public float getThumbWidth() {
+        return thumbWidth;
+    }
+
+    public void setThumbWidth(float thumbWidth) {
+        this.thumbWidth = thumbWidth;
+    }
+
+    public float getThumbHeight() {
+        return thumbHeight;
+    }
+
+    public void setThumbHeight(float thumbHeight) {
+        this.thumbHeight = thumbHeight;
+    }
+
+    public boolean isLimitThumbRange() {
+        return limitThumbRange;
+    }
+
+    public void setLimitThumbRange(boolean limitThumbRange) {
+        this.limitThumbRange = limitThumbRange;
+    }
+
+    public float getScaleRangeMin() {
+        return scaleRangeMin;
+    }
+
+    public void setScaleRangeMin(float scaleRangeMin) {
+        this.scaleRangeMin = scaleRangeMin;
+    }
+
+    public float getScaleRangeMax() {
+        return scaleRangeMax;
+    }
+
+    public void setScaleRangeMax(float scaleRangeMax) {
+        this.scaleRangeMax = scaleRangeMax;
+    }
+
+    public float getScaleStep() {
+        return scaleStep;
+    }
+
+    public void setScaleStep(float scaleStep) {
+        this.scaleStep = scaleStep;
+    }
+
+    public Drawable getTrack() {
+        return track;
+    }
+
+    public void setTrack(Drawable track) {
+        this.track = track;
+    }
+
+    public Drawable getRange() {
+        return range;
+    }
+
+    public void setRange(Drawable range) {
+        this.range = range;
+    }
+
+    public Drawable getThumb() {
+        return thumb;
+    }
+
+    public void setThumb(Drawable thumb) {
+        this.thumb = thumb;
+    }
+
+    public void initThumbs(int noThumbs)
+    {
+        for(int i = 0; i < noThumbs; i++) {
+            Thumb th = new Thumb();
+            thumbs.add(th);
+        }
     }
 }
