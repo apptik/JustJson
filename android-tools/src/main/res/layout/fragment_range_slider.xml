@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="org.djodjo.jjson.atools.JsonFragment"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
     >
 
     <include layout="@layout/frag_header" />

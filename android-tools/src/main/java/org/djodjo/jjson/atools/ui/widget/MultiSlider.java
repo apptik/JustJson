@@ -459,8 +459,12 @@ public class MultiSlider extends View {
     @Override
     public void jumpDrawablesToCurrentState() {
         super.jumpDrawablesToCurrentState();
-        for(Thumb thumb:mThumbs) {
-            if (thumb.getThumb() != null) thumb.getThumb().jumpToCurrentState();
+        if(mDraggingThumb!=null) {
+            if (mDraggingThumb.getThumb() != null) mDraggingThumb.getThumb().jumpToCurrentState();
+        } else {
+            for (Thumb thumb : mThumbs) {
+                if (thumb.getThumb() != null) thumb.getThumb().jumpToCurrentState();
+            }
         }
     }
 
@@ -468,10 +472,15 @@ public class MultiSlider extends View {
     protected void drawableStateChanged() {
         super.drawableStateChanged();
 
-        for(Thumb thumb:mThumbs) {
-            if (thumb.getThumb() != null && thumb.getThumb().isStateful()) {
-                int[] state = getDrawableState();
-                thumb.getThumb().setState(state);
+        if(mDraggingThumb!=null) {
+            int[] state = getDrawableState();
+            mDraggingThumb.getThumb().setState(state);
+        } else {
+            for(Thumb thumb:mThumbs) {
+                if (thumb.getThumb() != null && thumb.getThumb().isStateful()) {
+                    int[] state = getDrawableState();
+                    thumb.getThumb().setState(state);
+                }
             }
         }
     }
@@ -599,7 +608,6 @@ public class MultiSlider extends View {
                 // draw in its extra space
                 canvas.translate(getPaddingLeft() - thumb.getThumbOffset(), getPaddingTop());
                 // float scale = mScaleMax > 0 ? (float) thumb.getValue() / (float) mScaleMax : 0;
-
                 thumb.getThumb().draw(canvas);
 
                 canvas.restore();
@@ -609,23 +617,28 @@ public class MultiSlider extends View {
 
     @Override
     protected synchronized void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
+        int maxThumbHeight = 0;
+        int maxRangeHeight = 0;
+        for(Thumb thumb:mThumbs) {
+            if (thumb.getThumb() != null) {
+                maxThumbHeight = Math.max(thumb.getThumb().getIntrinsicHeight(), maxThumbHeight);
+                maxRangeHeight = Math.max(thumb.getThumb().getIntrinsicHeight(), maxRangeHeight);
+
+            }
+        }
+
         int dw = 0;
         int dh = 0;
         if (mTrack != null) {
             dw = Math.max(mMinWidth, Math.min(mMaxWidth, mTrack.getIntrinsicWidth()));
             dh = Math.max(mMinHeight, Math.min(mMaxHeight, mTrack.getIntrinsicHeight()));
+            dh = Math.max(maxRangeHeight, dh);
+            dh = Math.max(maxThumbHeight, dh);
         }
-        updateTrackState();
         dw += getPaddingLeft() + getPaddingRight();
         dh += getPaddingTop() + getPaddingBottom();
 
-
-        for(Thumb thumb:mThumbs) {
-            if (thumb.getThumb() != null) {
-                int maxThumbHeight = thumb.getThumb().getIntrinsicHeight() + getPaddingTop() + getPaddingBottom();
-                dh = Math.max(maxThumbHeight, dh);
-            }
-        }
         setMeasuredDimension(resolveSizeAndState(dw, widthMeasureSpec, 0),
                 resolveSizeAndState(dh, heightMeasureSpec, 0));
     }
@@ -667,8 +680,8 @@ public class MultiSlider extends View {
                 if (isInScrollingContainer()) {
                     mTouchDownX = event.getX();
                 } else {
-                    setPressed(true);
                     onStartTrackingTouch(getClosestThumb(newValue));
+                    setPressed(true);
                     if (mDraggingThumb != null && mDraggingThumb.getThumb() != null) {
                         invalidate(mDraggingThumb.getThumb().getBounds()); // This may be within the padding region
                     }
@@ -684,8 +697,8 @@ public class MultiSlider extends View {
                 } else {
                     final float x = event.getX();
                     if (Math.abs(x - mTouchDownX) > mScaledTouchSlop) {
-                        setPressed(true);
                         onStartTrackingTouch(getClosestThumb(newValue));
+                        setPressed(true);
                         if (mDraggingThumb != null && mDraggingThumb.getThumb() != null) {
                             invalidate(mDraggingThumb.getThumb().getBounds()); // This may be within the padding region
                         }
