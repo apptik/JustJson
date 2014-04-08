@@ -23,6 +23,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -606,6 +607,7 @@ public class MultiSlider extends View {
                 canvas.save();
                 // Translate the padding. For the x, we need to allow the thumb to
                 // draw in its extra space
+                Log.d("MULTI_SLIDER", "offset:" + thumb.getThumbOffset());
                 canvas.translate(getPaddingLeft() - thumb.getThumbOffset(), getPaddingTop());
                 // float scale = mScaleMax > 0 ? (float) thumb.getValue() / (float) mScaleMax : 0;
                 thumb.getThumb().draw(canvas);
@@ -655,11 +657,17 @@ public class MultiSlider extends View {
         return false;
     }
 
+    /**
+     * Get closest thumb to play with,
+     * incase more than one get the last one
+     * @param value
+     * @return
+     */
     private Thumb getClosestThumb(int value) {
         Thumb closest = null;
         int currDistance = mScaleMax+1;
         for(Thumb thumb:mThumbs) {
-            if(Math.abs(thumb.getValue()-value) < currDistance) {
+            if(Math.abs(thumb.getValue()-value) <= currDistance) {
                 closest = thumb;
                 currDistance = Math.abs(thumb.getValue()-value);
             }
