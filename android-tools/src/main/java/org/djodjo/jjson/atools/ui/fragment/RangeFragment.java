@@ -28,17 +28,17 @@ import org.djodjo.jjson.atools.R;
 import org.djodjo.jjson.atools.ui.widget.MultiSlider;
 
 
-public class RangeFragment<T extends Number> extends BasePropertyFragment {
+public class RangeFragment extends BasePropertyFragment {
 
     public final static int LAYOUT_RANGE_SLIDER = R.layout.fragment_range_slider;
     public static final String ARG_MIN_BUNDLE = "min";
     public static final String ARG_MAX_BUNDLE = "max";
 
-    private T minVal1;
-    private T maxVal1;
+    private int minVal1;
+    private int maxVal1;
 
-    private T minVal2;
-    private T maxVal2;
+    private int minVal2;
+    private int maxVal2;
 
     public RangeFragment() {
         // Required empty public constructor
@@ -56,10 +56,10 @@ public class RangeFragment<T extends Number> extends BasePropertyFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            minVal1 = (T) getArguments().getBundle(ARG_MIN_BUNDLE).get(NumberFragment.ARG_MINIMUM);
-            maxVal1 = (T) getArguments().getBundle(ARG_MIN_BUNDLE).get(NumberFragment.ARG_MAXIMUM);
-            minVal2 = (T) getArguments().getBundle(ARG_MAX_BUNDLE).get(NumberFragment.ARG_MINIMUM);
-            maxVal2 = (T) getArguments().getBundle(ARG_MAX_BUNDLE).get(NumberFragment.ARG_MAXIMUM);
+            minVal1 = getArguments().getBundle(ARG_MIN_BUNDLE).getInt(NumberFragment.ARG_MINIMUM);
+            maxVal1 = getArguments().getBundle(ARG_MIN_BUNDLE).getInt(NumberFragment.ARG_MAXIMUM);
+            minVal2 = getArguments().getBundle(ARG_MAX_BUNDLE).getInt(NumberFragment.ARG_MINIMUM);
+            maxVal2 = getArguments().getBundle(ARG_MAX_BUNDLE).getInt(NumberFragment.ARG_MAXIMUM);
         }
     }
 

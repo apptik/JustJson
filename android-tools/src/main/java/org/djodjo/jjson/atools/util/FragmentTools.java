@@ -16,7 +16,6 @@
 
 package org.djodjo.jjson.atools.util;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 
 import org.djodjo.jjson.atools.ui.fragment.BasePropertyFragment;
@@ -43,8 +42,8 @@ public class FragmentTools {
         args.putString(BasePropertyFragment.ARG_TITLE, schema.getTitle());
         args.putString(BasePropertyFragment.ARG_DESC, schema.getDescription());
         args.putString(BasePropertyFragment.ARG_DEFAULT_VAL, schema.getDefault());
-        args.putDouble(NumberFragment.ARG_MINIMUM, schema.getMinimum());
-        args.putDouble(NumberFragment.ARG_MAXIMUM, schema.getMaximum());
+        args.putInt(NumberFragment.ARG_MINIMUM, (int)schema.getMinimum());
+        args.putInt(NumberFragment.ARG_MAXIMUM, (int)schema.getMaximum());
 
         // --> loop inner(property schemas), used for complex(Object) properties
         // to deliver all sub-arguments to the created fragment

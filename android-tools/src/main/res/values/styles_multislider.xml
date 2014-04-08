@@ -21,7 +21,7 @@
 
   <style name="MultiSlider">
 
-      <item name="thumb">@drawable/multislider_scrubber_control_selector_holo_light</item>
+      <item name="thumbDrawable">@drawable/multislider_scrubber_control_selector_holo_light</item>
       <item name="range">@drawable/multislider_scrubber_primary_holo</item>
       <item name="track">@drawable/multislider_scrubber_track_holo_light</item>
 
