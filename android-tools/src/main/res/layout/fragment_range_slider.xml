@@ -35,7 +35,7 @@
     <org.djodjo.jjson.atools.ui.widget.MultiSlider
         android:id="@+id/range_slider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         app:orientation="horizontal"
         app:limitThumbRange="true"
         app:scaleMax="100"
