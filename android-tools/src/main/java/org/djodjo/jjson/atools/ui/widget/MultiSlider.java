@@ -607,7 +607,6 @@ public class MultiSlider extends View {
                 canvas.save();
                 // Translate the padding. For the x, we need to allow the thumb to
                 // draw in its extra space
-                Log.d("MULTI_SLIDER", "offset:" + thumb.getThumbOffset());
                 canvas.translate(getPaddingLeft() - thumb.getThumbOffset(), getPaddingTop());
                 // float scale = mScaleMax > 0 ? (float) thumb.getValue() / (float) mScaleMax : 0;
                 thumb.getThumb().draw(canvas);
@@ -668,8 +667,17 @@ public class MultiSlider extends View {
         int currDistance = mScaleMax+1;
         for(Thumb thumb:mThumbs) {
             if(Math.abs(thumb.getValue()-value) <= currDistance) {
-                closest = thumb;
-                currDistance = Math.abs(thumb.getValue()-value);
+                if(Math.abs(thumb.getValue()-value) == currDistance) {
+                    if(value>mScaleMax/2) {
+                        //left one(s) has more place to move, so just leave it
+                    } else {
+                        //right one(s) has more place to move, so set us as we are right
+                        closest = thumb;
+                    }
+                } else {
+                    currDistance = Math.abs(thumb.getValue() - value);
+                    closest = thumb;
+                }
             }
         }
 
