@@ -7,8 +7,6 @@
     tools:context="org.djodjo.jjson.atools.JsonFragment"
     >
 
-    <include layout="@layout/frag_header" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,28 +14,43 @@
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
+        <include layout="@layout/frag_header"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
 
+                 android:layout_gravity="center_vertical"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" : "/>
         <TextView
             android:id="@+id/minValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:layout_weight="1" />
-
+            android:text="min"
+            android:paddingLeft="10dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - "/>
         <TextView
             android:id="@+id/maxValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="max" />
     </LinearLayout>
 
     <org.djodjo.jjson.atools.ui.widget.MultiSlider
         android:id="@+id/range_slider"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
 
         app:track="@drawable/multislider_scrubber_track_holo_light"
-        app:range="@drawable/multislider_scrubber_primary_holo"
+        app:range="@drawable/multislider_scrubber_track_holo_light"
         app:range1="@drawable/multislider_scrubber_track_holo_light"
         app:thumbDrawable="@drawable/multislider_scrubber_control_selector_holo_light"
         />

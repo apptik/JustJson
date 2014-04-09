@@ -75,19 +75,19 @@ public class RangeFragment extends BasePropertyFragment {
 
         MultiSlider seekBar = (MultiSlider)v.findViewById(R.id.range_slider);
 
-//        RangeSlider<Integer> seekBar = new RangeSlider<Integer>(minVal1.intValue(), maxVal2.intValue(), getActivity());
-//
-//        seekBar.setOnRangeSeekBarChangeListener(new RangeSlider.OnRangeSeekBarChangeListener<Integer>() {
-//            @Override
-//            public void onRangeSeekBarValuesChanged(RangeSlider<?> bar, Integer minValue, Integer maxValue) {
-//                //TODO logging
-//                Log.i("", "User selected new range values: MIN=" + minValue + ", MAX=" + maxValue);
-//
-//                min.setText(minValue.toString());
-//                max.setText(maxValue.toString());
-//
-//            }
-//        });
+
+        seekBar.setOnThumbValueChangeListener(new MultiSlider.OnThumbValueChangeListener() {
+            @Override
+            public void onValueChanged(MultiSlider multiSlider, MultiSlider.Thumb thumb, int thumbIndex, int value) {
+                if(thumbIndex==0) {
+                    min.setText(String.valueOf(value));
+                } else {
+                    max.setText(String.valueOf(value));
+                }
+            }
+        });
+
+
 
 
         // add RangeSeekBar to pre-defined layout

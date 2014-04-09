@@ -7,11 +7,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
 import org.djodjo.jjson.atools.EnumControllerCallback;
 import org.djodjo.jjson.atools.LayoutBuilder;
@@ -27,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class OneOfFragment extends Fragment implements EnumControllerCallback {
+public class OneOfFragment_radio extends Fragment implements EnumControllerCallback {
 
     private static final String ARG_SCHEMAS = "schemas";
     private static final String ARG_CONTROLLERS = "controllers";
@@ -49,8 +46,8 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
 
     private HashMap<Integer,LayoutBuilder<Schema>> layoutBuilders = new HashMap<Integer,LayoutBuilder<Schema>>();
 
-    public static OneOfFragment newInstance(ArrayList<String> schemas, ArrayList<String> controllers, Bundle settingsBundle) {
-        OneOfFragment fragment = new OneOfFragment();
+    public static OneOfFragment_radio newInstance(ArrayList<String> schemas, ArrayList<String> controllers, Bundle settingsBundle) {
+        OneOfFragment_radio fragment = new OneOfFragment_radio();
         Bundle args = new Bundle();
         args.putStringArrayList(ARG_SCHEMAS, schemas);
         args.putStringArrayList(ARG_CONTROLLERS, controllers);
@@ -58,7 +55,7 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
         fragment.setArguments(args);
         return fragment;
     }
-    public OneOfFragment() {
+    public OneOfFragment_radio() {
         // Required empty public constructor
     }
 
@@ -89,32 +86,28 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
         View v = inflater.inflate(R.layout.fragment_one_of_radio, container, false);
 
 
-        Spinner enumSpinner = (Spinner) v.findViewById(R.id.enumSpinner);
-        SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item);
-        enumSpinner.setAdapter(adapter);
-//
-//        oneOfRadioGroup = (RadioGroup) v.findViewById(R.id.oneOfRadioGroup);
-//        oneOfRadioGroup.removeAllViews();
-//        if(controllers!=null && controllers.size()>0) {
-//            oneOfRadioGroup.setVisibility(View.GONE);
-//        } else {
-//            // --> Prepare default controller
-//            oneOfRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(RadioGroup group, final int checkedId) {
-//
-//                    if(checkedId!=-1)
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            layoutBuilders.get(checkedId)
-//
-//                                    .build(R.id.oneOfContainer);
-//                        }
-//                    }).start();
-//                }
-//            });
-//        }
+        oneOfRadioGroup = (RadioGroup) v.findViewById(R.id.oneOfRadioGroup);
+        oneOfRadioGroup.removeAllViews();
+        if(controllers!=null && controllers.size()>0) {
+            oneOfRadioGroup.setVisibility(View.GONE);
+        } else {
+            // --> Prepare default controller
+            oneOfRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, final int checkedId) {
+
+                    if(checkedId!=-1)
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            layoutBuilders.get(checkedId)
+
+                                    .build(R.id.oneOfContainer);
+                        }
+                    }).start();
+                }
+            });
+        }
 
 
 
@@ -146,8 +139,6 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
                 controllerOptions.put(controller, new ArrayList<String>());
             }
         }
-
-
 
         // --> buildup options and create layout builders
         for(Schema schema:schemas) {

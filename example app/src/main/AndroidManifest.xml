@@ -16,6 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <uses-feature android:name="android.hardware.touchscreen.multitouch"
+                      android:required="true" />
     </application>
 
 </manifest>
