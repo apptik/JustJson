@@ -23,7 +23,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -222,9 +221,9 @@ public class MultiSlider extends View {
         setThumbs(thumbDrawable, range, range1, range2); // will guess thumbOffset if thumb != null...
         mNoInvalidate = false;
         // ...but allow layout to override this
-        //TODO
-//        int thumbOffset = a.getDimensionPixelOffset(R.styleable.MultiSlider_thumbOffset, getThumbOffset());
-//        setThumbOffset(thumbOffset);
+
+        int thumbOffset = a.getDimensionPixelOffset(R.styleable.MultiSlider_thumbOffset, thumbDrawable.getIntrinsicWidth()/2);
+        setThumbOffset(thumbOffset);
 
         mScaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
 
@@ -242,6 +241,13 @@ public class MultiSlider extends View {
         mThumbs =  new LinkedList<Thumb>();
         mThumbs.add(new Thumb().setMin(mScaleMin).setMax(mScaleMax).setValue(mScaleMin));
         mThumbs.add(new Thumb().setMin(mScaleMin).setMax(mScaleMax).setValue(mScaleMax));
+    }
+
+    public void setThumbOffset(int thumbOffset) {
+        for(Thumb thumb:mThumbs) {
+            thumb.setThumbOffset(thumbOffset);
+        }
+        invalidate();
     }
 
     public void setTrackDrawable(Drawable d) {
@@ -550,7 +556,7 @@ public class MultiSlider extends View {
         }
 
         // Canvas will be translated, so 0,0 is where we start drawing
-        final int left = (isLayoutRtl()) ? available - thumbPos : thumbPos;
+        final int left = (isLayoutRtl() && mMirrorForRtl) ? available - thumbPos : thumbPos;
         thumb.setBounds(left, topBound, left + thumbWidth, bottomBound);
 
         //TODO set bounds for range also

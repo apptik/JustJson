@@ -25,6 +25,7 @@
 
         <attr name="thumbDrawable" format="reference"/>
         <attr name="thumbNumber" format="integer"/>
+        <attr name="thumbOffset" format="dimension"/>
 
         <attr name="thumbValue1" format="integer"/>
         <attr name="thumbValue2" format="integer"/>
