@@ -364,10 +364,12 @@ public class LayoutBuilder<T extends Schema> {
         build(containerId, false);
     }
     public void build(int containerId, boolean append) {
+        Log.d(this.getClass().toString(), "start build");
         if(fragmentManager==null) return;
         if(fragBuilders == null || fragBuilders.size()<1)
         {
 
+            Log.d(this.getClass().toString(), "start generate main props");
             SchemaMap schemaTopProperties = schema.getProperties();
 
             // --> First find basic properties
@@ -391,9 +393,12 @@ public class LayoutBuilder<T extends Schema> {
                     );
                 }
             }
+            Log.d(this.getClass().toString(), "end generate main props");
+
 
             // --> check for oneOf
             if (schema.getOneOf() != null && schema.getOneOf().getJson().length() > 0) {
+                Log.d(this.getClass().toString(), "start generate onOf");
                 ArrayList<Schema> oneOfSchemas = schema.getOneOf().getJsonWrappersList();
                 ArrayList<String> stringSchemas = new ArrayList<String>();
                 for (Schema oneOfSchema : oneOfSchemas) {
@@ -413,6 +418,7 @@ public class LayoutBuilder<T extends Schema> {
                     stringSchemas.add(oneOfSchema.getJson().toString());
                 }
                 //
+                Log.d(this.getClass().toString(), "end generate onOf");
                 oneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers, bundleSettings());
             }
 
@@ -423,9 +429,11 @@ public class LayoutBuilder<T extends Schema> {
 
         // --> clean fragments if not appending
         if(!append) {
+
+            Log.d(this.getClass().toString(), "start fragment removal");
             //FragmentTransaction.replace does not replace all the fragments in the container but only one thus we need to remove them all one by one
             Fragment currFrag =  fragmentManager.findFragmentById(containerId);
-            Log.d(this.getClass().toString(), "start fragment removal");
+
             while(currFrag!=null) {
                 try {
                     fragmentManager.beginTransaction().remove(currFrag).commit();
@@ -444,26 +452,24 @@ public class LayoutBuilder<T extends Schema> {
 
 
         // --> The TRANSACTION
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
         // --> build and add fragments
         for (Map.Entry<String, FragmentBuilder> builder:fragBuilders.entrySet()) {
 
             Fragment fragment = builder.getValue().build();
             if(fragment!= null) {
                 Log.d("JustJsonLayoutBulder", "adding fragment: " + builder.getKey());
-                transaction.add(containerId, fragment, builder.getKey());
+                fragmentManager.beginTransaction().add(containerId, fragment, builder.getKey()).commit();
             }
 
         }
 
         //add oneOf fragment if exists
         if(oneOfFragment != null) {
-
-            transaction.add(containerId, oneOfFragment, "oneOf");
+            fragmentManager.beginTransaction().add(containerId, oneOfFragment, "oneOf").commit();
 
         }
 
-        transaction.commit();
+        Log.d(this.getClass().toString(), "All commited - end build");
 
     }
 
