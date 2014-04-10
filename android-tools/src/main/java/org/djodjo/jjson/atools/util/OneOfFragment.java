@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -35,8 +36,9 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
 
     private static final String ARG_SETTING_BUNDLE = "settingsBundle";
 
-
+    int maxRadioItems = 3;
     RadioGroup oneOfRadioGroup;
+    Spinner oneOfSpinner;
 
     private ArrayList<String> controllers = null;
     private ArrayList<Schema> schemas =  new ArrayList<Schema>();
@@ -48,6 +50,10 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
     Bundle settingsArgs = null;
 
     private HashMap<Integer,LayoutBuilder<Schema>> layoutBuilders = new HashMap<Integer,LayoutBuilder<Schema>>();
+
+    private boolean isRadioDisplay() {
+        return schemas.size() <= maxRadioItems;
+    }
 
     public static OneOfFragment newInstance(ArrayList<String> schemas, ArrayList<String> controllers, Bundle settingsBundle) {
         OneOfFragment fragment = new OneOfFragment();
@@ -86,35 +92,64 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_one_of_radio, container, false);
+        View v = isRadioDisplay() ?
+                inflater.inflate(R.layout.fragment_one_of_radio, container, false):
+                inflater.inflate(R.layout.fragment_oneof_spinner, container, false);
 
+        if(isRadioDisplay()) {
+            oneOfRadioGroup = (RadioGroup) v.findViewById(R.id.oneOfRadioGroup);
+            oneOfRadioGroup.removeAllViews();
+            oneOfSpinner = null;
+        } else {
+            oneOfSpinner = (Spinner) v.findViewById(R.id.oneofSpinner);
+            oneOfRadioGroup = null;
+        }
 
-        Spinner enumSpinner = (Spinner) v.findViewById(R.id.enumSpinner);
-        SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item);
-        enumSpinner.setAdapter(adapter);
-//
-//        oneOfRadioGroup = (RadioGroup) v.findViewById(R.id.oneOfRadioGroup);
-//        oneOfRadioGroup.removeAllViews();
-//        if(controllers!=null && controllers.size()>0) {
-//            oneOfRadioGroup.setVisibility(View.GONE);
-//        } else {
-//            // --> Prepare default controller
-//            oneOfRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(RadioGroup group, final int checkedId) {
-//
-//                    if(checkedId!=-1)
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            layoutBuilders.get(checkedId)
-//
-//                                    .build(R.id.oneOfContainer);
-//                        }
-//                    }).start();
-//                }
-//            });
-//        }
+        if(controllers!=null && controllers.size()>0) {
+            if(oneOfRadioGroup!= null)
+                oneOfRadioGroup.setVisibility(View.GONE);
+            if(oneOfSpinner!=null)
+                oneOfSpinner.setVisibility(View.GONE);
+        } else {
+            // --> Prepare default controller
+            if(oneOfRadioGroup!=null) {
+                oneOfRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, final int checkedId) {
+
+                        if (checkedId != -1)
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    layoutBuilders.get(checkedId)
+
+                                            .build(R.id.oneOfContainer);
+                                }
+                            }).start();
+                    }
+                });
+            } else if(oneOfSpinner!=null) {
+                oneOfSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
+                        if (position != -1)
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    layoutBuilders.get(position)
+
+                                            .build(R.id.oneOfContainer);
+                                }
+                            }).start();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+            }
+        }
+
 
 
 
@@ -148,16 +183,20 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
         }
 
 
+        ArrayList<String> options =  new ArrayList<String>();
 
         // --> buildup options and create layout builders
         for(Schema schema:schemas) {
             int selectionId = 0;
             //build default controller
-            if(oneOfRadioGroup.getVisibility() == View.VISIBLE) {
+            if(oneOfRadioGroup!= null && oneOfRadioGroup.getVisibility() == View.VISIBLE) {
                 RadioButton button = new RadioButton(getActivity());
                 button.setText(schema.getTitle());
                 oneOfRadioGroup.addView(button);
                 selectionId = button.getId();
+            } else if(oneOfSpinner != null && oneOfSpinner.getVisibility() == View.VISIBLE) {
+                options.add(schema.getTitle());
+                selectionId = options.size() - 1;
             } else {
                 //build custom controller
                 for(String controller:controllers) {
@@ -175,6 +214,12 @@ public class OneOfFragment extends Fragment implements EnumControllerCallback {
                             .ignoreProperties(controllers)
             );
         }
+
+        if(oneOfSpinner != null && oneOfSpinner.getVisibility() == View.VISIBLE) {
+            SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, options);
+            oneOfSpinner.setAdapter(adapter);
+        }
+
 
         if(controllers != null && controllers.size()>0) {
             FragmentTransaction transaction = getFragmentManager().beginTransaction();

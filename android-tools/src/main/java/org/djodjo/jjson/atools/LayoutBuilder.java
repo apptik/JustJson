@@ -419,8 +419,7 @@ public class LayoutBuilder<T extends Schema> {
         }
 
 
-        // --> The TRANSACTION
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
 
         // --> clean fragments if not appending
         if(!append) {
@@ -443,10 +442,15 @@ public class LayoutBuilder<T extends Schema> {
             Log.d(this.getClass().toString(), "complete fragment removal");
         }
 
+
+        // --> The TRANSACTION
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         // --> build and add fragments
         for (Map.Entry<String, FragmentBuilder> builder:fragBuilders.entrySet()) {
+
             Fragment fragment = builder.getValue().build();
             if(fragment!= null) {
+                Log.d("JustJsonLayoutBulder", "adding fragment: " + builder.getKey());
                 transaction.add(containerId, fragment, builder.getKey());
             }
 
@@ -454,7 +458,9 @@ public class LayoutBuilder<T extends Schema> {
 
         //add oneOf fragment if exists
         if(oneOfFragment != null) {
+
             transaction.add(containerId, oneOfFragment, "oneOf");
+
         }
 
         transaction.commit();

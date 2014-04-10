@@ -58,7 +58,7 @@ public class SchemaFormRendererFragment extends BlankFragment {
         super.onResume();
         final SchemaV4 schema = new SchemaV4();
         try {
-            schema.wrap(JsonElement.readFrom(new InputStreamReader(getActivity().getAssets().open("schema4.json"))));
+            schema.wrap(JsonElement.readFrom(new InputStreamReader(getActivity().getAssets().open("schema5.json"))));
         } catch (JsonException e) {
             e.printStackTrace();
         } catch (IOException e) {

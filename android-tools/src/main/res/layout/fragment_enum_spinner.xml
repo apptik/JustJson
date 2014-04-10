@@ -10,10 +10,11 @@
     <include layout="@layout/frag_header" />
 
     <Spinner
+        android:id="@+id/enumSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:imeOptions="actionNext"
-        android:id="@+id/enumSpinner"/>
+
+        />
 
     <include layout="@layout/frag_footer" />
 

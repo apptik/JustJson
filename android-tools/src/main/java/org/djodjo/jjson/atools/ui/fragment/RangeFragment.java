@@ -28,6 +28,26 @@ import org.djodjo.jjson.atools.R;
 import org.djodjo.jjson.atools.ui.widget.MultiSlider;
 
 
+/**
+ * this fragment renders range objects with properties of the form:
+ "properties" : {
+     "min": {
+         "type" : "integer",
+         "minimum" : 0,
+         "maximum" : 10000
+     },
+     "max": {
+         "type" : "integer",
+         "minimum" : 0,
+         "maximum" : 10000
+     }
+ }
+
+ where min and max are not required.
+ the slider has extra positions at the end and beginning and when selected no min and max values are returned, as assuming infinite/undefined range
+ *
+ */
+
 public class RangeFragment extends BasePropertyFragment {
 
     public final static int LAYOUT_RANGE_SLIDER = R.layout.fragment_range_slider;

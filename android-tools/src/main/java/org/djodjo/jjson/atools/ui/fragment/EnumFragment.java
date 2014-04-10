@@ -91,13 +91,13 @@ public class EnumFragment extends BasePropertyFragment {
         }
         else if(layoutId == LAYOUT_ENUM_SPINNER) {
             Spinner enumSpinner = (Spinner) v.findViewById(R.id.enumSpinner);
-            SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, styleValue, options);
+            SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, options);
             enumSpinner.setAdapter(adapter);
 
         }
         else if(layoutId == LAYOUT_ENUM_LISTVIEW) {
             ListView enumListView = (ListView) v.findViewById(R.id.enumListView);
-            ArrayAdapter<String>  adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, styleValue, options);
+            ArrayAdapter<String>  adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, options);
             enumListView.setAdapter(adapter);
             enumListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
