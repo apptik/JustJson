@@ -5,7 +5,7 @@ package org.djodjo.jjson.atools;
  * Called from the anyOf, allOf, oneOf enum controller fragments
  * by default this is implemented in the JsonSchemaFragment
  */
-public interface EnumControllerCallback {
+public interface OneOfControllerCallback {
 
-    void onValueChanged(int position, String value);
+    void onValueChanged(String propertyName, int position);
 }

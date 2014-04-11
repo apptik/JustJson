@@ -71,14 +71,15 @@ public class SchemaFormRendererFragment extends BlankFragment {
             public void run() {
                 LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
                 lb
-                        //.addOneOfController("controller1")
+                        .addOneOfController("controller0")
+                       .addOneOfController("controller1")
                         .setGlobalNoDescription(true)
                         .setGlobalDisplayType(FragmentBuilder.DISPLAY_TYPE_CHECKBOX)
-                        .setGlobalRadioButtonSelector(R.drawable.red_radio_selector)
-                        .setGlobalCheckBoxSelector(R.drawable.apptheme_btn_check_holo_light)
-                        .setGlobalSliderThumbSelector(R.drawable.apptheme_scrubber_control_selector_holo_light)
-                        .setGlobalSliderProgressDrawable(R.drawable.apptheme_scrubber_progress_horizontal_holo_light)
-                        .setGlobalThemeColor(getResources().getColor(R.color.apptheme_color))
+                        //.setGlobalRadioButtonSelector(R.drawable.red_radio_selector)
+                        //.setGlobalCheckBoxSelector(R.drawable.apptheme_btn_check_holo_light)
+                        //.setGlobalSliderThumbSelector(R.drawable.apptheme_scrubber_control_selector_holo_light)
+                        //.setGlobalSliderProgressDrawable(R.drawable.apptheme_scrubber_progress_horizontal_holo_light)
+                        //.setGlobalThemeColor(getResources().getColor(R.color.apptheme_color))
                         .build(R.id.form_container);
             }
         }).start();

@@ -17,12 +17,10 @@
 package org.djodjo.jjson.atools.ui.fragment;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -60,15 +58,15 @@ public class BooleanFragment extends BasePropertyFragment {
         CompoundButton button = (CompoundButton)v.findViewById(R.id.prop_value);
         if(buttonSelector!=0) {
             button.setButtonDrawable(buttonSelector);
-        } else if (button instanceof CheckBox && customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR) != 0)
+        } else if (button instanceof CheckBox && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR) != 0)
         {
             button.setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR));
         }
-        else if (button instanceof ToggleButton && customButtonSelectors.get(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR) != 0)
+        else if (button instanceof ToggleButton && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR) != 0)
         {
             button.setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR));
         }
-        else if (button instanceof Switch && customButtonSelectors.get(ARG_GLOBAL_SWITCHBUTTON_SELECTOR) != 0)
+        else if (button instanceof Switch && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_SWITCHBUTTON_SELECTOR) != 0)
         {
             button.setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_SWITCHBUTTON_SELECTOR));
         }

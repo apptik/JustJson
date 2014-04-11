@@ -21,7 +21,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -29,6 +31,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import org.djodjo.jjson.atools.FragmentBuilder;
+import org.djodjo.jjson.atools.OneOfControllerCallback;
 import org.djodjo.jjson.atools.R;
 
 import java.util.ArrayList;
@@ -41,8 +44,13 @@ public class EnumFragment extends BasePropertyFragment {
     public final static int LAYOUT_ENUM_LISTVIEW = R.layout.fragment_enum_listview;
 
     public static final String ARG_OPTIONS = "options";
+    public static final String ARG_IS_CONTROLLER = "isController";
 
     private ArrayList<String> options;
+
+    private boolean isController = false;
+
+    OneOfControllerCallback oneOfControllerCallback = null;
 
     public EnumFragment() {
         // Required empty public constructor
@@ -67,32 +75,63 @@ public class EnumFragment extends BasePropertyFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             options = getArguments().getStringArrayList(ARG_OPTIONS);
+            isController = getArguments().getBoolean(ARG_IS_CONTROLLER, false);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
+        if(isController) {
+            try {
+                oneOfControllerCallback = (OneOfControllerCallback) getFragmentManager().findFragmentByTag("oneOf");
+            } catch(Exception ex) {
+            }
+        }
+
         if(layoutId == LAYOUT_ENUM_RADIO) {
             RadioGroup enumRadioGroup = (RadioGroup) v.findViewById(R.id.enumRadioGroup);
-            for(String option:options) {
+            for(final String option:options) {
                 RadioButton button = (RadioButton)inflater.inflate(R.layout.radio_button, enumRadioGroup, false);
                 button.setText(option);
                 button.setTextAppearance(getActivity(), styleValue);
                 if(buttonSelector!=0) {
                     button.setBackgroundResource(buttonSelector);
-                } else if (customButtonSelectors.get(ARG_GLOBAL_RADIOBUTTON_SELECTOR) != 0)
+                } else if (customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_RADIOBUTTON_SELECTOR) != 0)
                 {
                     button.setBackgroundResource(customButtonSelectors.get(ARG_GLOBAL_RADIOBUTTON_SELECTOR));
                 }
-
+                if(oneOfControllerCallback!=null) {
+                    button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if(isChecked) {
+                                oneOfControllerCallback.onValueChanged(label, options.indexOf(option));
+                            }
+                        }
+                    });
+                }
                 enumRadioGroup.addView(button);
+
             }
         }
         else if(layoutId == LAYOUT_ENUM_SPINNER) {
             Spinner enumSpinner = (Spinner) v.findViewById(R.id.enumSpinner);
             SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, options);
             enumSpinner.setAdapter(adapter);
+            if(oneOfControllerCallback!=null) {
+                enumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        oneOfControllerCallback.onValueChanged(label, options.indexOf(position));
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+            }
 
         }
         else if(layoutId == LAYOUT_ENUM_LISTVIEW) {

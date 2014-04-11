@@ -69,12 +69,12 @@ public class NumberFragment extends BasePropertyFragment {
             SeekBar seekBar = (SeekBar)v.findViewById(R.id.prop_value);
             if(buttonSelector!=0){
                 seekBar.setThumb(getActivity().getResources().getDrawable(buttonSelector));
-            } else if (customButtonSelectors.get(ARG_GLOBAL_SLIDER_THUMB_SELECTOR) != 0)
+            } else if (customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_SLIDER_THUMB_SELECTOR) != 0)
             {
                 seekBar.setThumb(getActivity().getResources().getDrawable(customButtonSelectors.get(ARG_GLOBAL_SLIDER_THUMB_SELECTOR)));
             }
 
-            if(customButtonSelectors.get(ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE) != 0)
+            if(customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE) != 0)
             {
                 seekBar.setProgressDrawable(getActivity().getResources().getDrawable(customButtonSelectors.get(ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE)));
             }

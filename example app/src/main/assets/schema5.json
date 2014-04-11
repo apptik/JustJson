@@ -15,9 +15,13 @@
         {
             "title": "Option 1",
             "properties": {
+                "controller0": {
+                    "title" : "controller0",
+                    "enum": ["KING"]
+                },
                 "controller1": {
                     "title" : "controller1",
-                    "enum": ["bravo", "delta", "foxtrot"]
+                    "enum": ["alpha", "bravo", "delta", "foxtrot"]
                 },
                 "additionalOption2": {
                     "title" : "additionalOption2",
@@ -52,9 +56,13 @@
         {
             "title": "option 2",
             "properties": {
+                "controller0": {
+                    "title" : "controller0",
+                    "enum": ["KONG"]
+                },
                 "controller1": {
                     "title" : "controller1",
-                    "enum": ["alpha","charlie", "echo"]
+                    "enum": ["charlie"]
                 },
                 "additionalOption2": {
                     "title" : "additionalOption2",
@@ -74,9 +82,13 @@
         {
             "title": "option 3",
             "properties": {
+                "controller0": {
+                    "title" : "controller0",
+                    "enum": ["KING"]
+                },
                 "controller1": {
                     "title" : "controller1",
-                    "enum": ["alpha","charlie", "echo"]
+                    "enum": ["charlie"]
                 },
                 "additionalOption2": {
                     "title" : "additionalOption2",
@@ -96,9 +108,13 @@
         {
             "title": "option 4",
             "properties": {
+                "controller0": {
+                    "title" : "controller0",
+                    "enum": ["KONG"]
+                },
                 "controller1": {
                     "title" : "controller1",
-                    "enum": ["alpha","charlie", "echo"]
+                    "enum": ["echo"]
                 },
                 "additionalOption2": {
                     "title" : "additionalOption2",
@@ -118,49 +134,13 @@
         {
             "title": "option 5",
             "properties": {
-                "location" : {
-                		"title" : "Location",
-                		"type" : "object",
-                		"oneOf" :[ {
-                				"properties" : {
-                					"radius" : {
-                						"type" : "integer",
-                						"default" : "5"
-                					},
-                					"location" : {
-                						"type" : "object",
-                						"properties" : {
-                							"lat" : {
-                								"type" : "number"
-                							},
-                							"lon" : {
-                								"type" : "number"
-                							}
-                						}
-                					}
-                				}
-                			},
-                            {
-                				"properties" : {
-                					"commune" : {
-                						"type" : "string",
-                						"items" : { "enum" : ["1200", "1000", "1080"] }
-                					},
-                					"region" : {
-                						"type" : "array",
-                						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
-                					},
-                					"province" : {
-                						"type" : "array",
-                						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
-                					}
-                				}
-                			}
-                		]
-                	},
+                "controller0": {
+                    "title" : "controller0",
+                    "enum": ["KONG"]
+                },
                 "controller1": {
                     "title" : "controller1",
-                    "enum": ["alpha","charlie", "echo"]
+                    "enum": ["golf", "hotel", "india"]
                 },
                 "additionalOption2": {
                     "title" : "additionalOption2",
