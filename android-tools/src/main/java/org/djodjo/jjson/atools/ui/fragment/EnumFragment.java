@@ -123,7 +123,7 @@ public class EnumFragment extends BasePropertyFragment {
                 enumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        oneOfControllerCallback.onValueChanged(label, options.indexOf(position));
+                        oneOfControllerCallback.onValueChanged(label, position);
                     }
 
                     @Override

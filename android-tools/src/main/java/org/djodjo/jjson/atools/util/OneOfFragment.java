@@ -297,7 +297,7 @@ public class OneOfFragment extends Fragment implements OneOfControllerCallback {
                 bundle.putBoolean(EnumFragment.ARG_IS_CONTROLLER, true);
                 bundle.putString(BasePropertyFragment.ARG_LABEL, controller);
                 frag.setArguments(bundle);
-                transaction.add(((ViewGroup)getView().getParent()).getId(), frag, controller);
+                transaction.add(R.id.oneOfControllers, frag, controller);
             }
 
             transaction.commit();
@@ -312,8 +312,11 @@ public class OneOfFragment extends Fragment implements OneOfControllerCallback {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                layoutBuilders.get(new ArrayList<Integer>(currSelection.values()))
-                        .build(R.id.oneOfContainer);
+                LayoutBuilder<Schema> lb = layoutBuilders.get(new ArrayList<Integer>(currSelection.values()));
+                //note that if controllers not chosen wisely there could be a combination where there are no layout matching
+
+                if(lb!=null)
+                    lb.build(R.id.oneOfContainer);
             }
         }).start();
     }

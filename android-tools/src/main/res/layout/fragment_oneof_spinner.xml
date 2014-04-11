@@ -7,13 +7,20 @@
 
     >
 
-    <include layout="@layout/frag_header" />
+    <LinearLayout
+        android:id="@+id/oneOfControllers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    </LinearLayout>
 
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:imeOptions="actionNext"
         android:id="@+id/oneofSpinner"/>
+
+
 
     <include layout="@layout/frag_footer" />
 
