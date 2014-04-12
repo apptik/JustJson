@@ -1,4 +1,4 @@
-jjson
+JustJson
 =====
 
 JSON helper library for Android and Java
