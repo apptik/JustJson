@@ -93,8 +93,11 @@ public class RangeFragment extends BasePropertyFragment {
         max.setTextAppearance(getActivity(), styleValue);
 
 
+
         MultiSlider seekBar = (MultiSlider)v.findViewById(R.id.range_slider);
 
+        min.setText(String.valueOf(minVal1));
+        max.setText(String.valueOf(maxVal2));
 
         seekBar.setOnThumbValueChangeListener(new MultiSlider.OnThumbValueChangeListener() {
             @Override

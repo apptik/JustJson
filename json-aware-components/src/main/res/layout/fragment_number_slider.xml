@@ -22,15 +22,33 @@
               tools:context="org.djodjo.jjson.atools.JsonFragment"
 
     >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <include layout="@layout/frag_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
-    <include layout="@layout/frag_header" />
-
+        android:layout_gravity="center_vertical"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" : "/>
+    <TextView
+        android:id="@+id/prop_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="value"
+        android:paddingLeft="10dp"
+        />
+        </LinearLayout>
 
     <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:imeOptions="actionNext"
-        android:id="@+id/prop_value"
+        android:id="@+id/seekBar"
         android:layout_gravity="center_horizontal"/>
 
     <include layout="@layout/frag_footer" />

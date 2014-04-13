@@ -39,7 +39,8 @@ public class LimitedNumberFragment extends BasePropertyFragment {
     public final static int LAYOUT_NUMBER_PICKER = R.layout.fragment_number_picker;
     public final static int LAYOUT_NUMBER_SLIDER = R.layout.fragment_number_slider;
 
-    private ArrayList<String> options;
+    private int minimum;
+    private int maximum;
 
     public LimitedNumberFragment() {
         // Required empty public constructor
@@ -57,6 +58,14 @@ public class LimitedNumberFragment extends BasePropertyFragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            minimum = getArguments().getInt(NumberFragment.ARG_MINIMUM);
+            maximum = getArguments().getInt(NumberFragment.ARG_MAXIMUM);
+        }
+    }
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
@@ -66,7 +75,7 @@ public class LimitedNumberFragment extends BasePropertyFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         if(layoutId == LAYOUT_NUMBER_SLIDER) {
-            SeekBar seekBar = (SeekBar)v.findViewById(R.id.prop_value);
+            SeekBar seekBar = (SeekBar)v.findViewById(R.id.seekBar);
             if(buttonSelector!=0){
                 seekBar.setThumb(getActivity().getResources().getDrawable(buttonSelector));
             } else if (customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_SLIDER_THUMB_SELECTOR) != 0)
@@ -78,6 +87,31 @@ public class LimitedNumberFragment extends BasePropertyFragment {
             {
                 seekBar.setProgressDrawable(getActivity().getResources().getDrawable(customButtonSelectors.get(ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE)));
             }
+
+            seekBar.setMax(maximum-minimum);
+
+            final TextView propValue = (TextView) v.findViewById(R.id.prop_value);
+            propValue.setTextAppearance(getActivity(), styleValue);
+
+            int value = seekBar.getProgress()-minimum;
+            propValue.setText(String.valueOf(value));
+
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    int value = progress-minimum;
+                    propValue.setText(String.valueOf(value));
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                }
+            });
+
         } else if(displayType == LAYOUT_NUMBER_TEXT) {
             TextView propValue = (TextView) v.findViewById(R.id.prop_value);
             propValue.setTextAppearance(getActivity(), styleValue);
