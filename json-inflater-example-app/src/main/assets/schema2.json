@@ -1,38 +1,39 @@
 {
-    "type": "object",
-    "description" : "ontOf example"
-    "properties": {
-        "baseProperty1": {
-            "title" : "baseProperty1",
-            "type": "boolean"
-        },
-        "baseProperty2": {
-            "title" : "baseProperty2",
-            "enum" : [1,2,3,4,5,6]
-        }
-    },
-    "oneOf": [
-        {
-            "title": "Option 1",
-            "properties": {
-                "additionalOption1": {
-                    "title" : "additionalOption1",
-                    "enum": ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"]
-                }
-            }
-        },
-        {
-            "title": "option 2",
-            "properties": {
-                "additionalOption1": {
-                    "title" : "additionalOption1",
-                    "type" : "number"
-                },
-                "additionalOption2": {
-                    "title" : "additionalOption2",
-                    "type": "boolean"
-                }
-            }
-        }
-    ]
+	"title": "Example Schema",
+	"type": "object",
+	"properties": {
+		"firstName": {
+			"type": "string",
+			"title": "First Name"
+		},
+		"lastName": {
+			"type": "string",
+			"title": "Last Name"
+		},
+		"age": {
+		    "title": "Age",
+			"description": "Age in years",
+			"type": "integer",
+			"minimum": 0,
+			"maximum" : 150
+		},
+		"salary-range": {
+                            "title" : "Salary Range",
+                            "type": "object",
+                            "properties" : {
+                                "min" : {
+                                    "type" : "number",
+                                    "minimum" : 3000,
+                                    "maximum" : 5000
+                                },
+                                "max" : {
+                                    "type" : "number",
+                                    "minimum" : 3000,
+                                    "maximum" : 5000
+                                }
+                            }
+                        }
+
+	},
+	"required": ["firstName", "lastName"]
 }

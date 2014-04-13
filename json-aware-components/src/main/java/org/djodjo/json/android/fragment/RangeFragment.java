@@ -96,6 +96,7 @@ public class RangeFragment extends BasePropertyFragment {
 
         MultiSlider seekBar = (MultiSlider)v.findViewById(R.id.range_slider);
 
+
         min.setText(String.valueOf(minVal1));
         max.setText(String.valueOf(maxVal2));
 
