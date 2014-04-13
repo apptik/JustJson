@@ -1,1 +1,1 @@
-include ':lib', ':android-tools' , ':example app'
+include ':example app', ':json-wrapper', ':jsonfier', ':widget', ':json-aware-components', 'lib-core', 'json-inflater'

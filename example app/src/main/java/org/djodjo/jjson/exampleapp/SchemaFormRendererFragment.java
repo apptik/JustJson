@@ -24,10 +24,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.djodjo.jjson.atools.FragmentBuilder;
-import org.djodjo.jjson.atools.LayoutBuilder;
+import org.djodjo.json.android.fragment.DisplayType;
+import org.djodjo.json.infalter.FragmentBuilder;
+import org.djodjo.json.infalter.LayoutBuilder;
 import org.djodjo.json.JsonElement;
-import org.djodjo.json.JsonException;
+import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.SchemaV4;
 
 import java.io.IOException;
@@ -74,7 +75,7 @@ public class SchemaFormRendererFragment extends BlankFragment {
                         .addOneOfController("controller0")
                        .addOneOfController("controller1")
                         .setGlobalNoDescription(true)
-                        .setGlobalDisplayType(FragmentBuilder.DISPLAY_TYPE_CHECKBOX)
+                        .setGlobalDisplayType(DisplayType.DISPLAY_TYPE_CHECKBOX)
                         //.setGlobalRadioButtonSelector(R.drawable.red_radio_selector)
                         //.setGlobalCheckBoxSelector(R.drawable.apptheme_btn_check_holo_light)
                         //.setGlobalSliderThumbSelector(R.drawable.apptheme_scrubber_control_selector_holo_light)
