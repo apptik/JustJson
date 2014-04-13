@@ -23,6 +23,91 @@ public abstract class Schema extends JsonObjectWrapper {
     public static final String TYPE_INTEGER = "integer";
     public static final String TYPE_BOOLEAN = "boolean";
 
+    //formats as defined in http://tools.ietf.org/html/draft-zyp-json-schema-03#section-5.23
+    //note that there is no definition for the formats in draft-v4 except in http://json-schema.org/latest/json-schema-validation.html#anchor104
+
+    /**
+     *    date-time  This SHOULD be a date in ISO 8601 format of YYYY-MM-
+     DDThh:mm:ssZ in UTC time.  This is the recommended form of date/
+     timestamp.
+     */
+    public static final String FORMAT_DATE_TIME = "date-time";
+
+    /**
+     *    date  This SHOULD be a date in the format of YYYY-MM-DD.  It is
+     recommended that you use the "date-time" format instead of "date"
+     unless you need to transfer only the date part.
+     */
+    public static final String FORMAT_DATE = "date";
+
+    /**
+     *
+     time  This SHOULD be a time in the format of hh:mm:ss.  It is
+     recommended that you use the "date-time" format instead of "time"
+     unless you need to transfer only the time part.
+     */
+    public static final String FORMAT_TIME = "time";
+
+    /**
+     *    utc-millisec  This SHOULD be the difference, measured in
+     milliseconds, between the specified time and midnight, 00:00 of
+     January 1, 1970 UTC.  The value SHOULD be a number (integer or
+     float).
+     */
+    public static final String FORMAT_UTC_MILISEC = "utc-millisec";
+
+    /**
+     *    regex  A regular expression, following the regular expression
+     specification from ECMA 262/Perl 5.
+     */
+    public static final String FORMAT_REGEX = "regex";
+
+    /**
+     *    color  This is a CSS color (like "#FF0000" or "red"), based on CSS
+     2.1 [W3C.CR-CSS21-20070719].
+     */
+    public static final String FORMAT_COLOR = "color";
+
+    /**
+     *    style  This is a CSS style definition (like "color: red; background-
+     color:#FFF"), based on CSS 2.1 [W3C.CR-CSS21-20070719].
+     */
+    public static final String FORMAT_STYLE = "style";
+
+    /**
+     *    phone  This SHOULD be a phone number (format MAY follow E.123).
+     */
+    public static final String FORMAT_PHONE = "phone";
+
+    /**
+     * uri  This value SHOULD be a URI..
+     */
+    public static final String FORMAT_URI = "uri";
+
+    /**
+     * email  This SHOULD be an email address.
+     */
+    public static final String FORMAT_EMAIL = "email";
+
+
+    /**
+     *    ip-address  This SHOULD be an ip version 4 address.
+     */
+    public static final String FORMAT_IP_ADDR = "ip-address"; //draft v3
+    public static final String FORMAT_IPV4 = "ipv4"; //draft v4
+
+    /**
+     *    ipv6  This SHOULD be an ip version 6 address.
+     */
+    public static final String FORMAT_IPV6 = "ipv6";
+
+    /**
+     *
+     host-name  This SHOULD be a host-name.
+     */
+    public static final String FORMAT_HOST_NAME = "host-name"; //draft v3
+    public static final String FORMAT_HOSTNAME = "hostname"; //draft v4
+
     public Schema() {
         super();
         this.setContentType("application/schema+json");
@@ -67,6 +152,11 @@ public abstract class Schema extends JsonObjectWrapper {
 
     public String getTitle() {
         return getJson().optString("title", "");
+    }
+
+    //TODO validation
+    public String getFormat() {
+        return getJson().optString("format", "");
     }
 
     public String getDescription() {
