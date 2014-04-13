@@ -42,11 +42,13 @@ public class BooleanFragment extends BasePropertyFragment {
 
     @Override
     protected int getLayoutId() {
-        switch (displayType) {
+        int currDisplType = (displayType>=0)?displayType:displayTypes.get(ARG_GLOBAL_BOOLEAN_DISPLAY_TYPE);
+        switch (currDisplType) {
             case DisplayType.DISPLAY_TYPE_CHECKBOX: return LAYOUT_BOOL_CHECKBOX;
             case DisplayType.DISPLAY_TYPE_SWITCH: return LAYOUT_BOOL_SWITCH;
             case DisplayType.DISPLAY_TYPE_TOGGLE: return LAYOUT_BOOL_TOGGLE;
         }
+
         return LAYOUT_BOOL_SWITCH;
     }
 
@@ -54,7 +56,7 @@ public class BooleanFragment extends BasePropertyFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        CompoundButton button = (CompoundButton)v.findViewById(R.id.prop_value);
+        CompoundButton button = (CompoundButton) (v != null ? v.findViewById(R.id.prop_value) : null);
         if(buttonSelector!=0) {
             button.setButtonDrawable(buttonSelector);
         } else if (button instanceof CheckBox && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR) != 0)

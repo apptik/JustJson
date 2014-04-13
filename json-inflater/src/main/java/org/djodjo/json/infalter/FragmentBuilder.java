@@ -64,8 +64,8 @@ public class FragmentBuilder {
     static {
         commonPropertyMatchers = new LinkedTreeMap<Matcher<Schema>, Class>();
         commonPropertyMatchers.put(isStringType(), StringFragment.class);
-        commonPropertyMatchers.put(isBooleanType(),BooleanFragment.class);
-        commonPropertyMatchers.put(isEnum(),EnumFragment.class);
+        commonPropertyMatchers.put(isBooleanType(), BooleanFragment.class);
+        commonPropertyMatchers.put(isEnum(), EnumFragment.class);
         commonPropertyMatchers.put(isNumberType(), NumberFragment.class);
         commonPropertyMatchers.put(isRangeObject(), RangeFragment.class);
 
@@ -167,4 +167,10 @@ public class FragmentBuilder {
         args.putSerializable(BasePropertyFragment.ARG_CUSTOM_BUTTON_SELECTORS, globalButtonSelectors);
         return this;
     }
+
+    public FragmentBuilder withGlobalDisplayTypes(HashMap<String, Integer> globalDisplayTypes) {
+        args.putSerializable(BasePropertyFragment.ARG_DISPLAY_TYPES, globalDisplayTypes);
+        return this;
+    }
+
 }

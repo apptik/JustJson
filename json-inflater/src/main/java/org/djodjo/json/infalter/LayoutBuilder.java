@@ -46,7 +46,7 @@ public class LayoutBuilder<T extends Schema> {
     private static final String ARG_NO_TITLE = "noTitle";
     private static final String ARG_NO_DESC = "noDescription";
 
-    private static final String ARG_GLOBAL_DISPLAY_TYPE = "globalDisplayType";
+    private static final String ARG_GLOBAL_DISPLAY_TYPES = "globalDisplayTypes";
 
     private static final String ARG_GLOBAL_THEME_COLOR = "globalThemeColor";
 
@@ -98,7 +98,7 @@ public class LayoutBuilder<T extends Schema> {
     /**
      * a mask of the possible display types for all elements
      */
-    private int globalDisplayType = -1;
+    private HashMap<String, Integer> globalDisplayTypes = new HashMap<String, Integer>();
 
 
     private int globalThemeColor = -1;
@@ -127,6 +127,15 @@ public class LayoutBuilder<T extends Schema> {
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE,0);
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_TOGGLEBUTTON_SELECTOR,0);
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SWITCHBUTTON_SELECTOR,0);
+
+        this.globalDisplayTypes = new HashMap<String, Integer>();
+        setGlobalStringDisplayType(DisplayType.DISPLAY_TYPE_TEXT);
+        setGlobalNumberDisplayType(DisplayType.DISPLAY_TYPE_SLIDER);
+        setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_SWITCH);
+        setGlobalArrayDisplayType(DisplayType.DISPLAY_TYPE_LISTVIEW);
+        setGlobalArrayEnumDisplayType(DisplayType.DISPLAY_TYPE_SPINNER); //multi select
+        setGlobalEnumDisplayType(DisplayType.DISPLAY_TYPE_SPINNER); //single select
+        setGlobalRangeDisplayType(DisplayType.DISPLAY_TYPE_SLIDER);
     }
 
     public LayoutBuilder<T> setSettingsBundle(Bundle args) {
@@ -141,7 +150,7 @@ public class LayoutBuilder<T extends Schema> {
         noTitle =   (HashMap<String, Boolean>)args.getSerializable(ARG_NO_TITLE);
         noDescription = ( HashMap<String, Boolean>)args.getSerializable(ARG_NO_DESC);
 
-        globalDisplayType = args.getInt(ARG_GLOBAL_DISPLAY_TYPE, -1);
+        globalDisplayTypes = (HashMap<String, Integer>) args.getSerializable(ARG_GLOBAL_DISPLAY_TYPES);
         globalThemeColor = args.getInt(ARG_GLOBAL_THEME_COLOR, -1);
         globalButtonSelectors = (HashMap<String, Integer>) args.getSerializable(ARG_GLOBAL_BOTTON_SELECTORS);
         globalTitleTextAppearance = args.getInt(ARG_GLOBAL_TITLE_STYLE, R.style.textTitle);
@@ -163,7 +172,7 @@ public class LayoutBuilder<T extends Schema> {
         bundle.putSerializable(ARG_NO_TITLE, noTitle);
         bundle.putSerializable(ARG_NO_DESC, noDescription);
 
-        bundle.putInt(ARG_GLOBAL_DISPLAY_TYPE, globalDisplayType);
+        bundle.putSerializable(ARG_GLOBAL_DISPLAY_TYPES, globalDisplayTypes);
         bundle.putInt(ARG_GLOBAL_THEME_COLOR, globalThemeColor);
         bundle.putSerializable(ARG_GLOBAL_BOTTON_SELECTORS, globalButtonSelectors);
         bundle.putInt(ARG_GLOBAL_TITLE_STYLE, globalTitleTextAppearance);
@@ -242,8 +251,38 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
-    public LayoutBuilder<T> setGlobalDisplayType(int globalDisplayType) {
-        this.globalDisplayType = globalDisplayType;
+    public LayoutBuilder<T> setGlobalStringDisplayType(int globalDisplayType) {
+        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_STRING_DISPLAY_TYPE, globalDisplayType);
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalNumberDisplayType(int globalDisplayType) {
+        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_NUMBER_DISPLAY_TYPE, globalDisplayType);
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalBooleanDisplayType(int globalDisplayType) {
+        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_BOOLEAN_DISPLAY_TYPE, globalDisplayType);
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalArrayDisplayType(int globalDisplayType) {
+        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_ARRAY_DISPLAY_TYPE, globalDisplayType);
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalArrayEnumDisplayType(int globalDisplayType) {
+        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_ARRAY_ENUM_DISPLAY_TYPE, globalDisplayType);
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalEnumDisplayType(int globalDisplayType) {
+        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_ENUM_DISPLAY_TYPE, globalDisplayType);
+        return this;
+    }
+
+    public LayoutBuilder<T> setGlobalRangeDisplayType(int globalDisplayType) {
+        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_RANGE_DISPLAY_TYPE, globalDisplayType);
         return this;
     }
 
@@ -389,6 +428,7 @@ public class LayoutBuilder<T extends Schema> {
                                     .withNoTitle(isNoTile(property.getKey()))
                                     .withNoDescription(isNoDescription(property.getKey()))
                                     .withGlobalButtonSelectors(globalButtonSelectors)
+                                    .withGlobalDisplayTypes(globalDisplayTypes)
                     );
                 }
             }
@@ -488,7 +528,7 @@ public class LayoutBuilder<T extends Schema> {
             res = displayTypes.get(property);
         }
         else {
-            res = globalDisplayType;
+            res = -1;
         }
 
         return res;

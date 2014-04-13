@@ -38,6 +38,8 @@ public abstract class BasePropertyFragment extends Fragment {
     public static final String ARG_LAYOUT = "layout_id";
 
     public static final String ARG_DISPLAY_TYPE = "display_type";
+    //if ARG_DISPLAY_TYPE is not set or < 0 we check global types
+    public static final String ARG_DISPLAY_TYPES = "display_types";
     public static final String ARG_THEME_COLOR = "theme_color";
     public static final String ARG_BUTTON_SELECTOR = "button_selector";
     public static final String ARG_CUSTOM_BUTTON_SELECTORS = "custom_button_selectors";
@@ -46,6 +48,19 @@ public abstract class BasePropertyFragment extends Fragment {
     public static final String ARG_VALUE_TEXT_APPEARANCE = "value_text_style";
     public static final String ARG_NO_TITLE = "no_title";
     public static final String ARG_NO_DESC = "no_desc";
+
+
+
+    public static final String ARG_GLOBAL_STRING_DISPLAY_TYPE = "globalStringDisplayType";
+    public static final String ARG_GLOBAL_NUMBER_DISPLAY_TYPE = "globalNumberDisplayType";
+    public static final String ARG_GLOBAL_BOOLEAN_DISPLAY_TYPE = "globalBooleanDisplayType";
+    //array with any items
+    public static final String ARG_GLOBAL_ARRAY_DISPLAY_TYPE = "globalArrayDisplayType";
+    //array with enum items
+    public static final String ARG_GLOBAL_ARRAY_ENUM_DISPLAY_TYPE = "globalArrayEnumDisplayType";
+    public static final String ARG_GLOBAL_ENUM_DISPLAY_TYPE = "globalEnumDisplayType";
+    public static final String ARG_GLOBAL_RANGE_DISPLAY_TYPE = "globalRangeDisplayType";
+
     public static final String ARG_GLOBAL_CHECKBOX_SELECTOR = "globalCheckBoxSelector";
     public static final String ARG_GLOBAL_RADIOBUTTON_SELECTOR = "globalRadioButtonSelector";
     public static final String ARG_GLOBAL_SLIDER_THUMB_SELECTOR = "globalSliderThumbSelector";
@@ -65,6 +80,7 @@ public abstract class BasePropertyFragment extends Fragment {
     protected int layoutId;
 
     protected int displayType;
+    protected HashMap<String,Integer> displayTypes;
     protected int themeColor;
     protected int buttonSelector;
     protected HashMap<String,Integer> customButtonSelectors;
@@ -88,7 +104,8 @@ public abstract class BasePropertyFragment extends Fragment {
             description = getArguments().getString(ARG_DESC);
             layoutId = getArguments().getInt(ARG_LAYOUT, 0);
 
-            displayType = getArguments().getInt(ARG_DISPLAY_TYPE);
+            displayType = getArguments().getInt(ARG_DISPLAY_TYPE, -1);
+            displayTypes = (HashMap<String,Integer>)getArguments().getSerializable(ARG_DISPLAY_TYPES);
             themeColor = getArguments().getInt(ARG_THEME_COLOR, -1);
             buttonSelector = getArguments().getInt(ARG_BUTTON_SELECTOR);
             customButtonSelectors = (HashMap<String,Integer>)getArguments().getSerializable(ARG_CUSTOM_BUTTON_SELECTORS);
