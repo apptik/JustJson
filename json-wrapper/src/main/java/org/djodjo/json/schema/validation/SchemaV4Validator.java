@@ -70,7 +70,7 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
         }
 
         double maximum = schema.getMaximum();
-        if(maximum != Double.MAX_VALUE) {
+        if(Double.compare(maximum, Double.NaN)!=0) {
             if(schema.getExclusiveMaximum()) {
                 allMatchers.add(isLessThan(maximum));
             } else {
@@ -79,7 +79,7 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
         }
 
         double minimum = schema.getMinimum();
-        if(minimum != Double.MIN_VALUE) {
+        if(Double.compare(minimum, Double.NaN)!=0) {
             if(schema.getExclusiveMinimum()) {
                 allMatchers.add(isMoreThan(minimum));
             } else {

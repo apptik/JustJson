@@ -22,6 +22,7 @@ import android.os.Bundle;
 import org.djodjo.json.android.fragment.BasePropertyFragment;
 import org.djodjo.json.android.fragment.BooleanFragment;
 import org.djodjo.json.android.fragment.EnumFragment;
+import org.djodjo.json.android.fragment.LimitedNumberFragment;
 import org.djodjo.json.android.fragment.NumberFragment;
 import org.djodjo.json.android.fragment.RangeFragment;
 import org.djodjo.json.android.fragment.StringFragment;
@@ -36,6 +37,7 @@ import java.util.Map;
 
 import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isBooleanType;
 import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isEnum;
+import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isLimitedNumber;
 import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isNumberType;
 import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isRangeObject;
 import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isStringType;
@@ -63,9 +65,10 @@ public class FragmentBuilder {
 
     static {
         commonPropertyMatchers = new LinkedTreeMap<Matcher<Schema>, Class>();
+        commonPropertyMatchers.put(isEnum(), EnumFragment.class);
         commonPropertyMatchers.put(isStringType(), StringFragment.class);
         commonPropertyMatchers.put(isBooleanType(), BooleanFragment.class);
-        commonPropertyMatchers.put(isEnum(), EnumFragment.class);
+        commonPropertyMatchers.put(isLimitedNumber(), LimitedNumberFragment.class);
         commonPropertyMatchers.put(isNumberType(), NumberFragment.class);
         commonPropertyMatchers.put(isRangeObject(), RangeFragment.class);
 

@@ -30,28 +30,30 @@ import org.djodjo.json.android.R;
 import java.util.ArrayList;
 
 
-public class NumberFragment extends BasePropertyFragment {
+public class LimitedNumberFragment extends BasePropertyFragment {
 
     public static final String ARG_MINIMUM = "minimum";
     public static final String ARG_MAXIMUM = "maximum";
 
     public final static int LAYOUT_NUMBER_TEXT = R.layout.fragment_number_text;
     public final static int LAYOUT_NUMBER_PICKER = R.layout.fragment_number_picker;
+    public final static int LAYOUT_NUMBER_SLIDER = R.layout.fragment_number_slider;
 
     private ArrayList<String> options;
 
-    public NumberFragment() {
+    public LimitedNumberFragment() {
         // Required empty public constructor
     }
 
     @Override
     protected int getLayoutId() {
-        int currDisplType = (displayType>=0)?displayType:displayTypes.get(ARG_GLOBAL_NUMBER_DISPLAY_TYPE);
+        int currDisplType = (displayType>=0)?displayType:displayTypes.get(ARG_GLOBAL_LIMITED_NUMBER_DISPLAY_TYPE);
         switch (currDisplType) {
             case DisplayType.DISPLAY_TYPE_TEXT: return LAYOUT_NUMBER_TEXT;
             case DisplayType.DISPLAY_TYPE_NUMBER_PICKER: return LAYOUT_NUMBER_PICKER;
+            case DisplayType.DISPLAY_TYPE_SLIDER: return LAYOUT_NUMBER_SLIDER;
         }
-        return LAYOUT_NUMBER_TEXT;
+        return LAYOUT_NUMBER_SLIDER;
     }
 
     @Override
@@ -63,7 +65,20 @@ public class NumberFragment extends BasePropertyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        if(displayType == LAYOUT_NUMBER_TEXT) {
+        if(layoutId == LAYOUT_NUMBER_SLIDER) {
+            SeekBar seekBar = (SeekBar)v.findViewById(R.id.prop_value);
+            if(buttonSelector!=0){
+                seekBar.setThumb(getActivity().getResources().getDrawable(buttonSelector));
+            } else if (customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_SLIDER_THUMB_SELECTOR) != 0)
+            {
+                seekBar.setThumb(getActivity().getResources().getDrawable(customButtonSelectors.get(ARG_GLOBAL_SLIDER_THUMB_SELECTOR)));
+            }
+
+            if(customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE) != 0)
+            {
+                seekBar.setProgressDrawable(getActivity().getResources().getDrawable(customButtonSelectors.get(ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE)));
+            }
+        } else if(displayType == LAYOUT_NUMBER_TEXT) {
             TextView propValue = (TextView) v.findViewById(R.id.prop_value);
             propValue.setTextAppearance(getActivity(), styleValue);
         }

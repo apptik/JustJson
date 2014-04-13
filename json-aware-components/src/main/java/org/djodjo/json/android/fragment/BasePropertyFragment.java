@@ -53,6 +53,7 @@ public abstract class BasePropertyFragment extends Fragment {
 
     public static final String ARG_GLOBAL_STRING_DISPLAY_TYPE = "globalStringDisplayType";
     public static final String ARG_GLOBAL_NUMBER_DISPLAY_TYPE = "globalNumberDisplayType";
+    public static final String ARG_GLOBAL_LIMITED_NUMBER_DISPLAY_TYPE = "globalLimitedNumberDisplayType";
     public static final String ARG_GLOBAL_BOOLEAN_DISPLAY_TYPE = "globalBooleanDisplayType";
     //array with any items
     public static final String ARG_GLOBAL_ARRAY_DISPLAY_TYPE = "globalArrayDisplayType";

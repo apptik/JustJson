@@ -110,8 +110,8 @@ public class SchemaDefMatchers {
             @Override
             protected boolean matchesSafely(Schema item) {
                 if(!isNumberType().matches(item)) return false;
-                if(item.getMinimum() == Double.MIN_VALUE) return false;
-                if(item.getMaximum() == Double.MAX_VALUE) return false;
+                if(Double.compare(item.getMinimum(), Double.NaN)!=0) return false;
+                if(Double.compare(item.getMaximum(), Double.NaN)!=0) return false;
                 return true;
             }
 
@@ -183,8 +183,8 @@ public class SchemaDefMatchers {
             protected boolean matchesSafely(Schema item) {
 
                 if(!isRangeObject().matches(item)) return false;
-                if(item.getProperties().optValue("min").getMinimum() == Double.MIN_VALUE) return false;
-                if(item.getProperties().optValue("max").getMaximum() == Double.MAX_VALUE) return false;
+                if(Double.compare(item.getProperties().optValue("min").getMinimum(), Double.NaN)!=0) return false;
+                if(Double.compare(item.getProperties().optValue("max").getMaximum(), Double.NaN)!=0) return false;
 
 
                 return true;

@@ -130,7 +130,8 @@ public class LayoutBuilder<T extends Schema> {
 
         this.globalDisplayTypes = new HashMap<String, Integer>();
         setGlobalStringDisplayType(DisplayType.DISPLAY_TYPE_TEXT);
-        setGlobalNumberDisplayType(DisplayType.DISPLAY_TYPE_SLIDER);
+        setGlobalNumberDisplayType(DisplayType.DISPLAY_TYPE_TEXT);
+        setGlobalLimitedNumberDisplayType(DisplayType.DISPLAY_TYPE_SLIDER);
         setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_SWITCH);
         setGlobalArrayDisplayType(DisplayType.DISPLAY_TYPE_LISTVIEW);
         setGlobalArrayEnumDisplayType(DisplayType.DISPLAY_TYPE_SPINNER); //multi select
@@ -258,6 +259,16 @@ public class LayoutBuilder<T extends Schema> {
 
     public LayoutBuilder<T> setGlobalNumberDisplayType(int globalDisplayType) {
         this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_NUMBER_DISPLAY_TYPE, globalDisplayType);
+        return this;
+    }
+
+    /**
+     * Set global display type of a limited number property. Limited means the property has "minimum" and "maximum" values defined.
+     * @param globalDisplayType
+     * @return
+     */
+    public LayoutBuilder<T> setGlobalLimitedNumberDisplayType(int globalDisplayType) {
+        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_LIMITED_NUMBER_DISPLAY_TYPE, globalDisplayType);
         return this;
     }
 

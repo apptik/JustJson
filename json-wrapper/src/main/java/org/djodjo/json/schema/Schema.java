@@ -172,7 +172,7 @@ public abstract class Schema extends JsonObjectWrapper {
     }
 
     public double getMaximum() {
-        return getJson().optDouble("maximum", Double.MAX_VALUE);
+        return getJson().optDouble("maximum", Double.NaN);
     }
 
     public boolean getExclusiveMaximum() {
@@ -180,7 +180,7 @@ public abstract class Schema extends JsonObjectWrapper {
     }
 
     public double getMinimum() {
-        return getJson().optDouble("minimum", Double.MIN_VALUE);
+        return getJson().optDouble("minimum", Double.NaN);
     }
 
     public boolean getExclusiveMinimum() {

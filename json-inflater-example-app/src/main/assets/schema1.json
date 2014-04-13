@@ -14,8 +14,7 @@
 		    "title": "Age",
 			"description": "Age in years",
 			"type": "integer",
-			"minimum": 0,
-			"maximum": 150
+			"minimum": 0
 		}
 	},
 	"required": ["firstName", "lastName"]
