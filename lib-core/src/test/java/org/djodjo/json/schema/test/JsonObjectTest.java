@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.test;
+package org.djodjo.json.schema.test;
 
 import java.net.ConnectException;
 import java.util.ArrayList;

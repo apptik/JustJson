@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.test;
+package org.djodjo.json.schema.test;
 
-
-import junit.framework.Assert;
 
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonObject;
-import org.djodjo.json.JsonReader;
 import org.djodjo.json.Validator;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
@@ -29,8 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.net.URI;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
