@@ -760,6 +760,13 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
         return nameValuePairs.entrySet().iterator();
     }
 
+    /**
+     * Merge Json Object with another Json Object.
+     * It does not change element of another with the same name exists.
+     * However if the element is Json Object then it will go down and merge that object.
+     * @param another
+     * @return
+     */
     public JsonObject merge(JsonObject another) {
         for(Map.Entry<String, JsonElement> anotherEntry:another) {
             JsonElement curr = this.opt(anotherEntry.getKey());
@@ -769,7 +776,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
                 } catch (JsonException e) {
                     e.printStackTrace();
                 }
-            } else if(curr.isJsonObject() || anotherEntry.getValue().isJsonObject()) {
+            } else if(curr.isJsonObject() && anotherEntry.getValue().isJsonObject()) {
                 curr.asJsonObject().merge(anotherEntry.getValue().asJsonObject());
             }
         }
