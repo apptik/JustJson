@@ -1,1 +1,1 @@
-include ':example app', ':json-wrapper', ':jsonfier', ':widget', ':json-aware-components', 'lib-core', 'json-inflater'
+include ':example app', ':json-wrapper', ':jsonfier', ':widget', ':json-aware-components', ':json-inflater-example-app', 'lib-core', 'json-inflater'

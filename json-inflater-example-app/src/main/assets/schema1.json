@@ -1,0 +1,43 @@
+{
+"properties" : {
+    "propString" : {
+		"type" : "string",
+		"title" : "string prop"
+	},
+	"propNumber" : {
+		"type" : "number",
+		"title" : "number prop",
+		"description" : "description for a number"
+	},
+	"propBool" : {
+    		"type" : "boolean",
+    		"title" : "bool prop"
+    	},
+    "propEnum1" : {
+		"title" : "enum prop short",
+		"enum" : ["Yes", "No", "Don't Know"]
+	},
+    "propEnum2" : {
+		"title" : "enum prop long",
+		"enum" : ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", 345, 567, 890]
+	},
+	"propPriceRange" : {
+	    "type" : "object",
+	    "title" : "Price",
+	    "description" : "Price range",
+	    "properties" : {
+	        "min" : {
+	            "type" : "number",
+	            "minimum" : 10,
+	            "maximum" : 150
+	        },
+	        "max" : {
+				"type" : "number",
+	            "minimum" : 50,
+	            "maximum" : 200
+	        }
+	    }
+	}
+}
+
+}
