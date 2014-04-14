@@ -125,6 +125,9 @@ public class MultiSlider extends View {
             if (min > this.max) {
                 min = this.max;
             }
+            if(min < mScaleMin) {
+                min = mScaleMin;
+            }
             if (this.min != min) {
                 this.min = min;
                 if(value < this.min) {
@@ -142,6 +145,9 @@ public class MultiSlider extends View {
         public Thumb setMax(int max) {
             if (max < this.min) {
                 max = this.min;
+            }
+            if(max > mScaleMax) {
+                max = mScaleMax;
             }
             if (this.max != max) {
                 this.max = max;
