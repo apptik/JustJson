@@ -139,8 +139,9 @@ public class MultiSlider extends View {
             return value;
         }
 
-        private Thumb setValue(int value) {
+        public Thumb setValue(int value) {
             this.value = value;
+            invalidate();
             return this;
         }
 
@@ -203,7 +204,7 @@ public class MultiSlider extends View {
 //        mMinHeight = a.getDimensionPixelSize(R.styleable.MultiSlider_minHeight, mMinHeight);
 //        mMaxHeight = a.getDimensionPixelSize(R.styleable.MultiSlider_maxHeight, mMaxHeight);
 
-        setMax(a.getInt(R.styleable.MultiSlider_scaleMax, mScaleMax));
+        setMax(a.getInt(R.styleable.MultiSlider_scaleMax, mScaleMax), true);
 
 
 
@@ -222,14 +223,33 @@ public class MultiSlider extends View {
         setThumbs(thumbDrawable, range, range1, range2); // will guess thumbOffset if thumb != null...
         // ...but allow layout to override this
 
-
-
         int thumbOffset = a.getDimensionPixelOffset(R.styleable.MultiSlider_thumbOffset, thumbDrawable.getIntrinsicWidth()/2);
         setThumbOffset(thumbOffset);
+
+        positionThumbs();
 
         mScaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mNoInvalidate = false;
         a.recycle();
+    }
+
+    private void positionThumbs() {
+        if(mThumbs==null || mThumbs.isEmpty()) return;
+
+        if(mThumbs.size()>0) {
+            mThumbs.getFirst().setValue(mScaleMin);
+        }
+        if(mThumbs.size()>1) {
+            mThumbs.getLast().setValue(mScaleMax);
+        }
+        if(mThumbs.size()>2) {
+            int even = (mScaleMax - mScaleMin) / mThumbs.size()-2;
+            int lastPos = even / 2;
+            for (int i = 1; i < mThumbs.size()-1; i++) {
+                mThumbs.get(i).setValue(lastPos);
+                lastPos += even;
+            }
+        }
     }
 
     public void setOnThumbValueChangeListener(OnThumbValueChangeListener l) {
@@ -349,7 +369,7 @@ public class MultiSlider extends View {
      *
      * @param thumb Drawable representing the thumb
      */
-    public void setThumbs(Drawable thumb, Drawable range, Drawable range1, Drawable range2) {
+    private void setThumbs(Drawable thumb, Drawable range, Drawable range1, Drawable range2) {
         if (thumb==null) return;
         boolean needUpdate;
         Drawable rangeDrawable;
@@ -443,18 +463,36 @@ public class MultiSlider extends View {
     }
 
     public synchronized void setMax(int max) {
+        setMax(max, true, false);
+    }
+    public synchronized void setMax(int max, boolean extendMaxForThumbs) {
+        setMax(max, extendMaxForThumbs, false);
+    }
+
+    public synchronized void setMax(int max, boolean extendMaxForThumbs, boolean repositionThumbs) {
         if (max < mScaleMin) {
             max = mScaleMin  + mStep;
         }
         if (max != mScaleMax) {
             mScaleMax = max;
-            postInvalidate();
 
-            if (mThumbs.getLast().getValue() > max) {
-                setValue(mThumbs.getLast(), max, false);
+            //check for thumbs out of bounds and adjust the max for those exceeding the new one
+            for(Thumb thumb:mThumbs) {
+                if (thumb.getValue() > max) {
+                    setValue(thumb, max, false);
+                }
+
+                if(extendMaxForThumbs) {
+                    thumb.setMax(max);
+                }
+                else if (thumb.getMax()>max) {
+                    thumb.setMax(max);
+                }
             }
+            if(repositionThumbs)
+                positionThumbs();
 
-
+            postInvalidate();
         }
 
         if ((mKeyProgressIncrement == 0) || (mScaleMax / mKeyProgressIncrement > 20)) {
