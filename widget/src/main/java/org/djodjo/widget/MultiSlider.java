@@ -714,6 +714,9 @@ public class MultiSlider extends View {
         Thumb currThumb = null;
         if(mDraggingThumb.size() > pointerIdx) {
             currThumb = mDraggingThumb.get(pointerIdx);
+        } else {
+            currThumb = getClosestThumb(newValue);
+            onStartTrackingTouch(currThumb);
         }
 
 
@@ -723,8 +726,8 @@ public class MultiSlider extends View {
                 if (isInScrollingContainer()) {
                     mTouchDownX = event.getX();
                 } else {
-                    currThumb = getClosestThumb(newValue);
-                    onStartTrackingTouch(currThumb);
+                    //currThumb = getClosestThumb(newValue);
+                    //onStartTrackingTouch(currThumb);
                     setPressed(true);
                     if (currThumb != null && currThumb.getThumb() != null) {
                         invalidate(currThumb.getThumb().getBounds()); // This may be within the padding region
@@ -740,8 +743,8 @@ public class MultiSlider extends View {
                 if (isInScrollingContainer()) {
                     mTouchDownX = event.getX();
                 } else {
-                    currThumb = getClosestThumb(newValue);
-                    onStartTrackingTouch(currThumb);
+                    //currThumb = getClosestThumb(newValue);
+                    //onStartTrackingTouch(currThumb);
                     setPressed(true);
                     if (currThumb != null && currThumb.getThumb() != null) {
                         invalidate(currThumb.getThumb().getBounds()); // This may be within the padding region
@@ -771,8 +774,8 @@ public class MultiSlider extends View {
                 } else {
                     final float x = event.getX();
                     if (Math.abs(x - mTouchDownX) > mScaledTouchSlop) {
-                        currThumb = getClosestThumb(newValue);
-                        onStartTrackingTouch(currThumb);
+                        //currThumb = getClosestThumb(newValue);
+                        //onStartTrackingTouch(currThumb);
                         setPressed(true);
                         if (currThumb != null && currThumb.getThumb() != null) {
                             invalidate(currThumb.getThumb().getBounds()); // This may be within the padding region
@@ -793,10 +796,10 @@ public class MultiSlider extends View {
                     onStopTrackingTouch(currThumb);
                     Log.d("Multislider", "pointer:" + pointerIdx + " ACTION: " + event.getActionMasked());
                 } else {
-                    currThumb = getClosestThumb(newValue);
+                    //currThumb = getClosestThumb(newValue);
                     // Touch up when we never crossed the touch slop threshold should
                     // be interpreted as a tap-seek to that location.
-                    onStartTrackingTouch(currThumb);
+                    //onStartTrackingTouch(currThumb);
                     setValue(currThumb, newValue, true);
                     onStopTrackingTouch(currThumb);
                 }
