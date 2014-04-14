@@ -486,7 +486,6 @@ public class MultiSlider extends View {
     @Override
     protected void drawableStateChanged() {
         super.drawableStateChanged();
-        Log.d("Multislider", "drawable state changed :" + mDraggingThumbs.size());
         if(mDraggingThumbs !=null && !mDraggingThumbs.isEmpty()) {
             int[] state = getDrawableState();
             for(Thumb thumb: mDraggingThumbs) {
@@ -743,7 +742,6 @@ public class MultiSlider extends View {
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                Log.d("Multislider", "pointer:" + pointerIdx + " ACTION: " + event.getActionMasked());
                 if (isInScrollingContainer()) {
                     mTouchDownX = event.getX();
                 } else {
@@ -762,7 +760,6 @@ public class MultiSlider extends View {
 
             //with move we dont have pointer action so set them all
             case MotionEvent.ACTION_MOVE:
-                //Log.d("Multislider", "thumbs:" + mDraggingThumbs.size() + " ACTION: " + event.getActionMasked());
                 if (!mDraggingThumbs.isEmpty()) {
                     //need the index
                     for(int i=0;i< mDraggingThumbs.size();i++) {
@@ -794,11 +791,9 @@ public class MultiSlider extends View {
 
             //there are other pointers left
             case MotionEvent.ACTION_POINTER_UP:
-                //Log.d("Multislider", "thumbs:" + mDraggingThumbs.size() + " ACTION: " + event.getActionMasked());
                 if (currThumb!=null) {
                     setValue(currThumb, newValue, true);
                     onStopTrackingTouch(currThumb);
-                    //Log.d("Multislider", "pointer:" + pointerIdx + " ACTION: " + event.getActionMasked());
                 } else {
                     currThumb = getClosestThumb(newValue);
                     // Touch up when we never crossed the touch slop threshold should
