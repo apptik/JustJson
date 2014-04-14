@@ -205,12 +205,9 @@ public class MultiSlider extends View {
 
         setMax(a.getInt(R.styleable.MultiSlider_scaleMax, mScaleMax));
 
+
+
         //TODO
-        //init values for thumbs 1/2 if there are any
-
-
-
-//TODO
         // mMirrorForRtl = a.getBoolean(R.styleable.MultiSlider_mirrorForRtl, mMirrorForRtl);
 
 
