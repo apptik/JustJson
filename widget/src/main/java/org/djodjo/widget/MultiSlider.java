@@ -122,7 +122,16 @@ public class MultiSlider extends View {
         }
 
         public Thumb setMin(int min) {
-            this.min = min;
+            if (min > this.max) {
+                min = this.max;
+            }
+            if (this.min != min) {
+                this.min = min;
+                if(value < this.min) {
+                    value = this.min;
+                    invalidate();
+                }
+            }
             return this;
         }
 
@@ -131,7 +140,16 @@ public class MultiSlider extends View {
         }
 
         public Thumb setMax(int max) {
-            this.max = max;
+            if (max < this.min) {
+                max = this.min;
+            }
+            if (this.max != max) {
+                this.max = max;
+                if(value > this.max) {
+                    value = this.max;
+                    invalidate();
+                }
+            }
             return this;
         }
 
@@ -473,6 +491,7 @@ public class MultiSlider extends View {
         if (max < mScaleMin) {
             max = mScaleMin  + mStep;
         }
+
         if (max != mScaleMax) {
             mScaleMax = max;
 
