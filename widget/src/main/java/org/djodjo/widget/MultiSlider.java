@@ -234,7 +234,9 @@ public class MultiSlider extends View {
 //        mMinHeight = a.getDimensionPixelSize(R.styleable.MultiSlider_minHeight, mMinHeight);
 //        mMaxHeight = a.getDimensionPixelSize(R.styleable.MultiSlider_maxHeight, mMaxHeight);
 
+
         setMax(a.getInt(R.styleable.MultiSlider_scaleMax, mScaleMax), true);
+        setMin(a.getInt(R.styleable.MultiSlider_scaleMin, mScaleMin), true);
 
 
 
@@ -501,7 +503,7 @@ public class MultiSlider extends View {
 
     public synchronized void setMax(int max, boolean extendMaxForThumbs, boolean repositionThumbs) {
         if (max < mScaleMin) {
-            max = mScaleMin  + mStep;
+            max = mScaleMin;
         }
 
         if (max != mScaleMax) {
@@ -509,16 +511,59 @@ public class MultiSlider extends View {
 
             //check for thumbs out of bounds and adjust the max for those exceeding the new one
             for(Thumb thumb:mThumbs) {
-                if (thumb.getValue() > max) {
-                    setValue(thumb, max, false);
-                }
-
                 if(extendMaxForThumbs) {
                     thumb.setMax(max);
                 }
                 else if (thumb.getMax()>max) {
                     thumb.setMax(max);
                 }
+
+                if (thumb.getValue() > max) {
+                    setValue(thumb, max, false);
+                }
+
+
+            }
+            if(repositionThumbs)
+                positionThumbs();
+
+            postInvalidate();
+        }
+
+        if ((mKeyProgressIncrement == 0) || (mScaleMax / mKeyProgressIncrement > 20)) {
+            // It will take the user too long to change this via keys, change it
+            // to something more reasonable
+            setKeyProgressIncrement(Math.max(1, Math.round((float) mScaleMax / 20)));
+        }
+    }
+
+    public synchronized void setMin(int min) {
+        setMin(min, true, false);
+    }
+    public synchronized void setMin(int min, boolean extendMaxForThumbs) {
+        setMin(min, extendMaxForThumbs, false);
+    }
+    public synchronized void setMin(int min, boolean extendMaxForThumbs, boolean repositionThumbs) {
+        if (min > mScaleMax) {
+            min = mScaleMax;
+        }
+
+        if (min != mScaleMin) {
+            mScaleMin = min;
+
+            //check for thumbs out of bounds and adjust the max for those exceeding the new one
+            for(Thumb thumb:mThumbs) {
+                if(extendMaxForThumbs) {
+                    thumb.setMin(min);
+                }
+                else if (thumb.getMin()<min) {
+                    thumb.setMin(min);
+                }
+
+                if (thumb.getValue() < min) {
+                    setValue(thumb, min, false);
+                }
+
             }
             if(repositionThumbs)
                 positionThumbs();

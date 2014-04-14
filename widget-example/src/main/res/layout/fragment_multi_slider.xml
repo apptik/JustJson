@@ -61,6 +61,7 @@
         app:range1="@drawable/multislider_scrubber_track_holo_light"
         app:thumbDrawable="@drawable/multislider_scrubber_control_selector_holo_light"
 
+        app:scaleMin="500"
         app:scaleMax="5000"
         />
 
