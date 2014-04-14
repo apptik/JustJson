@@ -158,8 +158,14 @@ public class MultiSlider extends View {
         }
 
         public Thumb setValue(int value) {
-            this.value = value;
-            invalidate();
+            if(value<min)
+                value = min;
+            if(value>max)
+                value = max;
+            if(value!=this.value) {
+                this.value = value;
+                invalidate();
+            }
             return this;
         }
 
