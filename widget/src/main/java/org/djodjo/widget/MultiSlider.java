@@ -225,14 +225,15 @@ public class MultiSlider extends View {
         Drawable range2 = a.getDrawable(R.styleable.MultiSlider_range2);
 
         setThumbs(thumbDrawable, range, range1, range2); // will guess thumbOffset if thumb != null...
-        mNoInvalidate = false;
         // ...but allow layout to override this
+
+
 
         int thumbOffset = a.getDimensionPixelOffset(R.styleable.MultiSlider_thumbOffset, thumbDrawable.getIntrinsicWidth()/2);
         setThumbOffset(thumbOffset);
 
         mScaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-
+        mNoInvalidate = false;
         a.recycle();
     }
 
@@ -362,6 +363,7 @@ public class MultiSlider extends View {
         // it recalcuating thumbOffset (if for example it the bounds of the
         // drawable changed)
         int curr = 0;
+        int padding = 0;
         for(Thumb mThumb:mThumbs) {
             curr ++;
             if (mThumb.getThumb()!=null && thumb != mThumb.getThumb()) {
@@ -389,6 +391,7 @@ public class MultiSlider extends View {
             // progress bar.
             mThumb.setThumbOffset(thumb.getIntrinsicWidth() / 2);
 
+            padding = Math.max(padding,mThumb.getThumbOffset());
             // If we're updating get the new states
             if (needUpdate &&
                     (newDrawable.getIntrinsicWidth() != mThumb.getThumb().getIntrinsicWidth()
@@ -407,8 +410,8 @@ public class MultiSlider extends View {
                 }
 
             }
-
         }
+        setPadding(padding,getPaddingTop(),padding, getPaddingBottom());
 
     }
 
