@@ -48,6 +48,16 @@ public class MultiSlider extends View {
      */
     private int mScaleMin;
     private int mScaleMax;
+
+
+    public int getStep() {
+        return mStep;
+    }
+
+    public void setStep(int mStep) {
+        this.mStep = mStep;
+    }
+
     private int mStep;
 
 
@@ -223,6 +233,7 @@ public class MultiSlider extends View {
 //        mMaxHeight = a.getDimensionPixelSize(R.styleable.MultiSlider_maxHeight, mMaxHeight);
 
 
+        setStep(a.getInt(R.styleable.MultiSlider_scaleStep, mStep));
         setMax(a.getInt(R.styleable.MultiSlider_scaleMax, mScaleMax), true);
         setMin(a.getInt(R.styleable.MultiSlider_scaleMin, mScaleMin), true);
 
@@ -281,6 +292,7 @@ public class MultiSlider extends View {
     }
 
     private void initMultiSlider() {
+        mStep = 1;
         mScaleMin = 0;
         mScaleMax = 100;
         mMinWidth = 24;
@@ -340,15 +352,29 @@ public class MultiSlider extends View {
         if(thumb == null || thumb.getThumb()==null) return;
         int currIdx = mThumbs.indexOf(thumb);
 
+        if((value-mScaleMin) % mStep != 0) {
+            value += mStep - ((value-mScaleMin) % mStep);
+        }
+
         if (value < thumb.getMin()) {
-            thumb.value = thumb.getMin();
-        } else if (value > thumb.getMax()) {
-            thumb.value = thumb.getMax();
-        } else if(mThumbs.size() > currIdx+1 && value > mThumbs.get(currIdx+1).getValue()) {
-            thumb.value = mThumbs.get(currIdx+1).getValue();
-        } else if(currIdx > 0 && value < mThumbs.get(currIdx-1).getValue()) {
-            thumb.value = mThumbs.get(currIdx-1).getValue();
-        } else if (value != thumb.getValue()) {
+            value = thumb.getMin();
+        }
+
+        if (value > thumb.getMax()) {
+            value = thumb.getMax();
+        }
+
+        if(mThumbs.size() > currIdx+1 && value > mThumbs.get(currIdx+1).getValue()) {
+           value = mThumbs.get(currIdx+1).getValue();
+        }
+
+        if(currIdx > 0 && value < mThumbs.get(currIdx-1).getValue()) {
+            value = mThumbs.get(currIdx-1).getValue();
+        }
+
+
+
+            if (value != thumb.getValue()) {
             thumb.value = value;
         }
         if(mOnThumbValueChangeListener != null) {

@@ -50,7 +50,8 @@ public class MultiSliderFragment extends Fragment {
 
         MultiSlider multiSlider = (MultiSlider)v.findViewById(R.id.range_slider);
 
-       // multiSlider.setMax(10000, true, true);
+        //multiSlider.setStep(100);
+       //multiSlider.setMax(5000, true, true);
        // multiSlider.setMin(500, true, true);
         //multiSlider.getThumb(1).setValue(7777);
         //multiSlider.getThumb(1).setMax(5000);

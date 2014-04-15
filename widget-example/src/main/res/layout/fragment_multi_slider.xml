@@ -62,8 +62,9 @@
         app:thumbDrawable="@drawable/multislider_scrubber_control_selector_holo_light"
         app:thumbNumber="3"
 
-        app:scaleMin="500"
+        app:scaleMin="0"
         app:scaleMax="5000"
+        app:scaleStep="100"
         />
 
 
