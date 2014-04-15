@@ -47,8 +47,8 @@ public abstract class JsonElementWrapper {
     private LinkedHashSet<SchemaFetcher> fetchers = new LinkedHashSet<SchemaFetcher>();
 
 
-    public JsonElement getJson() {
-        return json;
+    public <T extends JsonElement> T getJson() {
+        return (T)json;
     }
 
     public String getContentType() {

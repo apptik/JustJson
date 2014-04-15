@@ -371,7 +371,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
      *     to a boolean.
      */
     public boolean getBoolean(String name) throws JsonException {
-        return getBoolean(name, false);
+        return getBoolean(name, true);
     }
 
     /**
@@ -387,7 +387,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
      * or {@code fallback} otherwise.
      */
     public boolean optBoolean(String name, boolean fallback) {
-        return optBoolean(name, fallback, false);
+        return optBoolean(name, fallback, true);
     }
 
     public boolean optBoolean(String name, boolean fallback, boolean strict) {
@@ -423,7 +423,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
     }
 
     public double getDouble(String name) throws JsonException {
-        return getDouble(name, false);
+        return getDouble(name, true);
     }
 
     /**
@@ -439,7 +439,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
      * can be coerced to a double, or {@code fallback} otherwise.
      */
     public double optDouble(String name, double fallback) {
-        return optDouble(name, fallback, false);
+        return optDouble(name, fallback, true);
     }
 
     public double optDouble(String name, double fallback, boolean strict) {
@@ -474,7 +474,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
     }
 
     public int getInt(String name) throws JsonException {
-        return getInt(name, false);
+        return getInt(name, true);
     }
 
     /**
@@ -490,7 +490,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
      * can be coerced to an int, or {@code fallback} otherwise.
      */
     public int optInt(String name, int fallback) {
-        return optInt(name, fallback, false);
+        return optInt(name, fallback, true);
     }
 
     public int optInt(String name, int fallback, boolean strict) {
@@ -528,7 +528,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
     }
 
     public long getLong(String name) throws JsonException {
-        return getLong(name, false);
+        return getLong(name, true);
     }
 
     /**
@@ -547,7 +547,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
      * numbers via Util.
      */
     public long optLong(String name, long fallback) {
-        return optLong(name, fallback, false);
+        return optLong(name, fallback, true);
     }
 
     public long optLong(String name, long fallback, boolean strict) {
@@ -577,7 +577,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
     }
 
     public String getString(String name) throws JsonException {
-        return getString(name, false);
+        return getString(name, true);
     }
 
     /**
@@ -593,7 +593,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
      * necessary, or {@code fallback} if no such mapping exists.
      */
     public String optString(String name, String fallback) {
-        return optString(name, fallback, false);
+        return optString(name, fallback, true);
     }
 
     public String optString(String name, String fallback, boolean strict) {

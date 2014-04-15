@@ -128,7 +128,7 @@ public class SelfUseTest extends TestCase {
 
     public void testObjectGetBoolean() throws JsonException {
         object.put("foo", "true");
-        object.getBoolean("foo");
+        object.getBoolean("foo", false);
         assertEquals(1, objectGetCalls);
     }
 

@@ -14,21 +14,20 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
-import org.djodjo.json.android.fragment.BasePropertyFragment;
-import org.djodjo.json.android.fragment.EnumFragment;
-import org.djodjo.json.infalter.LayoutBuilder;
-import org.djodjo.json.android.fragment.ControllerCallback;
-import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.JsonObject;
+import org.djodjo.json.android.fragment.BasePropertyFragment;
+import org.djodjo.json.android.fragment.ControllerCallback;
+import org.djodjo.json.android.fragment.EnumFragment;
+import org.djodjo.json.exception.JsonException;
+import org.djodjo.json.infalter.LayoutBuilder;
 import org.djodjo.json.infalter.R;
-import org.djodjo.json.util.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.util.LinkedTreeMap;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 
@@ -132,7 +131,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    HashSet<Integer> hs = new HashSet<Integer>();
+                                    ArrayList<Integer> hs = new ArrayList<Integer>();
                                     hs.add(checkedId);
                                     layoutBuilders.get(hs)
                                             .build(R.id.oneOfContainer);
@@ -148,7 +147,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    HashSet<Integer> hs = new HashSet<Integer>();
+                                    ArrayList<Integer> hs = new ArrayList<Integer>();
                                     hs.add(position);
                                     layoutBuilders.get(hs)
                                             .build(R.id.oneOfContainer);
@@ -296,6 +295,8 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 bundle.putStringArrayList(EnumFragment.ARG_OPTIONS, opts);
                 bundle.putBoolean(EnumFragment.ARG_IS_CONTROLLER, true);
                 bundle.putString(BasePropertyFragment.ARG_LABEL, controller);
+                //TODO doesnt work like this for fragment builder
+                bundle.putBundle(ARG_SETTING_BUNDLE, settingsArgs);
                 frag.setArguments(bundle);
                 transaction.add(R.id.oneOfControllers, frag, controller);
             }

@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     testCompile 'junit:junit:[4,)'
-    compile project (':lib-core')
+    compile project (':jjson-core')
     compile 'org.hamcrest:hamcrest-core:1.3'
     compile 'org.hamcrest:hamcrest-library:1.3'
     compile 'org.hamcrest:hamcrest-integration:1.3'

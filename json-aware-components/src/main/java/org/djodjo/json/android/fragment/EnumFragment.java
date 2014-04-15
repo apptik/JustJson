@@ -60,7 +60,7 @@ public class EnumFragment extends BasePropertyFragment {
             case DisplayType.DISPLAY_TYPE_RADIO: return LAYOUT_ENUM_RADIO;
         }
 
-        if(options.size()>6)
+        if(options.size()>3)
             return LAYOUT_ENUM_SPINNER;
             //return LAYOUT_ENUM_LISTVIEW;
         else
