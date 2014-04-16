@@ -399,16 +399,14 @@ public class MultiSlider extends View {
         }
 
         if(mThumbs.size() > currIdx+1 && value > mThumbs.get(currIdx+1).getValue()) {
-           value = mThumbs.get(currIdx+1).getValue();
+            value = mThumbs.get(currIdx+1).getValue();
         }
 
         if(currIdx > 0 && value < mThumbs.get(currIdx-1).getValue()) {
             value = mThumbs.get(currIdx-1).getValue();
         }
 
-
-
-            if (value != thumb.getValue()) {
+        if (value != thumb.getValue()) {
             thumb.value = value;
         }
         if(mOnThumbValueChangeListener != null) {
@@ -684,9 +682,15 @@ public class MultiSlider extends View {
 
         float scale = getScaleSize() > 0 ? (float) thumb.getValue() / (float) getScaleSize() : 0;
 
+        Drawable prevThumb = null;
+        int currIdx = mThumbs.indexOf(thumb);
+        if( currIdx > 0) {
+            prevThumb = mThumbs.get(currIdx-1).getThumb();
+        }
+
         if (thumbHeight > trackHeight) {
             if (thumb != null) {
-                setThumbPos(w, h, thumb.getThumb(), thumb.getRange(), scale, 0, thumb.getThumbOffset());
+                setThumbPos(w, h, thumb.getThumb(), prevThumb, thumb.getRange(), scale, 0, thumb.getThumbOffset());
             }
             int gapForCenteringTrack = (thumbHeight - trackHeight) / 2;
             if (mTrack != null) {
@@ -703,15 +707,22 @@ public class MultiSlider extends View {
             }
             int gap = (trackHeight - thumbHeight) / 2;
             if (thumb != null) {
-                setThumbPos(w, h, thumb.getThumb(), thumb.getRange(), scale, gap, thumb.getThumbOffset());
+                setThumbPos(w, h, thumb.getThumb(), prevThumb, thumb.getRange(), scale, gap, thumb.getThumbOffset());
             }
+        }
+
+        //update thumbs after it
+        for(int i = currIdx+1;i<mThumbs.size();i++) {
+            int gap = (trackHeight - thumbHeight) / 2;
+            scale = getScaleSize() > 0 ? (float) mThumbs.get(i).getValue() / (float) getScaleSize() : 0;
+            setThumbPos(w, h, mThumbs.get(i).getThumb(), mThumbs.get(i-1).getThumb(), mThumbs.get(i).getRange(), scale, gap, mThumbs.get(i).getThumbOffset());
         }
     }
 
     /**
      * @param gap If set to {@link Integer#MIN_VALUE}, this will be ignored and
      */
-    private void setThumbPos(int w, int h, Drawable thumb, Drawable range, float scale, int gap, int thumbOffset) {
+    private void setThumbPos(int w, int h, Drawable thumb, Drawable prevThumb, Drawable range, float scale, int gap, int thumbOffset) {
         int available = w - getPaddingLeft() - getPaddingRight();
         int thumbWidth = thumb.getIntrinsicWidth();
         int thumbHeight = thumb.getIntrinsicHeight();
@@ -745,8 +756,12 @@ public class MultiSlider extends View {
         int right = w;
         int bottom = h;
 
+        int leftRange = 0;
+        if(prevThumb!=null) {
+            leftRange = prevThumb.getBounds().left;
+        }
         if (range != null) {
-            range.setBounds(0, 0, left, bottom);
+            range.setBounds(leftRange, 0, left, bottom);
         }
 
         invalidate();

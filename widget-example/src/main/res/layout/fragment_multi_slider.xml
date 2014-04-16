@@ -57,14 +57,15 @@
         android:layout_height="wrap_content"
 
         app:track="@drawable/multislider_scrubber_track_holo_light"
-        app:range="@drawable/multislider_scrubber_track_holo_light"
         app:range1="@drawable/multislider_scrubber_track_holo_light"
+        app:range="@drawable/multislider_scrubber_primary_holo"
         app:thumbDrawable="@drawable/multislider_scrubber_control_selector_holo_light"
-        app:thumbNumber="3"
+        app:thumbNumber="2"
 
         app:scaleMin="0"
         app:scaleMax="5000"
         app:scaleStep="100"
+        app:keepThumbsApart="true"
         />
 
 
