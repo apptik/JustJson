@@ -48,17 +48,8 @@ public class MultiSlider extends View {
      */
     private int mScaleMin;
     private int mScaleMax;
-
-
-    public int getStep() {
-        return mStep;
-    }
-
-    public void setStep(int mStep) {
-        this.mStep = mStep;
-    }
-
     private int mStep;
+    private boolean mKeepThumbsApart;
 
 
     private Drawable mTrack;
@@ -120,6 +111,30 @@ public class MultiSlider extends View {
         }
 
         public Thumb() {
+        }
+
+        /**
+         * Only useful the keepThumbsApart is set, otherwise return ScaleMin
+         * @return the minimum value a thumb can obtain depending on other thumbs before it
+         */
+        public int getPossibleMin() {
+            int res = mScaleMin;
+            if(mKeepThumbsApart) {
+
+            }
+
+            return res;
+        }
+        /**
+         * Only useful the keepThumbsApart is set, otherwise return ScaleMax
+         * @return the maximum value a thumb can have depending the thumbs after it
+         */
+        public int getPossibleMax() {
+            int res = mScaleMax;
+            if(mKeepThumbsApart) {
+
+            }
+            return res;
         }
 
         public int getMin() {
@@ -234,6 +249,7 @@ public class MultiSlider extends View {
 
 
         setStep(a.getInt(R.styleable.MultiSlider_scaleStep, mStep));
+        setKeepThumbsApart(a.getBoolean(R.styleable.MultiSlider_keepThumbsApart, mKeepThumbsApart));
         setMax(a.getInt(R.styleable.MultiSlider_scaleMax, mScaleMax), true);
         setMin(a.getInt(R.styleable.MultiSlider_scaleMin, mScaleMin), true);
 
@@ -262,6 +278,23 @@ public class MultiSlider extends View {
         mScaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mNoInvalidate = false;
         a.recycle();
+    }
+
+
+    public boolean isKeepThumbsApart() {
+        return mKeepThumbsApart;
+    }
+
+    public void setKeepThumbsApart(boolean mKeepThumbsApart) {
+        this.mKeepThumbsApart = mKeepThumbsApart;
+    }
+
+    public int getStep() {
+        return mStep;
+    }
+
+    public void setStep(int mStep) {
+        this.mStep = mStep;
     }
 
     private int  getScaleSize() {
@@ -293,6 +326,7 @@ public class MultiSlider extends View {
 
     private void initMultiSlider() {
         mStep = 1;
+        mKeepThumbsApart = false;
         mScaleMin = 0;
         mScaleMax = 100;
         mMinWidth = 24;
