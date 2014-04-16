@@ -104,7 +104,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                              Bundle savedInstanceState) {
         View v = isRadioDisplay() ?
                 inflater.inflate(R.layout.fragment_one_of_radio, container, false):
-                inflater.inflate(R.layout.fragment_oneof_spinner, container, false);
+                inflater.inflate(R.layout.fragment_one_of_spinner, container, false);
 
         if(isRadioDisplay()) {
             oneOfRadioGroup = (RadioGroup) v.findViewById(R.id.oneOfRadioGroup);
@@ -161,6 +161,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 });
             }
         }
+        performLayout();
         return v;
     }
 
@@ -172,6 +173,28 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
     public void onResume() {
         super.onResume();
 
+
+    }
+
+    @Override
+    public void onValueChanged(final String name, final int position) {
+        if(position>=0)
+            currSelection.put(name,position);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LayoutBuilder<Schema> lb = layoutBuilders.get(new ArrayList<Integer>(currSelection.values()));
+                //note that if controllers not chosen wisely there could be a combination where there are no layout matching
+
+                if(lb!=null)
+                    lb.build(R.id.oneOfContainer);
+            }
+        }).start();
+    }
+
+
+    private void performLayout() {
         //used to populate values for controllers
         LinkedTreeMap<String, LinkedHashSet<String>> controllerOptions =  new LinkedTreeMap<String, LinkedHashSet<String>>();
 
@@ -303,23 +326,6 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
 
             transaction.commit();
         }
-    }
-
-    @Override
-    public void onValueChanged(final String name, final int position) {
-        if(position>=0)
-            currSelection.put(name,position);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LayoutBuilder<Schema> lb = layoutBuilders.get(new ArrayList<Integer>(currSelection.values()));
-                //note that if controllers not chosen wisely there could be a combination where there are no layout matching
-
-                if(lb!=null)
-                    lb.build(R.id.oneOfContainer);
-            }
-        }).start();
     }
 
 }

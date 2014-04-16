@@ -96,9 +96,11 @@ public class RangeFragment extends BasePropertyFragment {
 
         MultiSlider seekBar = (MultiSlider)v.findViewById(R.id.range_slider);
 
+        seekBar.setMax(maxVal2, true, true);
+        seekBar.setMin(minVal1, true, true);
 
-        min.setText(String.valueOf(minVal1));
-        max.setText(String.valueOf(maxVal2));
+        min.setText(String.valueOf(seekBar.getThumb(0).getValue()));
+        max.setText(String.valueOf(seekBar.getThumb(1).getValue()));
 
         seekBar.setOnThumbValueChangeListener(new MultiSlider.OnThumbValueChangeListener() {
             @Override
