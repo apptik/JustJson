@@ -63,9 +63,10 @@
         app:thumbNumber="2"
 
         app:scaleMin="0"
-        app:scaleMax="5000"
-        app:scaleStep="100"
-        app:keepThumbsApart="true"
+        app:scaleMax="78"
+        app:scaleStep="1"
+        app:stepsThumbsApart="1"
+        app:drawThumbsApart="true"
         />
 
 

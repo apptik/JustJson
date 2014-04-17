@@ -23,7 +23,9 @@
         <attr name="scaleMax" format="integer"/>
         <attr name="scaleStep" format="integer"/>
 
-        <attr name="keepThumbsApart" format="boolean"/>
+
+        <attr name="stepsThumbsApart" format="integer"/>
+        <attr name="drawThumbsApart" format="boolean"/>
 
         <attr name="thumbDrawable" format="reference"/>
         <attr name="thumbNumber" format="integer"/>
