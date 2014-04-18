@@ -23,7 +23,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -751,19 +750,12 @@ public class MultiSlider extends View {
      * @param gap If set to {@link Integer#MIN_VALUE}, this will be ignored and
      */
     private void setThumbPos(int w, int h, Drawable thumb, Drawable prevThumb, Drawable range, float scale, int gap, int thumbOffset, int optThumbOffset) {
-        int available = w - getPaddingLeft() - getPaddingRight();
+        final int available = getAvailable();
         int thumbWidth = thumb.getIntrinsicWidth();
         int thumbHeight = thumb.getIntrinsicHeight();
 
         //todo change available before also
-        if(mDrawThumbsApart) {
-            available -= thumbWidth * mThumbs.size();
-        } else {
-            available -= thumbWidth;
-        }
 
-        // The extra space for the thumb to move on the track
-        available += thumbOffset * 2;
 
         float scaleOffset = getScaleSize() > 0 ? (float) mScaleMin / (float) getScaleSize() : 0;
 
@@ -891,6 +883,14 @@ public class MultiSlider extends View {
         return false;
     }
 
+    private int getAvailable() {
+        int available = getWidth() - getPaddingLeft() - getPaddingRight();
+        if(mThumbs!=null && mThumbs.size()>0) {
+            available -= getThumbOptOffset(mThumbs.getLast());
+        }
+        //TODO check for the offset
+        return available;
+    }
     /**
      * Get closest thumb to play with,
      * incase more than one get the last one
@@ -898,17 +898,15 @@ public class MultiSlider extends View {
      * @return
      */
     private LinkedList<Thumb> getClosestThumb(int x) {
-        Log.d("Multislider", "getclosest thumb" + x);
         LinkedList<Thumb> exact = new LinkedList<Thumb>();
         Thumb closest = null;
-        int currDistance = getScaleSize()+1;
+        int currDistance = getAvailable()+1;
 
         for(Thumb thumb:mThumbs) {
             if(thumb.getThumb() == null) continue;
 
             int minV = x - thumb.getThumb().getIntrinsicWidth();
             int maxV = x + thumb.getThumb().getIntrinsicWidth();
-            Log.d("Multislider", "value: " + thumb.getValue());
             if (thumb.getThumb().getBounds().centerX() >= minV && thumb.getThumb().getBounds().centerX() <= maxV) {
                 //we have exact match
                 // we add them all so we can choose later which one to move
@@ -917,10 +915,10 @@ public class MultiSlider extends View {
             else if(Math.abs(thumb.getThumb().getBounds().centerX()-x) <= currDistance) {
                 if(Math.abs(thumb.getThumb().getBounds().centerX()-x) == currDistance) {
                     if(x>getWidth()/2) {
-                        //left one(s) has more place to move, so just leave it
+                        //left one(s) has more place to move
                         closest = thumb;
                     } else {
-                        //right one(s) has more place to move, so set us as we are right
+                        //right one(s) has more place to move
 
                     }
                 } else {
@@ -933,12 +931,10 @@ public class MultiSlider extends View {
         if(exact.isEmpty() && closest!=null) {
             exact.add(closest);
         }
-        Log.d("Multislider", "exact thumbs: " + exact.size());
         return exact;
     }
 
     private Thumb getMostMovable(LinkedList<Thumb>thumbs, MotionEvent event) {
-        Log.d("Multislider", "choose thumb");
         Thumb res = null;
         int maxChange = 0;
         if(thumbs != null && !thumbs.isEmpty()) {
@@ -962,7 +958,7 @@ public class MultiSlider extends View {
         if (!mIsUserSeekable || !isEnabled()) {
             return false;
         }
-        //int newValue = getValue(event);
+
         int pointerIdx = event.getActionIndex();
 
 
@@ -971,7 +967,7 @@ public class MultiSlider extends View {
             currThumb = mDraggingThumbs.get(pointerIdx);
         } else {
 
-            LinkedList<Thumb> closestOnes = getClosestThumb((int) event.getX());
+            LinkedList<Thumb> closestOnes = getClosestThumb((int) event.getX(event.getActionIndex()));
             if (closestOnes != null && !closestOnes.isEmpty()) {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN || event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
                     if (closestOnes.size() == 1) {
@@ -1138,11 +1134,7 @@ public class MultiSlider extends View {
 
     private int getValue(MotionEvent event, int pointerIndex, Thumb thumb) {
         final int width = getWidth();
-        int available = width - getPaddingLeft() - getPaddingRight();
-        //TODO apart complete
-        if(mDrawThumbsApart) {
-            available -= mThumbs.getFirst().getThumb().getIntrinsicWidth() * mThumbs.size();
-        }
+        final int available = getAvailable();
 
         int optThumbOffset = getThumbOptOffset(thumb);
 

@@ -51,7 +51,7 @@ public class LayoutBuilder<T extends Schema> {
     private static final String ARG_GLOBAL_THEME_COLOR = "globalThemeColor";
 
 
-    //used for the hashmap containing all posible global selectors
+    //used for the hashmap containing all possible global selectors
     private static final String ARG_GLOBAL_BOTTON_SELECTORS = "globalButtonSelectors";
     private static final String ARG_GLOBAL_TITLE_STYLE = "globalTitleTextAppearance";
     private static final String ARG_GLOBAL_DESC_STYLE = "globalDescTextAppearance";
@@ -116,6 +116,8 @@ public class LayoutBuilder<T extends Schema> {
 
     private LinkedTreeMap<String, FragmentBuilder> fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
     OneOfFragment oneOfOneOfFragment =  null;
+
+
 
     public LayoutBuilder(T schema, FragmentManager fragmentManager) {
         this.fragmentManager = fragmentManager;
