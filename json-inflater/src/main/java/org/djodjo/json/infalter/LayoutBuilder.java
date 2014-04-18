@@ -17,6 +17,7 @@
 package org.djodjo.json.infalter;
 
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,9 +26,10 @@ import android.view.ViewGroup;
 import org.djodjo.json.android.fragment.BasePropertyFragment;
 import org.djodjo.json.android.fragment.DisplayType;
 import org.djodjo.json.infalter.util.OneOfFragment;
-import org.djodjo.json.util.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
+import org.djodjo.json.util.LinkedTreeMap;
+import org.hamcrest.Matcher;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,6 +89,19 @@ public class LayoutBuilder<T extends Schema> {
     //map for custom layouts for specific properties for this object
     private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
 
+
+    //TODO Use singleton containing settings instances instead of static here
+    /**
+     * used to specify exact fragment for a property.
+     */
+    private static HashMap<String, FragmentBuilder.FragmentPack> customFragments = new HashMap<String, FragmentBuilder.FragmentPack>();
+
+    /**
+     * custom matchers to be used to match custom Fragment to a specific property schema type.
+     * if any they all need to be passed to the fragment builders
+     */
+    private static LinkedTreeMap<Matcher<Schema>, FragmentBuilder.FragmentPack> customPropertyMatchers = new LinkedTreeMap<Matcher<Schema>, FragmentBuilder.FragmentPack>();
+
     private HashMap<String, Integer> displayTypes = new HashMap<String, Integer>();
     private HashMap<String, Integer> customButtonSelectors =  new HashMap<String, Integer>();
     private HashMap<String, Integer> customTitleTextAppearances = new HashMap<String, Integer>();
@@ -116,6 +131,7 @@ public class LayoutBuilder<T extends Schema> {
 
     private LinkedTreeMap<String, FragmentBuilder> fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
     OneOfFragment oneOfOneOfFragment =  null;
+
 
 
 
@@ -391,6 +407,26 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
+    public LayoutBuilder<T> addCustomFragment(String propertyName, FragmentBuilder.FragmentPack fragmentClass) {
+        customFragments.put(propertyName, fragmentClass);
+        return this;
+    }
+
+    public LayoutBuilder<T> addCustomFragments(Map<String, FragmentBuilder.FragmentPack> customFragments) {
+        this.customFragments.putAll(customFragments);
+        return this;
+    }
+
+    public LayoutBuilder<T> addCustomPropertyMatcher (Matcher<Schema> propertyMatcher,  FragmentBuilder.FragmentPack fragmentClass) {
+        customPropertyMatchers.put(propertyMatcher, fragmentClass);
+        return this;
+    }
+
+    public LayoutBuilder<T> addCustomPropertyMatchers (Map<Matcher<Schema>, FragmentBuilder.FragmentPack> propertyMatchers) {
+        customPropertyMatchers.putAll(propertyMatchers);
+        return this;
+    }
+
     public LayoutBuilder<T> addDisplayType (String propertyName, int displayType) {
         displayTypes.put(propertyName, displayType);
         return this;
@@ -442,6 +478,8 @@ public class LayoutBuilder<T extends Schema> {
                                     .withNoDescription(isNoDescription(property.getKey()))
                                     .withGlobalButtonSelectors(globalButtonSelectors)
                                     .withGlobalDisplayTypes(globalDisplayTypes)
+                                    .withCustomFragment(customFragments.get(property.getKey()))
+                                    .withCustomPropertyMatchers(customPropertyMatchers)
                     );
                 }
             }
@@ -470,7 +508,7 @@ public class LayoutBuilder<T extends Schema> {
                     stringSchemas.add(oneOfSchema.getJson().toString());
                 }
                 //
-                Log.d(this.getClass().toString(), "end generate onOf");
+                Log.d(this.getClass().toString(), "end generate oneOf");
                 oneOfOneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers, bundleSettings());
             }
 
@@ -507,7 +545,7 @@ public class LayoutBuilder<T extends Schema> {
         // --> build and add fragments
         for (Map.Entry<String, FragmentBuilder> builder:fragBuilders.entrySet()) {
 
-            BasePropertyFragment fragment = builder.getValue().build();
+           Fragment fragment = builder.getValue().build();
             if(fragment!= null) {
                 Log.d("JustJsonLayoutBulder", "adding fragment: " + builder.getKey());
                 fragmentManager.beginTransaction().add(containerId, fragment, builder.getKey()).commit();

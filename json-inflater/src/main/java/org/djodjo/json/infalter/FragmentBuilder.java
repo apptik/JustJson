@@ -17,6 +17,7 @@
 package org.djodjo.json.infalter;
 
 
+import android.app.Fragment;
 import android.os.Bundle;
 
 import org.djodjo.json.android.fragment.BasePropertyFragment;
@@ -27,8 +28,8 @@ import org.djodjo.json.android.fragment.NumberFragment;
 import org.djodjo.json.android.fragment.RangeFragment;
 import org.djodjo.json.android.fragment.StringFragment;
 import org.djodjo.json.infalter.util.FragmentTools;
-import org.djodjo.json.util.LinkedTreeMap;
 import org.djodjo.json.schema.Schema;
+import org.djodjo.json.util.LinkedTreeMap;
 import org.hamcrest.Matcher;
 
 import java.lang.ref.WeakReference;
@@ -60,6 +61,8 @@ public class FragmentBuilder {
     protected Bundle args = new Bundle();
 
     private static LinkedTreeMap<Matcher<Schema>, Class> commonPropertyMatchers;
+    private LinkedTreeMap<Matcher<Schema>, FragmentPack> customPropertyMatchers;
+    private FragmentPack customFragment;
 
 
 
@@ -126,12 +129,21 @@ public class FragmentBuilder {
         return this;
     }
 
-    public BasePropertyFragment build() {
+    public FragmentBuilder withCustomFragment(FragmentPack customFragment) {
+        this.customFragment = customFragment;
+        return this;
+    }
+    public FragmentBuilder withCustomPropertyMatchers(LinkedTreeMap<Matcher<Schema>, FragmentPack> customPropertyMatchers) {
+        this.customPropertyMatchers = customPropertyMatchers;
+        return this;
+    }
+
+    public Fragment build() {
 //        if(fragmentWeakReference != null && fragmentWeakReference.get()!=null) {
 //            return fragmentWeakReference.get();
 //        }
 
-        BasePropertyFragment fragment = null;
+        Fragment fragment = null;
 
 
         if((propertySchema.getType()==null || propertySchema.getType().isEmpty()) && propertySchema.getEnum() == null) {
@@ -144,23 +156,56 @@ public class FragmentBuilder {
 
         //TODO use MIXED fragment
 
-        for(Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
-            if(entry.getKey().matches(propertySchema)) {
-                try {
-                    fragment = (BasePropertyFragment) entry.getValue().newInstance();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+        if(customFragment!=null) {
+            try {
+                fragment = (Fragment) customFragment.getFragment().newInstance();
+                if(customFragment.getArgs()!=null) {
+                    args.putAll(customFragment.getArgs());
                 }
-                break;
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(fragment==null) {
+            for (Map.Entry<Matcher<Schema>, FragmentPack> entry : customPropertyMatchers.entrySet()) {
+                if (entry.getKey().matches(propertySchema)) {
+                    try {
+                        fragment = (Fragment) entry.getValue().getFragment().newInstance();
+                        if(entry.getValue().getArgs()!=null) {
+                            args.putAll(entry.getValue().getArgs());
+                        }
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        }
+
+        if(fragment==null) {
+            for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
+                if (entry.getKey().matches(propertySchema)) {
+                    try {
+                        fragment = (Fragment) entry.getValue().newInstance();
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
             }
         }
 
         //fragment can be null in some cases
         if(fragment != null) {
             fragment.setArguments(args);
-           // fragmentWeakReference =  new WeakReference<BasePropertyFragment>(fragment);
+            // fragmentWeakReference =  new WeakReference<BasePropertyFragment>(fragment);
         }
         return fragment;
     }
@@ -176,4 +221,28 @@ public class FragmentBuilder {
         return this;
     }
 
+
+   public static class FragmentPack {
+        Class fragment;
+        Bundle args;
+
+        public FragmentPack(Class fragment) {
+            args = new Bundle();
+            this.fragment = fragment;
+        }
+
+        public Class getFragment() {
+            return fragment;
+        }
+
+        public Bundle getArgs() {
+            return args;
+        }
+
+        public FragmentPack setArgs(Bundle args) {
+            this.args = args;
+            return this;
+        }
+
+    }
 }
