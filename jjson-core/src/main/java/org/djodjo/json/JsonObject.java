@@ -24,6 +24,7 @@ import org.djodjo.json.util.Util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -715,6 +716,9 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
         return nameValuePairs.keySet();
     }
 
+    public Collection<JsonElement> valuesSet() {
+        return nameValuePairs.values();
+    }
     /**
      * Returns an array containing the string names in this object. This method
      * returns null if this object contains no mappings.

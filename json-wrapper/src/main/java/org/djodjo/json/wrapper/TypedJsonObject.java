@@ -35,8 +35,22 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
         return get(getJson().get(key));
     }
 
+
     public T optValue(String key) {
         return get(getJson().opt(key));
+    }
+
+    public T getValue(int pos) {
+        return get(getJson().valuesSet().toArray(new JsonElement[0])[pos]);
+    }
+
+    public String getKey(int pos) {
+        try {
+            return getJson().names().getString(pos);
+        } catch (JsonException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public TypedJsonObject<T> putValue(String key, T value) throws JsonException {
