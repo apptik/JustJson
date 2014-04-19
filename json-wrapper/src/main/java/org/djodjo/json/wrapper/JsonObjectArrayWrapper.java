@@ -24,6 +24,10 @@ import org.djodjo.json.exception.JsonException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Json Array that contains Json Objects of a specific type
+ * @param <T>
+ */
 public class JsonObjectArrayWrapper<T extends JsonObjectWrapper> extends JsonElementWrapper {
 
     public ArrayList<T> getJsonWrappersList() {
@@ -71,5 +75,10 @@ public class JsonObjectArrayWrapper<T extends JsonObjectWrapper> extends JsonEle
         return super.getJson().asJsonArray();
     }
 
+    public <O extends JsonObjectArrayWrapper> O addJsonObjectWrapperItem(T jsonObjectWrapperItem) {
+        jsonWrappersList.add(jsonObjectWrapperItem);
+        getJson().asJsonArray().put(jsonObjectWrapperItem.getJson());
+        return (O)this;
+    }
 
 }
