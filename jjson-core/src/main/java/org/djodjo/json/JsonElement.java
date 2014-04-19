@@ -15,7 +15,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
 
-public abstract class JsonElement implements Serializable {
+public abstract class JsonElement {
 
 
     public static JsonElement readFrom( Reader reader ) throws JsonException, IOException {
