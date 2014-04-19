@@ -48,6 +48,6 @@ public class JsonObjectWrapper extends JsonElementWrapper {
 
     @Override
     public JsonObjectWrapper wrap(JsonElement jsonElement) {
-        return (JsonObjectWrapper)super.wrap(jsonElement);
+        return super.wrap(jsonElement);
     }
 }

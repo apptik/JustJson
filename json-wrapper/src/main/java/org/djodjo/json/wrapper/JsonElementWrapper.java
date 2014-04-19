@@ -113,9 +113,9 @@ public abstract class JsonElementWrapper implements Serializable {
         return currSchema;
     }
 
-    public JsonElementWrapper wrap(JsonElement jsonElement) {
+    public <T extends JsonElementWrapper> T wrap(JsonElement jsonElement) {
         this.json = jsonElement;
-        return this;
+        return (T)this;
     }
 
     public JsonElementWrapper setContentType(String contentType) {
