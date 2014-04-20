@@ -165,7 +165,7 @@ public abstract class JsonElementWrapper implements Serializable {
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException, JsonException {
         ois.defaultReadObject();
-        json = JsonElement.readFrom((String) ois.readObject());
+        this.wrap(JsonElement.readFrom((String) ois.readObject()));
     }
 
 }

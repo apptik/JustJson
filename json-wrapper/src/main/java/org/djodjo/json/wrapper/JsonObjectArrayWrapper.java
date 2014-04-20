@@ -41,7 +41,7 @@ public class JsonObjectArrayWrapper<T extends JsonObjectWrapper> extends JsonEle
 
     }
 
-    public JsonObjectArrayWrapper wrap(JsonArray jsonArray, Class<T> cls) {
+    public <O extends JsonObjectArrayWrapper> O wrap(JsonArray jsonArray, Class<T> cls) {
         super.wrap(jsonArray);
         jsonWrappersList.clear();
 
@@ -60,7 +60,7 @@ public class JsonObjectArrayWrapper<T extends JsonObjectWrapper> extends JsonEle
         }
 
 
-        return this;
+        return (O) this;
     }
 
     @Override
