@@ -46,8 +46,4 @@ public class JsonObjectWrapper extends JsonElementWrapper {
         super(jsonObject);
     }
 
-    @Override
-    public JsonObjectWrapper wrap(JsonElement jsonElement) {
-        return super.wrap(jsonElement);
-    }
 }
