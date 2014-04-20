@@ -48,8 +48,8 @@ public abstract class JsonElementWrapper implements Serializable {
     private String contentType;
     private URI jsonSchemaUri;
     private Schema jsonSchema;
-    private LinkedHashSet<Validator> validators = new LinkedHashSet<Validator>();
-    private LinkedHashSet<SchemaFetcher> fetchers = new LinkedHashSet<SchemaFetcher>();
+    private transient LinkedHashSet<Validator> validators = new LinkedHashSet<Validator>();
+    private transient LinkedHashSet<SchemaFetcher> fetchers = new LinkedHashSet<SchemaFetcher>();
 
 
     public <T extends JsonElement> T getJson() {
