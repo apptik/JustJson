@@ -105,6 +105,9 @@ public class MultiSlider extends View {
         private Drawable range;
         private int thumbOffset;
 
+         //cannot be moved if invisible
+        private boolean invisibleThumb = false;
+
         public Drawable getRange() {
             return range;
         }
@@ -116,6 +119,15 @@ public class MultiSlider extends View {
 
         public Thumb() {
         }
+
+        public boolean isInvisibleThumb() {
+            return invisibleThumb;
+        }
+
+        public void setInvisibleThumb(boolean invisibleThumb) {
+            this.invisibleThumb = invisibleThumb;
+        }
+
 
         public int getDrawableValue() {
             if(thumb == null) return 0;
@@ -676,6 +688,7 @@ public class MultiSlider extends View {
         if(mDraggingThumbs !=null && !mDraggingThumbs.isEmpty()) {
             int[] state = getDrawableState();
             for(Thumb thumb: mDraggingThumbs) {
+                if(thumb.getThumb()!=null)
                 thumb.getThumb().setState(state);
             }
             for(Thumb thumb:mThumbs) {
@@ -830,7 +843,7 @@ public class MultiSlider extends View {
 
         // --> then draw thumbs
         for(Thumb thumb:mThumbs) {
-            if (thumb.getThumb() != null) {
+            if (thumb.getThumb() != null && !thumb.isInvisibleThumb()) {
                 canvas.save();
                 // Translate the padding. For the x, we need to allow the thumb to
                 // draw in its extra space
@@ -903,7 +916,7 @@ public class MultiSlider extends View {
         int currDistance = getAvailable()+1;
 
         for(Thumb thumb:mThumbs) {
-            if(thumb.getThumb() == null) continue;
+            if(thumb.getThumb() == null || thumb.isInvisibleThumb()) continue;
 
             int minV = x - thumb.getThumb().getIntrinsicWidth();
             int maxV = x + thumb.getThumb().getIntrinsicWidth();
@@ -922,8 +935,10 @@ public class MultiSlider extends View {
 
                     }
                 } else {
-                    currDistance = Math.abs(thumb.getThumb().getBounds().centerX() - x);
-                    closest = thumb;
+                    if(thumb.getThumb()!=null) {
+                        currDistance = Math.abs(thumb.getThumb().getBounds().centerX() - x);
+                        closest = thumb;
+                    }
                 }
             }
         }
