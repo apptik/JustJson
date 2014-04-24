@@ -65,9 +65,6 @@ public class LayoutBuilder<T extends Schema> {
     // private final Activity activity;
     private final FragmentManager fragmentManager;
     private final T schema;
-    private boolean mergeAnyOf = false;
-    private boolean mergeAllOf = false;
-    private boolean mergeOneOf = false;
 
     //othe options are radio or other selector buttons alike
     private int typeChooser4AnyOf = DisplayType.DISPLAY_TYPE_SPINNER;

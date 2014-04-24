@@ -16,26 +16,20 @@
 
 package org.djodjo.json.infalter.example;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import org.djodjo.json.JsonElement;
-import org.djodjo.json.android.fragment.DisplayType;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.infalter.LayoutBuilder;
 import org.djodjo.json.schema.SchemaV4;
@@ -197,7 +191,7 @@ public class MainActivity extends Activity
                     LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
                     //add custom lb settings
                     switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
-
+                        //case 1:lb.setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW);break;
                     }
                     lb.build(R.id.form_container);
                 }
