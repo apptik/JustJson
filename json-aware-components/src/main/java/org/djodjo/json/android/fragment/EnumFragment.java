@@ -43,11 +43,11 @@ public class EnumFragment extends BasePropertyFragment {
     public static final String ARG_OPTIONS = "options";
     public static final String ARG_IS_CONTROLLER = "isController";
 
-    private ArrayList<String> options;
+    protected ArrayList<String> options;
 
-    private boolean isController = false;
+    protected boolean isController = false;
 
-    ControllerCallback controllerCallback = null;
+    protected ControllerCallback controllerCallback = null;
 
     public EnumFragment() {
         // Required empty public constructor

@@ -129,16 +129,19 @@ public abstract class BasePropertyFragment extends Fragment {
         v = inflater.inflate(layoutId, container, false);
         //set some view params: text, color, etc
         TextView txtTitle =  (TextView) v.findViewById(R.id.txtPropTitle);
+        final TextView txtPropDesc =   (TextView)v.findViewById(R.id.txtPropDescription);
 
-        if(noTitle) {
-            txtTitle.setVisibility(View.GONE);
-        } else {
-            txtTitle.setText(title);
-            txtTitle.setTextAppearance(getActivity(), styleTitle);
+        if(txtTitle!=null) {
+            if (noTitle) {
+                txtTitle.setVisibility(View.GONE);
+            } else {
+                txtTitle.setText(title);
+                txtTitle.setTextAppearance(getActivity(), styleTitle);
+            }
         }
 
-        if(description != null && !description.trim().isEmpty() && !noDesc) {
-            final TextView txtPropDesc =   (TextView)v.findViewById(R.id.txtPropDescription);
+        if(description != null && !description.trim().isEmpty() && !noDesc && txtPropDesc!=null) {
+
             txtPropDesc.setText(description);
             txtPropDesc.setTextAppearance(getActivity(), styleDesc);
             v.findViewById(R.id.btnPropHelp).setVisibility(View.VISIBLE);

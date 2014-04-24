@@ -22,6 +22,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Checkable;
+import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.ToggleButton;
@@ -31,6 +33,7 @@ import org.djodjo.json.android.R;
 
 public class BooleanFragment extends BasePropertyFragment {
 
+    public final static int LAYOUT_BOOL_CHECKED_TEXTVIEW = R.layout.fragment_bool_checkedtextview;
     public final static int LAYOUT_BOOL_CHECKBOX = R.layout.fragment_bool_check;
     public final static int LAYOUT_BOOL_SWITCH = R.layout.fragment_bool_switch;
     public final static int LAYOUT_BOOL_TOGGLE = R.layout.fragment_bool_toggle;
@@ -45,31 +48,50 @@ public class BooleanFragment extends BasePropertyFragment {
         int currDisplType = (displayType>=0)?displayType:displayTypes.get(ARG_GLOBAL_BOOLEAN_DISPLAY_TYPE);
         switch (currDisplType) {
             case DisplayType.DISPLAY_TYPE_CHECKBOX: return LAYOUT_BOOL_CHECKBOX;
+            case DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW: return LAYOUT_BOOL_CHECKED_TEXTVIEW;
             case DisplayType.DISPLAY_TYPE_SWITCH: return LAYOUT_BOOL_SWITCH;
             case DisplayType.DISPLAY_TYPE_TOGGLE: return LAYOUT_BOOL_TOGGLE;
         }
 
-        return LAYOUT_BOOL_SWITCH;
+        return LAYOUT_BOOL_CHECKED_TEXTVIEW;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        CompoundButton button = (CompoundButton) (v != null ? v.findViewById(R.id.prop_value) : null);
-        if(buttonSelector!=0) {
-            button.setButtonDrawable(buttonSelector);
-        } else if (button instanceof CheckBox && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR) != 0)
-        {
-            button.setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR));
+        final Checkable checkable = (Checkable) (v != null ? v.findViewById(R.id.prop_value) : null);
+
+        if(checkable instanceof CompoundButton && !(checkable instanceof ToggleButton)) {
+            ((CompoundButton)checkable).setText(title);
+        } else if(checkable instanceof CheckedTextView) {
+            ((CheckedTextView)checkable).setText(title);
+            ((CheckedTextView)checkable).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((CheckedTextView)checkable).toggle();
+                }
+            });
         }
-        else if (button instanceof ToggleButton && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR) != 0)
+
+        if(buttonSelector!=0 && checkable instanceof CompoundButton) {
+            ((CompoundButton)checkable).setButtonDrawable(buttonSelector);
+        } else if(buttonSelector!=0 && checkable instanceof CheckedTextView) {
+            ((CheckedTextView)checkable).setCheckMarkDrawable(buttonSelector);
+        } else if (checkable instanceof CheckBox && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR) != 0)
         {
-            button.setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR));
+            ((CompoundButton)checkable).setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR));
+        } else if (checkable instanceof CheckedTextView && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR) != 0)
+        {
+           ((CheckedTextView)checkable).setCheckMarkDrawable(customButtonSelectors.get(ARG_GLOBAL_CHECKBOX_SELECTOR));
         }
-        else if (button instanceof Switch && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_SWITCHBUTTON_SELECTOR) != 0)
+        else if (checkable instanceof ToggleButton && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR) != 0)
         {
-            button.setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_SWITCHBUTTON_SELECTOR));
+            ((CompoundButton)checkable).setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_TOGGLEBUTTON_SELECTOR));
+        }
+        else if (checkable instanceof Switch && customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_SWITCHBUTTON_SELECTOR) != 0)
+        {
+            ((CompoundButton)checkable).setButtonDrawable(customButtonSelectors.get(ARG_GLOBAL_SWITCHBUTTON_SELECTOR));
         }
 
         return v;

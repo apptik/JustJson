@@ -16,9 +16,6 @@
 
 package org.djodjo.json.android.fragment;
 
-/**
- * Created by djodjo on 13.04.14.
- */
 public class DisplayType {
     public static final int DISPLAY_TYPE_TEXT= 0;
     public static final int DISPLAY_TYPE_RADIO = 1;
@@ -27,6 +24,7 @@ public class DisplayType {
     public static final int DISPLAY_TYPE_TOGGLE = 4;
     public static final int DISPLAY_TYPE_SWITCH = 5;
     public static final int DISPLAY_TYPE_CHECKBOX = 6;
-    public static final int DISPLAY_TYPE_SLIDER = 7;
-    public static final int DISPLAY_TYPE_NUMBER_PICKER = 8;
+    public static final int DISPLAY_TYPE_CHECKED_TEXTVIEW = 7;
+    public static final int DISPLAY_TYPE_SLIDER = 8;
+    public static final int DISPLAY_TYPE_NUMBER_PICKER = 9;
 }

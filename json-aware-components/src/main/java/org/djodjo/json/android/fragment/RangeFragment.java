@@ -54,11 +54,11 @@ public class RangeFragment extends BasePropertyFragment {
     public static final String ARG_MIN_BUNDLE = "min";
     public static final String ARG_MAX_BUNDLE = "max";
 
-    private int minVal1;
-    private int maxVal1;
+    protected int minVal1;
+    protected int maxVal1;
 
-    private int minVal2;
-    private int maxVal2;
+    protected int minVal2;
+    protected int maxVal2;
 
     public RangeFragment() {
         // Required empty public constructor
@@ -89,37 +89,39 @@ public class RangeFragment extends BasePropertyFragment {
         final TextView min = (TextView) v.findViewById(R.id.minValue);
         final TextView max = (TextView) v.findViewById(R.id.maxValue);
 
-        min.setTextAppearance(getActivity(), styleValue);
-        max.setTextAppearance(getActivity(), styleValue);
+        if(min!=null) {
+            min.setTextAppearance(getActivity(), styleValue);
+        }
+        if(max!=null) {
+            max.setTextAppearance(getActivity(), styleValue);
+        }
 
 
 
         MultiSlider seekBar = (MultiSlider)v.findViewById(R.id.range_slider);
 
-        seekBar.setMax(maxVal2, true, true);
-        seekBar.setMin(minVal1, true, true);
+        if(seekBar!=null) {
+            seekBar.setMax(maxVal2, true, true);
+            seekBar.setMin(minVal1, true, true);
 
-        min.setText(String.valueOf(seekBar.getThumb(0).getValue()));
-        max.setText(String.valueOf(seekBar.getThumb(1).getValue()));
+            min.setText(String.valueOf(seekBar.getThumb(0).getValue()));
+            max.setText(String.valueOf(seekBar.getThumb(1).getValue()));
 
-        seekBar.setOnThumbValueChangeListener(new MultiSlider.OnThumbValueChangeListener() {
-            @Override
-            public void onValueChanged(MultiSlider multiSlider, MultiSlider.Thumb thumb, int thumbIndex, int value) {
-                if(thumbIndex==0) {
-                    min.setText(String.valueOf(value));
-                } else {
-                    max.setText(String.valueOf(value));
+            seekBar.setOnThumbValueChangeListener(new MultiSlider.OnThumbValueChangeListener() {
+                @Override
+                public void onValueChanged(MultiSlider multiSlider, MultiSlider.Thumb thumb, int thumbIndex, int value) {
+                    if (thumbIndex == 0) {
+                        if(min!=null) {
+                            min.setText(String.valueOf(value));
+                        }
+                    } else {
+                        if(max!=null) {
+                            max.setText(String.valueOf(value));
+                        }
+                    }
                 }
-            }
-        });
-
-
-
-
-        // add RangeSeekBar to pre-defined layout
-//        ViewGroup layout = (ViewGroup) v.findViewById(R.id.range_slider);
-//        layout.addView(seekBar);
-
+            });
+        }
         return v;
     }
 }

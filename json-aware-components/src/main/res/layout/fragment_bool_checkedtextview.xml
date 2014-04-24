@@ -20,14 +20,21 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               tools:context="org.djodjo.jjson.atools.JsonFragment"
+
+
     >
 
-        <CheckBox
+        <CheckedTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
             android:id="@+id/prop_value"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal"
+            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+            android:clickable="true"
+            android:checked="true"
+            android:gravity="center_vertical"
+            />
 
     <include layout="@layout/frag_footer" />
 
