@@ -23,7 +23,14 @@
 
     </RadioGroup>
 
-    <include layout="@layout/frag_footer" />
+    <View
+        android:id="@+id/oneOfFooter"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="0dp"
+
+        android:visibility="visible"
+        android:background="#ddd"/>
 
     <LinearLayout
         android:id="@+id/oneOfContainer"

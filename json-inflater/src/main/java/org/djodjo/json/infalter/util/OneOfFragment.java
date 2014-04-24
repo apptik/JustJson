@@ -106,6 +106,10 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 inflater.inflate(R.layout.fragment_one_of_radio, container, false):
                 inflater.inflate(R.layout.fragment_one_of_spinner, container, false);
 
+        View footer =  v.findViewById(R.id.oneOfFooter);
+        if(footer!=null)
+            footer.setVisibility(View.GONE);
+
         if(isRadioDisplay()) {
             oneOfRadioGroup = (RadioGroup) v.findViewById(R.id.oneOfRadioGroup);
             oneOfRadioGroup.removeAllViews();
@@ -309,6 +313,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
 
         //--> setup custom controllers
         if(controllers != null && controllers.size()>0) {
+
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             for (String controller : controllers) {
                 android.app.Fragment frag = new EnumFragment();
@@ -318,8 +323,11 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 bundle.putStringArrayList(EnumFragment.ARG_OPTIONS, opts);
                 bundle.putBoolean(EnumFragment.ARG_IS_CONTROLLER, true);
                 bundle.putString(BasePropertyFragment.ARG_LABEL, controller);
+
+               bundle.putInt(BasePropertyFragment.ARG_BUTTON_SELECTOR,
+                       ((HashMap<String, Integer>) settingsArgs.getSerializable(LayoutBuilder.ARG_GLOBAL_BOTTON_SELECTORS)).get(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR));
                 //TODO doesnt work like this for fragment builder
-                bundle.putBundle(ARG_SETTING_BUNDLE, settingsArgs);
+                //bundle.putBundle(ARG_SETTING_BUNDLE, settingsArgs);
                 frag.setArguments(bundle);
                 transaction.add(R.id.oneOfControllers, frag, controller);
             }

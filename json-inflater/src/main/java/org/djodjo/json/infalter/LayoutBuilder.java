@@ -54,7 +54,7 @@ public class LayoutBuilder<T extends Schema> {
 
 
     //used for the hashmap containing all possible global selectors
-    private static final String ARG_GLOBAL_BOTTON_SELECTORS = "globalButtonSelectors";
+    public static final String ARG_GLOBAL_BOTTON_SELECTORS = "globalButtonSelectors";
     private static final String ARG_GLOBAL_TITLE_STYLE = "globalTitleTextAppearance";
     private static final String ARG_GLOBAL_DESC_STYLE = "globalDescTextAppearance";
     private static final String ARG_GLOBAL_VALUE_TEXT_STYLE = "globalValuesTextAppearance";
@@ -150,7 +150,7 @@ public class LayoutBuilder<T extends Schema> {
         setGlobalStringDisplayType(DisplayType.DISPLAY_TYPE_TEXT);
         setGlobalNumberDisplayType(DisplayType.DISPLAY_TYPE_TEXT);
         setGlobalLimitedNumberDisplayType(DisplayType.DISPLAY_TYPE_SLIDER);
-        setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_SWITCH);
+        setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW);
         setGlobalArrayDisplayType(DisplayType.DISPLAY_TYPE_LISTVIEW);
         setGlobalArrayEnumDisplayType(DisplayType.DISPLAY_TYPE_SPINNER); //multi select
         setGlobalEnumDisplayType(DisplayType.DISPLAY_TYPE_SPINNER); //single select

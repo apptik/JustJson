@@ -21,8 +21,14 @@
         android:id="@+id/oneofSpinner"/>
 
 
+    <View
+        android:id="@+id/oneOfFooter"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="0dp"
 
-    <include layout="@layout/frag_footer" />
+        android:visibility="visible"
+        android:background="#ddd"/>
 
     <LinearLayout
         android:id="@+id/oneOfContainer"
