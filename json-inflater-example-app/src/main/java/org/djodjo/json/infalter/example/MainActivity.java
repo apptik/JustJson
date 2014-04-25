@@ -192,6 +192,13 @@ public class MainActivity extends Activity
                     //add custom lb settings
                     switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
                         //case 1:lb.setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW);break;
+                        case 4:
+                            lb
+                                    .addOneOfController("buyRent")
+                                    .addOneOfController("mainType");
+                                    //.addOneOfController("controller1");
+                            break;
+                        case 5:lb.addOneOfController("controller0").addOneOfController("controller1"); break;
                     }
                     lb.build(R.id.form_container);
                 }

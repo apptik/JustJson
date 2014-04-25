@@ -1,74 +1,1214 @@
 {
-    "type": "object",
-    "description" : "ontOf example for custom controllers",
-    "properties": {
-        "baseProperty1": {
-            "title" : "baseProperty1",
-            "type": "boolean"
-        },
-        "baseProperty2": {
-            "title" : "baseProperty2",
-            "enum" : [1,2,3,4,5,6]
-        }
-    },
-    "oneOf": [
-        {
-            "title": "Option 1",
-            "properties": {
-                "controller1": {
-                    "title" : "controller1",
-                    "enum": ["bravo", "delta", "foxtrot"]
-                },
-                "additionalOption2": {
-                    "title" : "additionalOption2",
-                    "type": "string"
-                },
-                "additionalOption3": {
-                    "title" : "additionalOption3",
-                    "description" : "additional property 3",
-                    "type": "boolean"
-                },
-                "additionalOption5": {
-                    "title" : "additionalOption5",
-                    "type": "object",
-                    "properties" : {
-                        "min" : {
-                            "type" : "number",
-                            "minimum" : 0,
-                            "maximum" : 500
-                        },
-                        "max" : {
-                            "type" : "number",
-                            "minimum" : 50,
-                            "maximum" : 600
-                        }
-                    }
-                }
+"id": "http://immoweb.be/schema/query-residential-r1#",
+"$schema": "http://json-schema.org/draft-04/schema#",
+"description": "Query details",
+"title": "Residential",
+"type": "object",
 
-            },
-            "required" : ["baseProperty1", "baseProperty2", "controller1", "additionalOption2"]
-        },
-        {
-            "title": "option 2",
-            "properties": {
-                "controller1": {
-                    "title" : "controller1",
-                    "enum": ["alpha","charlie", "echo"]
-                },
-                "additionalOption2": {
-                    "title" : "additionalOption2",
-                    "type": "boolean"
-                },
-                "additionalOption3": {
-                    "title" : "additionalOption3",
-                    "type": "number"
-                },
-                "additionalOption4": {
-                    "title" : "additionalOption4",
-                    "type": "string"
-                }
-            },
-            "required" : ["baseProperty1", "baseProperty2", "controller1", "additionalOption2", "additionalOption3"]
-        }
-    ]
+"oneOf" : [
+{
+"title" : "Rent House",
+"required" : ["buyRent", "mainType", "location", "price", "rooms"],
+"additionalProperties" : false,
+"properties" : {
+	"buyRent" : {"enum" : ["Rent"]},
+
+	"mainType" : {
+		"title" : "Type",
+		"enum" : ["House"]
+	},
+
+	"location" : {
+		"title" : "Location",
+		"type" : "object",
+		"oneOf" :[ {
+				"properties" : {
+					"radius" : {
+						"type" : "integer",
+						"default" : "5"
+					},
+					"location" : {
+						"type" : "object",
+						"properties" : {
+							"lat" : {
+								"type" : "number"
+							},
+							"lon" : {
+								"type" : "number"
+							}
+						}
+					}
+				}
+			},
+            {
+				"properties" : {
+					"commune" : {
+						"type" : "string",
+						"items" : { "enum" : ["1200", "1000", "1080"] }
+					},
+					"region" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					},
+					"province" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					}
+				}
+			}
+		]
+	},
+
+	"price" : {
+		"type" : "object",
+		"title" : "monthly rental min/max",
+		"description" : "",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 50000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 50000
+			}
+		}
+	},
+
+	"rooms" : {
+		"title" : "Min Number of rooms",
+		"description" : "Min Number of rooms",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	},
+
+	"area" : {
+		"title" : "Habitable area",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			}
+		}
+	},
+
+	"land" : {
+		"title" : "Area of land",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			}
+		}
+	},
+
+	"subtype" : {
+		"type" : "array",
+		"title" : "Property subtype",
+		"enum" : ["HOUSE", "APARTMENT_BLOCK", "VILLA", "CASTLE", "CAR_PARK", "OTHER_PROPERTY", "TOWN_HOUSE", "MIXED_USE BUILDING", "FARMHOUSE", "BUNGALOW", "MANSION", "PAVILION", "COUNTRY_COTTAGE", "CHALET", "EXCEPTIONAL PROPERTY"]
+	},
+
+
+	"parkingPlaces" : {
+		"title" : "Min Number of parking places",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	},
+
+	"furnished" : {
+		"type" : "boolean",
+		"title" : "Furnished",
+		"description" : ""
+	},
+
+	"disabledAccess" : {
+		"type" : "boolean",
+		"title" : "Disabled access"
+	},
+
+	"terraceGarden" : {
+		"type" : "boolean",
+		"title" : "with terrace or garden"
+	}
+
+  }
+  },
+
+{
+"title" : "Rent Apartment",
+"required" : ["buyRent", "mainType", "location", "price", "rooms"],
+"additionalProperties" : false,
+"properties" : {
+	"buyRent" : {"enum" : ["Rent"]},
+
+	"mainType" : {
+		"title" : "Type",
+		"enum" : ["Apartment"]
+	},
+
+	"location" : {
+		"title" : "Location",
+		"type" : "object",
+		"oneOf" :[ {
+				"properties" : {
+					"radius" : {
+						"type" : "integer",
+						"default" : "5"
+					},
+					"location" : {
+						"type" : "object",
+						"properties" : {
+							"lat" : {
+								"type" : "number"
+							},
+							"lon" : {
+								"type" : "number"
+							}
+						}
+					}
+				}
+			},
+            {
+				"properties" : {
+					"commune" : {
+						"type" : "string",
+						"items" : { "enum" : ["1200", "1000", "1080"] }
+					},
+					"region" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					},
+					"province" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					}
+				}
+			}
+		]
+	},
+
+	"price" : {
+		"type" : "object",
+		"title" : "monthly rental min/max",
+		"description" : "",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 50000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 50000
+			}
+		}
+	},
+
+	"rooms" : {
+		"title" : "Min Number of rooms",
+		"description" : "Min Number of rooms",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	},
+
+	"area" : {
+		"title" : "Habitable area",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			}
+		}
+	},
+
+	"subtype" : {
+		"type" : "array",
+		"title" : "Property subtype",
+		"enum" : ["APARTMENT", "DUPLEX", "PENTHOUSE", "FLAT_STUDIO", "TRIPLEX", "KOT", "LOFT", "GROUND_FLOOR", "SERVICE_FLAT"]
+	},
+
+
+	"parkingPlaces" : {
+		"title" : "Min Number of parking places",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	},
+
+	"lift" : {
+		"type" : "boolean",
+		"title" : "Lift",
+		"description" : ""
+	},
+
+	"furnished" : {
+		"type" : "boolean",
+		"title" : "Furnished",
+		"description" : ""
+	},
+
+	"disabledAccess" : {
+		"type" : "boolean",
+		"title" : "Disabled access"
+	},
+
+	"terraceGarden" : {
+		"type" : "boolean",
+		"title" : "with terrace or garden"
+	}
+
+  }
+  },
+
+{
+"title" : "Rent Garage",
+"required" : ["buyRent", "mainType", "location", "price"],
+"additionalProperties" : false,
+"properties" : {
+	"buyRent" : {"enum" : ["Rent"]},
+
+	"mainType" : {
+		"title" : "Type",
+		"enum" : ["Garage"]
+	},
+
+	"location" : {
+		"title" : "Location",
+		"type" : "object",
+		"oneOf" :[ {
+				"properties" : {
+					"radius" : {
+						"type" : "integer",
+						"default" : "5"
+					},
+					"location" : {
+						"type" : "object",
+						"properties" : {
+							"lat" : {
+								"type" : "number"
+							},
+							"lon" : {
+								"type" : "number"
+							}
+						}
+					}
+				}
+			},
+            {
+				"properties" : {
+					"commune" : {
+						"type" : "string",
+						"items" : { "enum" : ["1200", "1000", "1080"] }
+					},
+					"region" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					},
+					"province" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					}
+				}
+			}
+		]
+	},
+
+	"price" : {
+		"type" : "object",
+		"title" : "monthly rental min/max",
+		"description" : "",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 50000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 50000
+			}
+		}
+	},
+
+	"subtype" : {
+		"type" : "array",
+		"title" : "Property subtype",
+		"enum" : ["OUTDOOR_PARKING_SPACE", "LOCK_UP_PARKING", "COVERED_PARKING_SPACE", "LOCK_UP_GARAGE"]
+	},
+
+
+	"parkingPlaces" : {
+		"title" : "Min Number of parking places",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	}
+
+  }
+  },
+
+{
+"title" : "Rent Other",
+"required" : ["buyRent", "mainType", "location", "price"],
+"additionalProperties" : false,
+"properties" : {
+	"buyRent" : {"enum" : ["Rent"]},
+
+	"mainType" : {
+		"title" : "Type",
+		"enum" : ["Other"]
+	},
+
+	"location" : {
+		"title" : "Location",
+		"type" : "object",
+		"properties" : {
+			"radius" : {
+				"type" : "integer",
+				"default" : "5"
+			},
+			"commune" : {
+				"type" : "array",
+				"items" : { "enum" : ["1200", "1000", "1080"] }
+			},
+			"region" : {
+				"type" : "array",
+				"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+			},
+			"province" : {
+				"type" : "array",
+				"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+			}
+
+		}
+	},
+
+	"price" : {
+		"type" : "object",
+		"title" : "monthly rental min/max",
+		"description" : "",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 50000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 50000
+			}
+		}
+	},
+
+	"area" : {
+		"title" : "Habitable area",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			}
+		}
+	},
+
+	"land" : {
+		"title" : "Area of land",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			}
+		}
+	},
+
+	"subtype" : {
+		"type" : "array",
+		"title" : "Property subtype",
+		"enum" : ["PROVINCIAL_FARMHOUSE", "GITES", "CAMPSITE", "BARGE", "OTHER", "MILL", "STATIC_CARAVAN", "HOUSE", "HOTEL", "BED_N_BREAKFAST", "MOBILE_HOME", "HOLIDAY_PARK", "BOAT_CRUISE"]
+	},
+
+	"parkingPlaces" : {
+		"title" : "Min Number of parking places",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	},
+
+	"furnished" : {
+		"type" : "boolean",
+		"title" : "Furnished",
+		"description" : ""
+	},
+
+	"disabledAccess" : {
+		"type" : "boolean",
+		"title" : "Disabled access"
+	},
+
+	"terraceGarden" : {
+		"type" : "boolean",
+		"title" : "with terrace or garden"
+	}
+
+  }
+  },
+
+{
+"title" : "Buy House",
+"required" : ["buyRent", "mainType", "location", "price", "rooms"],
+"additionalProperties" : false,
+"properties" : {
+	"buyRent" : {"enum" : ["Buy"]},
+
+	"mainType" : {
+		"title" : "Type",
+		"enum" : ["House"]
+	},
+
+	"location" : {
+		"title" : "Location",
+		"type" : "object",
+		"oneOf" :[ {
+				"properties" : {
+					"radius" : {
+						"type" : "integer",
+						"default" : "5"
+					},
+					"location" : {
+						"type" : "object",
+						"properties" : {
+							"lat" : {
+								"type" : "number"
+							},
+							"lon" : {
+								"type" : "number"
+							}
+						}
+					}
+				}
+			},
+            {
+				"properties" : {
+					"commune" : {
+						"type" : "string",
+						"items" : { "enum" : ["1200", "1000", "1080"] }
+					},
+					"region" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					},
+					"province" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					}
+				}
+			}
+		]
+	},
+
+	"price" : {
+		"type" : "object",
+		"title" : "sale price",
+		"description" : "",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5000000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5000000
+			}
+		}
+	},
+
+	"rooms" : {
+		"title" : "Min Number of rooms",
+		"description" : "Min Number of rooms",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	},
+
+	"area" : {
+		"title" : "Habitable area",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			}
+		}
+	},
+
+	"land" : {
+		"title" : "Area of land",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			}
+		}
+	},
+
+	"subtype" : {
+		"type" : "array",
+		"title" : "Property subtype",
+		"enum" : ["HOUSE", "APARTMENT_BLOCK", "VILLA", "CASTLE", "CAR_PARK", "OTHER_PROPERTY", "TOWN_HOUSE", "MIXED_USE BUILDING", "FARMHOUSE", "BUNGALOW", "MANSION", "PAVILION", "COUNTRY_COTTAGE", "CHALET", "EXCEPTIONAL PROPERTY"]
+	},
+
+	"auction" : {
+		"title" : "Include sales by auction",
+		"description" : "",
+		"enum" : ["Yes", "No", "Only"]
+	},
+
+	"newProperties" : {
+		"title" : "Include new properties",
+		"description" : "",
+		"enum" : ["Yes", "No", "Only"]
+	},
+
+	"lifeAnnuity" : {
+		"title" : "Include life annuity",
+		"description" : "",
+		"enum" : ["Yes", "No", "Only"]
+	},
+
+	"parkingPlaces" : {
+		"title" : "Min Number of parking places",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	},
+
+	"rentalComplex" : {
+		"type" : "boolean",
+		"title" : "Rental complex",
+		"description" : ""
+	},
+
+	"furnished" : {
+		"type" : "boolean",
+		"title" : "Furnished",
+		"description" : ""
+	},
+
+	"disabledAccess" : {
+		"type" : "boolean",
+		"title" : "Disabled access"
+	},
+
+	"terraceGarden" : {
+		"type" : "boolean",
+		"title" : "with terrace or garden"
+	}
+
+  }
+  },
+
+{
+"title" : "Buy Apartment",
+"required" : ["buyRent", "mainType", "location", "price", "rooms"],
+"additionalProperties" : false,
+"properties" : {
+	"buyRent" : {"enum" : ["Buy"]},
+
+	"mainType" : {
+		"title" : "Type",
+		"enum" : ["Apartment"]
+	},
+
+	"location" : {
+		"title" : "Location",
+		"type" : "object",
+		"oneOf" :[ {
+				"properties" : {
+					"radius" : {
+						"type" : "integer",
+						"default" : "5"
+					},
+					"location" : {
+						"type" : "object",
+						"properties" : {
+							"lat" : {
+								"type" : "number"
+							},
+							"lon" : {
+								"type" : "number"
+							}
+						}
+					}
+				}
+			},
+            {
+				"properties" : {
+					"commune" : {
+						"type" : "string",
+						"items" : { "enum" : ["1200", "1000", "1080"] }
+					},
+					"region" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					},
+					"province" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					}
+				}
+			}
+		]
+	},
+
+	"price" : {
+		"type" : "object",
+		"title" : "sale price",
+		"description" : "",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5000000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5000000
+			}
+		}
+	},
+
+	"rooms" : {
+		"title" : "Min Number of rooms",
+		"description" : "Min Number of rooms",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	},
+
+	"area" : {
+		"title" : "Habitable area",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			}
+		}
+	},
+
+	"subtype" : {
+		"type" : "array",
+		"title" : "Property subtype",
+		"enum" : ["APARTMENT", "DUPLEX", "PENTHOUSE", "FLAT_STUDIO", "TRIPLEX", "KOT", "LOFT", "GROUND_FLOOR", "SERVICE_FLAT"]
+	},
+
+	"auction" : {
+		"title" : "Include sales by auction",
+		"description" : "",
+		"enum" : ["Yes", "No", "Only"]
+	},
+
+	"newProperties" : {
+		"title" : "Include new properties",
+		"description" : "",
+		"enum" : ["Yes", "No", "Only"]
+	},
+
+	"lifeAnnuity" : {
+		"title" : "Include life annuity",
+		"description" : "",
+		"enum" : ["Yes", "No", "Only"]
+	},
+
+	"parkingPlaces" : {
+		"title" : "Min Number of parking places",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	},
+
+	"lift" : {
+		"type" : "boolean",
+		"title" : "Lift",
+		"description" : ""
+	},
+
+	"furnished" : {
+		"type" : "boolean",
+		"title" : "Furnished",
+		"description" : ""
+	},
+
+	"disabledAccess" : {
+		"type" : "boolean",
+		"title" : "Disabled access"
+	},
+
+	"terraceGarden" : {
+		"type" : "boolean",
+		"title" : "with terrace or garden"
+	}
+
+  }
+  },
+
+{
+"title" : "Buy Garage",
+"required" : ["buyRent", "mainType", "location", "price"],
+"additionalProperties" : false,
+"properties" : {
+	"buyRent" : {"enum" : ["Buy"]},
+
+	"mainType" : {
+		"title" : "Type",
+		"enum" : ["Garage"]
+	},
+
+	"location" : {
+		"title" : "Location",
+		"type" : "object",
+		"oneOf" :[ {
+				"properties" : {
+					"radius" : {
+						"type" : "integer",
+						"default" : "5"
+					},
+					"location" : {
+						"type" : "object",
+						"properties" : {
+							"lat" : {
+								"type" : "number"
+							},
+							"lon" : {
+								"type" : "number"
+							}
+						}
+					}
+				}
+			},
+            {
+				"properties" : {
+					"commune" : {
+						"type" : "string",
+						"items" : { "enum" : ["1200", "1000", "1080"] }
+					},
+					"region" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					},
+					"province" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					}
+				}
+			}
+		]
+	},
+
+	"price" : {
+		"type" : "object",
+		"title" : "Sale price",
+		"description" : "",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5000000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5000000
+			}
+		}
+	},
+
+	"subtype" : {
+		"type" : "array",
+		"title" : "Property subtype",
+		"enum" : ["OUTDOOR_PARKING_SPACE", "LOCK_UP_PARKING", "COVERED_PARKING_SPACE", "LOCK_UP_GARAGE"]
+	},
+
+	"auction" : {
+		"title" : "Include sales by auction",
+		"description" : "",
+		"enum" : ["Yes", "No", "Only"]
+	},
+
+	"newProperties" : {
+		"title" : "Include new properties",
+		"description" : "",
+		"enum" : ["Yes", "No", "Only"]
+	},
+
+	"parkingPlaces" : {
+		"title" : "Min Number of parking places",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+	},
+
+	"rentalComplex" : {
+		"type" : "boolean",
+		"title" : "Rental complex",
+		"description" : ""
+	}
+
+  }
+  },
+
+{
+"title" : "Buy Other",
+"required" : ["buyRent", "mainType", "location", "price"],
+"additionalProperties" : false,
+"properties" : {
+	"buyRent" : {"enum" : ["Buy"]},
+
+	"mainType" : {
+		"title" : "Type",
+		"enum" : ["Other"]
+	},
+
+	"location" : {
+		"title" : "Location",
+		"type" : "object",
+		"oneOf" :[ {
+				"properties" : {
+					"radius" : {
+						"type" : "integer",
+						"default" : "5"
+					},
+					"location" : {
+						"type" : "object",
+						"properties" : {
+							"lat" : {
+								"type" : "number"
+							},
+							"lon" : {
+								"type" : "number"
+							}
+						}
+					}
+				}
+			},
+            {
+				"properties" : {
+					"commune" : {
+						"type" : "string",
+						"items" : { "enum" : ["1200", "1000", "1080"] }
+					},
+					"region" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					},
+					"province" : {
+						"type" : "array",
+						"items" : { "enum" : ["Brussels", "Liege", "Antwerp"] }
+					}
+				}
+			}
+		]
+	},
+
+	"price" : {
+		"type" : "object",
+		"title" : "Sale price",
+		"description" : "",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5000000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5000000
+			}
+		}
+	},
+
+	"area" : {
+		"title" : "Habitable area",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			}
+		}
+	},
+
+	"land" : {
+		"title" : "Area of land",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 10000
+			}
+		}
+	},
+
+	"subtype" : {
+		"type" : "array",
+		"title" : "Property subtype",
+		"enum" : ["PROVINCIAL_FARMHOUSE", "GITES", "CAMPSITE", "BARGE", "OTHER", "MILL", "STATIC_CARAVAN", "HOUSE", "HOTEL", "BED_N_BREAKFAST", "MOBILE_HOME", "HOLIDAY_PARK", "BOAT_CRUISE"]
+	},
+
+	"auction" : {
+		"title" : "Include sales by auction",
+		"description" : "",
+		"enum" : ["Yes", "No", "Only"]
+	},
+
+	"newProperties" : {
+		"title" : "Include new properties",
+		"description" : "",
+		"enum" : ["Yes", "No", "Only"]
+	},
+
+	"parkingPlaces" : {
+		"title" : "Min Number of parking places",
+		"type" : "object",
+		"properties" : {
+			"min": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			},
+			"max": {
+				"type" : "integer",
+				"minimum" : 0,
+				"maximum" : 5
+			}
+		}
+
+	},
+
+	"rentalComplex" : {
+		"type" : "boolean",
+		"title" : "Rental complex",
+		"description" : ""
+	},
+
+	"lift" : {
+		"type" : "boolean",
+		"title" : "Lift",
+		"description" : ""
+	},
+
+	"furnished" : {
+		"type" : "boolean",
+		"title" : "Furnished",
+		"description" : ""
+	},
+
+	"disabledAccess" : {
+		"type" : "boolean",
+		"title" : "Disabled access"
+	},
+
+	"terraceGarden" : {
+		"type" : "boolean",
+		"title" : "with terrace or garden"
+	}
+
+  }
+  }
+
+
+
+
+]
 }

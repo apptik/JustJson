@@ -4,6 +4,7 @@ package org.djodjo.json.infalter.util;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import org.djodjo.json.android.fragment.BasePropertyFragment;
 import org.djodjo.json.android.fragment.ControllerCallback;
 import org.djodjo.json.android.fragment.EnumFragment;
 import org.djodjo.json.exception.JsonException;
+import org.djodjo.json.infalter.FragmentBuilder;
 import org.djodjo.json.infalter.LayoutBuilder;
 import org.djodjo.json.infalter.R;
 import org.djodjo.json.schema.Schema;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 
 public class OneOfFragment extends Fragment implements ControllerCallback {
@@ -39,9 +42,15 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
 
     private static final String ARG_SETTING_BUNDLE = "settingsBundle";
 
+    private volatile boolean isInitialised = false;
     int maxRadioItems = 3;
     RadioGroup oneOfRadioGroup;
     Spinner oneOfSpinner;
+
+    /**
+     * the added fragments of all allOfs so we can hide/show nicely
+     */
+    LinkedTreeMap<String, FragmentBuilder> addedFragmentBuilders = new LinkedTreeMap<String, FragmentBuilder>();
 
     private ArrayList<String> controllers = null;
     private ArrayList<Schema> schemas =  new ArrayList<Schema>();
@@ -137,6 +146,13 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                                 public void run() {
                                     ArrayList<Integer> hs = new ArrayList<Integer>();
                                     hs.add(checkedId);
+                                    while (!isInitialised) {
+                                        try {
+                                            Thread.sleep(33);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
                                     layoutBuilders.get(hs)
                                             .build(R.id.oneOfContainer);
                                 }
@@ -153,6 +169,13 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                                 public void run() {
                                     ArrayList<Integer> hs = new ArrayList<Integer>();
                                     hs.add(position);
+                                    while (!isInitialised) {
+                                        try {
+                                            Thread.sleep(33);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
                                     layoutBuilders.get(hs)
                                             .build(R.id.oneOfContainer);
                                 }
@@ -176,9 +199,21 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
     @Override
     public void onResume() {
         super.onResume();
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                isInitialised = true;
+            }
+        }).start();
 
     }
+
+
 
     @Override
     public void onValueChanged(final String name, final int position) {
@@ -190,7 +225,13 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
             public void run() {
                 LayoutBuilder<Schema> lb = layoutBuilders.get(new ArrayList<Integer>(currSelection.values()));
                 //note that if controllers not chosen wisely there could be a combination where there are no layout matching
-
+                while (!isInitialised) {
+                    try {
+                        Thread.sleep(33);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 if(lb!=null)
                     lb.build(R.id.oneOfContainer);
             }
@@ -199,6 +240,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
 
 
     private void performLayout() {
+        int maxNoOfFragBuildersPerSchema = 0;
         //used to populate values for controllers
         LinkedTreeMap<String, LinkedHashSet<String>> controllerOptions =  new LinkedTreeMap<String, LinkedHashSet<String>>();
 
@@ -293,14 +335,19 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 customCtrlKeys.add(hs);
             }
 
-            LayoutBuilder<Schema> lb = new LayoutBuilder<Schema>(schema, getFragmentManager())
+            LayoutBuilder<Schema> lb = new LayoutBuilder<Schema>(schema, getFragmentManager(), addedFragmentBuilders)
                     //ignore properties that are controllers as they are handled directly from here
                     .setSettingsBundle(settingsArgs)
-                    .ignoreProperties(controllers);
+                    .ignoreProperties(controllers)
+                    .prepFragments();
+
+            addedFragmentBuilders.putAll(lb.getFragBuilders());
 
             for(ArrayList<Integer> customCtrlKey:customCtrlKeys) {
                 layoutBuilders.put(customCtrlKey, lb);
             }
+
+            maxNoOfFragBuildersPerSchema = Math.max(lb.getFragBuilders().size(), maxNoOfFragBuildersPerSchema);
 
         }
 
@@ -311,7 +358,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
         }
 
 
-        //--> setup custom controllers
+        //--> setup and add the custom controllers
         if(controllers != null && controllers.size()>0) {
 
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -333,6 +380,50 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
             }
 
             transaction.commit();
+        }
+
+        //--> now attach all sub allOf props in the order they shoudl appear for each schema case
+        LinkedTreeMap<String, FragmentBuilder> orderedFragmentBuilders = new LinkedTreeMap<String, FragmentBuilder>();
+        for(int i=0;i<maxNoOfFragBuildersPerSchema;i++) {
+            for(LayoutBuilder currLb:layoutBuilders.values()) {
+                if(currLb.getFragBuilders().size()>i) {
+                    String tmpKey = (String)currLb.getFragBuilders().keySet().toArray()[i];
+                    if(!orderedFragmentBuilders.containsKey(tmpKey)) {
+                        orderedFragmentBuilders.put(tmpKey, (FragmentBuilder)currLb.getFragBuilders().get(tmpKey));
+                    }
+                }
+            }
+        }
+
+        int containerId = R.id.oneOfContainer;
+//        //--> REPLACE fragments if any inhere
+//        //FragmentTransaction.replace does not replace all the fragments in the container but only one thus we need to remove them all one by one
+//        Fragment currFrag =  getFragmentManager().findFragmentById(containerId);
+//
+//        while(currFrag!=null) {
+//            try {
+//                getFragmentManager().beginTransaction().remove(currFrag).commit();
+//                // fragment will not be removed instantly so we need to wait for the next one, otherwise too many commits buildup in the heap causing OutOfMemory
+//                android.app.Fragment nextFrag =  getFragmentManager().findFragmentById(containerId);
+//                while (nextFrag != null && nextFrag==currFrag) {
+//                    nextFrag =  getFragmentManager().findFragmentById(containerId);
+//                }
+//                currFrag = nextFrag;
+//            } catch(Exception ex){
+//                //frag manager exception timing issue
+//                //ex.printStackTrace();
+//            }
+//        }
+        // --> then add all& hide in all  schemas in order
+        for(Map.Entry<String, FragmentBuilder> builder : orderedFragmentBuilders.entrySet()) {
+            Fragment fragment = builder.getValue().build();
+            if (fragment != null) {
+                Log.d("JustJsonLayoutBulder ONEOF", "adding fragment: " + builder.getKey());
+                getFragmentManager().beginTransaction().add(containerId, fragment, builder.getKey()).commit();
+
+                LayoutBuilder.allAddedFragments.add(builder.getKey());
+
+            }
         }
     }
 

@@ -60,6 +60,8 @@ public class RangeFragment extends BasePropertyFragment {
     protected int minVal2;
     protected int maxVal2;
 
+    MultiSlider seekBar;
+
     public RangeFragment() {
         // Required empty public constructor
     }
@@ -98,11 +100,13 @@ public class RangeFragment extends BasePropertyFragment {
 
 
 
-        MultiSlider seekBar = (MultiSlider)v.findViewById(R.id.range_slider);
+        seekBar = (MultiSlider)v.findViewById(R.id.range_slider);
 
         if(seekBar!=null) {
             seekBar.setMax(maxVal2, true, true);
             seekBar.setMin(minVal1, true, true);
+
+
 
             min.setText(String.valueOf(seekBar.getThumb(0).getValue()));
             max.setText(String.valueOf(seekBar.getThumb(1).getValue()));
@@ -123,5 +127,21 @@ public class RangeFragment extends BasePropertyFragment {
             });
         }
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("minVal", seekBar.getThumb(0).getValue());
+        outState.putInt("maxVal", seekBar.getThumb(1).getValue());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if(savedInstanceState!=null) {
+            seekBar.getThumb(0).setValue(savedInstanceState.getInt("minVal", minVal1));
+            seekBar.getThumb(1).setValue(savedInstanceState.getInt("maxVal", maxVal2));
+        }
     }
 }

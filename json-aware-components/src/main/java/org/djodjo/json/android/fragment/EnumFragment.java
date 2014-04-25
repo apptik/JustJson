@@ -88,6 +88,7 @@ public class EnumFragment extends BasePropertyFragment {
 
         if(layoutId == LAYOUT_ENUM_RADIO) {
             RadioGroup enumRadioGroup = (RadioGroup) v.findViewById(R.id.enumRadioGroup);
+            boolean checked = false;
             for(final String option:options) {
                 RadioButton button = (RadioButton)inflater.inflate(R.layout.radio_button, enumRadioGroup, false);
                 button.setText(option);
@@ -109,7 +110,10 @@ public class EnumFragment extends BasePropertyFragment {
                     });
                 }
                 enumRadioGroup.addView(button);
-
+                if(!checked) {
+                    button.setChecked(true);
+                    checked = true;
+                }
             }
         }
         else if(layoutId == LAYOUT_ENUM_SPINNER) {

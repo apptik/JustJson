@@ -118,6 +118,7 @@ public abstract class BasePropertyFragment extends Fragment {
             noDesc = getArguments().getBoolean(ARG_NO_DESC);
 
         }
+
     }
 
     @Override

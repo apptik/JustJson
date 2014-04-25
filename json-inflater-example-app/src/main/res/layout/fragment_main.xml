@@ -35,6 +35,11 @@
         android:layout_height="1dp"
         android:background="@drawable/dark_grey" />
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
     <LinearLayout
         android:id="@+id/form_container"
         android:layout_width="match_parent"
@@ -45,4 +50,5 @@
 
     </LinearLayout>
 
+    </ScrollView>
 </LinearLayout>

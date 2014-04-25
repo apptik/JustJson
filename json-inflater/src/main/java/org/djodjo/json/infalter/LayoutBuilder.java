@@ -32,11 +32,16 @@ import org.djodjo.json.util.LinkedTreeMap;
 import org.hamcrest.Matcher;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class LayoutBuilder<T extends Schema> {
 
+
+    public static List<String> allAddedFragments =  Collections.synchronizedList(new ArrayList<String>());;
 
     //setings bundle args
     private static final String ARG_DISPLAY_TYPES = "displayTypes";
@@ -126,13 +131,22 @@ public class LayoutBuilder<T extends Schema> {
     private boolean globalNoTitle = false;
 
 
+    public LinkedTreeMap<String, FragmentBuilder> getFragBuilders() {
+        return fragBuilders;
+    }
+
     private LinkedTreeMap<String, FragmentBuilder> fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
+    private LinkedTreeMap<String, FragmentBuilder> extraFragBuilders;
     OneOfFragment oneOfOneOfFragment =  null;
 
 
-
+    public LayoutBuilder(T schema, FragmentManager fragmentManager, LinkedTreeMap<String, FragmentBuilder> addedFragmentsBuilders) {
+        this(schema, fragmentManager);
+        extraFragBuilders = addedFragmentsBuilders;
+    }
 
     public LayoutBuilder(T schema, FragmentManager fragmentManager) {
+        //allAddedFragments =  Collections.synchronizedList(new ArrayList<String>());
         this.fragmentManager = fragmentManager;
         this.schema = schema;
         this.globalButtonSelectors =  new HashMap<String, Integer>();
@@ -438,6 +452,10 @@ public class LayoutBuilder<T extends Schema> {
         fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
     }
 
+    private String genFragTag(String label, Schema propSchema) {
+        return label + "_" +propSchema.getJson().toString().hashCode();
+    }
+
     public void build(ViewGroup vg, boolean append) {
         build(vg.getId(), append);
     }
@@ -447,22 +465,26 @@ public class LayoutBuilder<T extends Schema> {
     public void build(int containerId) {
         build(containerId, false);
     }
-    public void build(int containerId, boolean append) {
-        Log.d(this.getClass().toString(), "start build");
-        if(fragmentManager==null) return;
-        if(fragBuilders == null || fragBuilders.size()<1)
-        {
+    public synchronized LayoutBuilder prepFragments() {
+        Log.d(this.getClass().toString(), "start prep");
+        if (fragmentManager == null) return this;
+        if (fragBuilders == null || fragBuilders.size() < 1) {
 
             Log.d(this.getClass().toString(), "start generate main props");
             SchemaMap schemaTopProperties = schema.getProperties();
 
             // --> First find basic properties
-            if(schemaTopProperties!=null) {
+            if (schemaTopProperties != null) {
                 for (Map.Entry<String, Schema> property : schemaTopProperties) {
                     if (ignoredProperties.contains(property.getKey())) continue;
                     Schema propSchema = property.getValue();
-                    FragmentBuilder fragBuilder = new FragmentBuilder(property.getKey(), propSchema);
-                    fragBuilders.put(property.getKey(),
+                    FragmentBuilder fragBuilder;
+                    if(extraFragBuilders!=null && extraFragBuilders.containsKey(genFragTag(property.getKey(), propSchema))) {
+                        fragBuilder = extraFragBuilders.get(genFragTag(property.getKey(), propSchema));
+                    } else {
+                        fragBuilder = new FragmentBuilder(property.getKey(), propSchema);
+                    }
+                    fragBuilders.put(genFragTag(property.getKey(), propSchema),
                             fragBuilder
                                     .withLayoutId(getCustomLayoutId(property.getKey()))
                                     .withDisplayType(chooseDisplayType(property.getKey()))
@@ -490,13 +512,13 @@ public class LayoutBuilder<T extends Schema> {
                 ArrayList<String> stringSchemas = new ArrayList<String>();
                 for (Schema oneOfSchema : oneOfSchemas) {
                     //before sending schemas to the oneOf fragment check if they are not already defined in here. if so merge and remove from common Layout
-                    if(schemaTopProperties!=null) {
+                    if (schemaTopProperties != null) {
                         SchemaMap propSchemas = oneOfSchema.getProperties();
                         for (Map.Entry<String, Schema> property : propSchemas) {
                             Schema topPropertySchema = schemaTopProperties.optValue(property.getKey());
                             if (topPropertySchema != null) {
                                 property.getValue().merge(topPropertySchema);
-                                fragBuilders.remove(property.getKey());
+                                fragBuilders.remove(genFragTag(property.getKey(), topPropertySchema));
                             }
                         }
                     }
@@ -507,48 +529,73 @@ public class LayoutBuilder<T extends Schema> {
                 //
                 Log.d(this.getClass().toString(), "end generate oneOf");
                 oneOfOneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers, bundleSettings());
-            }
+            } // <-- check for oneOf
 
         }
+        Log.d(this.getClass().toString(), "complete prep");
+        return this;
+    }
 
 
+    public synchronized void build(int containerId, boolean append) {
+        Log.d(this.getClass().toString(), "start build");
+        if (fragBuilders == null || fragBuilders.size() < 1) this.prepFragments();
 
-
-        // --> clean fragments if not appending
-        if(!append) {
-
-            Log.d(this.getClass().toString(), "start fragment removal");
-            //FragmentTransaction.replace does not replace all the fragments in the container but only one thus we need to remove them all one by one
-            android.app.Fragment currFrag =  fragmentManager.findFragmentById(containerId);
-
-            while(currFrag!=null) {
-                try {
-                    fragmentManager.beginTransaction().remove(currFrag).commit();
-                    // fragment will not be removed instantly so we need to wait for the next one, otherwise too many commits buildup in the heap causing OutOfMemory
-                    android.app.Fragment nextFrag =  fragmentManager.findFragmentById(containerId);
-                    while (nextFrag != null && nextFrag==currFrag) {
-                        nextFrag =  fragmentManager.findFragmentById(containerId);
+        synchronized (allAddedFragments) {
+            Iterator<String> iterator = allAddedFragments.iterator();
+            while (iterator.hasNext()) {
+                String fragTag = iterator.next();
+                Fragment currFrag = fragmentManager.findFragmentByTag(fragTag);
+                if (currFrag != null) {
+                    if (!fragBuilders.containsKey(fragTag)  && !currFrag.isHidden())
+                    {
+                        fragmentManager.beginTransaction().hide(currFrag).commit();
                     }
-                    currFrag = nextFrag;
-                } catch(Exception ex){
-                    ex.printStackTrace();
+                } else {
+                    iterator.remove();
                 }
             }
-            Log.d(this.getClass().toString(), "complete fragment removal");
         }
 
+        for (Map.Entry<String, FragmentBuilder> builder : fragBuilders.entrySet()) {
 
-        // --> The TRANSACTION
-        // --> build and add fragments
-        for (Map.Entry<String, FragmentBuilder> builder:fragBuilders.entrySet()) {
+            Fragment oldFrag = fragmentManager.findFragmentByTag(builder.getKey());
+            if (oldFrag != null) {
 
-           Fragment fragment = builder.getValue().build();
-            if(fragment!= null) {
-                Log.d("JustJsonLayoutBulder", "adding fragment: " + builder.getKey());
-                fragmentManager.beginTransaction().add(containerId, fragment, builder.getKey()).commit();
+                if (oldFrag.isHidden())
+                {
+                    fragmentManager.beginTransaction().show(oldFrag).commit();
+                    if (!allAddedFragments.contains(builder.getKey())) {
+                        allAddedFragments.add(builder.getKey());
+                    }
+                }
+                if (oldFrag.isDetached())
+                {
+                    fragmentManager.beginTransaction().attach(oldFrag).commit();
+                    if (!allAddedFragments.contains(builder.getKey())) {
+                        allAddedFragments.add(builder.getKey());
+                    }
+                }
+                if(!oldFrag.isAdded()) {
+                    fragmentManager.beginTransaction().add(containerId, oldFrag, oldFrag.getTag()).commit();
+                    if (!allAddedFragments.contains(builder.getKey())) {
+                        allAddedFragments.add(builder.getKey());
+                    }
+                }
+
+            } else {
+
+                Fragment fragment = builder.getValue().build();
+                if (fragment != null) {
+                    Log.d("JustJsonLayoutBulder", "adding fragment: " + builder.getKey());
+                    fragmentManager.beginTransaction().add(containerId, fragment, builder.getKey()).commit();
+                    if (!allAddedFragments.contains(builder.getKey())) {
+                        allAddedFragments.add(builder.getKey());
+                    }
+                }
             }
-
         }
+
 
         //add oneOf fragment if exists
         if(oneOfOneOfFragment != null) {
