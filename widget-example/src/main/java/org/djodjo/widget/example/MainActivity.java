@@ -161,6 +161,7 @@ public class MainActivity extends Activity
 
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:getFragmentManager().beginTransaction().add(R.id.inner_container, new MultiSliderFragment()).commit(); break;
+                case 2:getFragmentManager().beginTransaction().add(R.id.inner_container, new MultiSelectSpinnerFragment()).commit(); break;
             }
         }
     }
