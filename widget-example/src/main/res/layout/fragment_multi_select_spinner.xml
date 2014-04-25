@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context="org.djodjo.widget.example.MultiSelectSpinnerFragment">
 
-    <MultiSelectSpinner
+    <org.djodjo.widget.MultiSelectSpinner
         android:id="@+id/multiSelectSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
