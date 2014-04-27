@@ -29,9 +29,13 @@ import org.djodjo.json.util.LinkedTreeMap;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 public class OneOfFragment extends Fragment implements ControllerCallback {
@@ -46,6 +50,8 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
     int maxRadioItems = 3;
     RadioGroup oneOfRadioGroup;
     Spinner oneOfSpinner;
+
+    Set<String> newlyAddedFrags = Collections.synchronizedSet(new TreeSet<String>());
 
     /**
      * the added fragments of all allOfs so we can hide/show nicely
@@ -202,10 +208,23 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+                while(newlyAddedFrags.size()>0) {
+                    synchronized (newlyAddedFrags) {
+                        Iterator<String> iterator = newlyAddedFrags.iterator();
+                        while (iterator.hasNext()) {
+                            Fragment frag = getFragmentManager().findFragmentByTag(iterator.next());
+                            if (frag != null)
+                                iterator.remove();
+                        }
+                    }
+
+                    try {
+                        Thread.sleep(33);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                 }
                 isInitialised = true;
             }
@@ -371,8 +390,8 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 bundle.putBoolean(EnumFragment.ARG_IS_CONTROLLER, true);
                 bundle.putString(BasePropertyFragment.ARG_LABEL, controller);
 
-               bundle.putInt(BasePropertyFragment.ARG_BUTTON_SELECTOR,
-                       ((HashMap<String, Integer>) settingsArgs.getSerializable(LayoutBuilder.ARG_GLOBAL_BOTTON_SELECTORS)).get(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR));
+                bundle.putInt(BasePropertyFragment.ARG_BUTTON_SELECTOR,
+                        ((HashMap<String, Integer>) settingsArgs.getSerializable(LayoutBuilder.ARG_GLOBAL_BOTTON_SELECTORS)).get(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR));
                 //TODO doesnt work like this for fragment builder
                 //bundle.putBundle(ARG_SETTING_BUNDLE, settingsArgs);
                 frag.setArguments(bundle);
@@ -396,31 +415,14 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
         }
 
         int containerId = R.id.oneOfContainer;
-//        //--> REPLACE fragments if any inhere
-//        //FragmentTransaction.replace does not replace all the fragments in the container but only one thus we need to remove them all one by one
-//        Fragment currFrag =  getFragmentManager().findFragmentById(containerId);
-//
-//        while(currFrag!=null) {
-//            try {
-//                getFragmentManager().beginTransaction().remove(currFrag).commit();
-//                // fragment will not be removed instantly so we need to wait for the next one, otherwise too many commits buildup in the heap causing OutOfMemory
-//                android.app.Fragment nextFrag =  getFragmentManager().findFragmentById(containerId);
-//                while (nextFrag != null && nextFrag==currFrag) {
-//                    nextFrag =  getFragmentManager().findFragmentById(containerId);
-//                }
-//                currFrag = nextFrag;
-//            } catch(Exception ex){
-//                //frag manager exception timing issue
-//                //ex.printStackTrace();
-//            }
-//        }
-        // --> then add all& hide in all  schemas in order
+        // --> then add all in all  schemas in order
         for(Map.Entry<String, FragmentBuilder> builder : orderedFragmentBuilders.entrySet()) {
             Fragment fragment = builder.getValue().build();
             if (fragment != null) {
                 Log.d("JustJsonLayoutBulder ONEOF", "adding fragment: " + builder.getKey());
                 getFragmentManager().beginTransaction().add(containerId, fragment, builder.getKey()).commit();
-
+                //add the fragment sow we on resume we can check whe it is available
+                newlyAddedFrags.add(builder.getKey());
                 LayoutBuilder.allAddedFragments.add(builder.getKey());
 
             }
