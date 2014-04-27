@@ -465,12 +465,13 @@ public class LayoutBuilder<T extends Schema> {
     public void build(int containerId) {
         build(containerId, false);
     }
+
     public synchronized LayoutBuilder prepFragments() {
-        Log.d(this.getClass().toString(), "start prep");
+        Log.d("JustJsonLayoutBulder", "start prep");
         if (fragmentManager == null) return this;
         if (fragBuilders == null || fragBuilders.size() < 1) {
 
-            Log.d(this.getClass().toString(), "start generate main props");
+            Log.d("JustJsonLayoutBulder", "start generate main props");
             SchemaMap schemaTopProperties = schema.getProperties();
 
             // --> First find basic properties
@@ -502,12 +503,12 @@ public class LayoutBuilder<T extends Schema> {
                     );
                 }
             }
-            Log.d(this.getClass().toString(), "end generate main props");
+            Log.d("JustJsonLayoutBulder", "end generate main props");
 
 
             // --> check for oneOf
             if (schema.getOneOf() != null && schema.getOneOf().getJson().length() > 0) {
-                Log.d(this.getClass().toString(), "start generate onOf");
+                Log.d("JustJsonLayoutBulder", "start generate onOf");
                 ArrayList<Schema> oneOfSchemas = schema.getOneOf().getJsonWrappersList();
                 ArrayList<String> stringSchemas = new ArrayList<String>();
                 for (Schema oneOfSchema : oneOfSchemas) {
@@ -527,18 +528,18 @@ public class LayoutBuilder<T extends Schema> {
                     stringSchemas.add(oneOfSchema.getJson().toString());
                 }
                 //
-                Log.d(this.getClass().toString(), "end generate oneOf");
+                Log.d("JustJsonLayoutBulder", "end generate oneOf");
                 oneOfOneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers, bundleSettings());
             } // <-- check for oneOf
 
         }
-        Log.d(this.getClass().toString(), "complete prep");
+        Log.d("JustJsonLayoutBulder", "complete prep");
         return this;
     }
 
 
     public synchronized void build(int containerId, boolean append) {
-        Log.d(this.getClass().toString(), "start build");
+        Log.d("JustJsonLayoutBulder", "start build");
         if (fragBuilders == null || fragBuilders.size() < 1) this.prepFragments();
 
         synchronized (allAddedFragments) {
@@ -547,7 +548,7 @@ public class LayoutBuilder<T extends Schema> {
                 String fragTag = iterator.next();
                 Fragment currFrag = fragmentManager.findFragmentByTag(fragTag);
                 if (currFrag != null) {
-                    if (!fragBuilders.containsKey(fragTag)  && !currFrag.isHidden())
+                    if (!fragBuilders.containsKey(fragTag)  && !currFrag.isHidden()  && !currFrag.isDetached())
                     {
                         fragmentManager.beginTransaction().hide(currFrag).commit();
                     }
@@ -576,8 +577,9 @@ public class LayoutBuilder<T extends Schema> {
                         allAddedFragments.add(builder.getKey());
                     }
                 }
-                if(!oldFrag.isAdded()) {
-                    fragmentManager.beginTransaction().add(containerId, oldFrag, oldFrag.getTag()).commit();
+                if(!oldFrag.isAdded())
+                {
+                    fragmentManager.beginTransaction().add(containerId, oldFrag).commit();
                     if (!allAddedFragments.contains(builder.getKey())) {
                         allAddedFragments.add(builder.getKey());
                     }
@@ -603,7 +605,7 @@ public class LayoutBuilder<T extends Schema> {
 
         }
 
-        Log.d(this.getClass().toString(), "All commited - end build");
+        Log.d("JustJsonLayoutBulder", "All commited - end build");
 
     }
 

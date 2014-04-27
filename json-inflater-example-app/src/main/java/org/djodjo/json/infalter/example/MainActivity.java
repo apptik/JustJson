@@ -162,6 +162,8 @@ public class MainActivity extends Activity
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText("Schema" + Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+            buildFragments();
+
             return rootView;
         }
 
@@ -175,35 +177,38 @@ public class MainActivity extends Activity
         @Override
         public void onResume() {
             super.onResume();
-            final SchemaV4 schema = new SchemaV4();
-            try {
-                schema.wrap(JsonElement.readFrom(new InputStreamReader(getActivity().getAssets().open("schema" + getArguments().getInt(ARG_SECTION_NUMBER) + ".json"))));
-            } catch (JsonException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
-                    //add custom lb settings
-                    switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
-                        //case 1:lb.setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW);break;
-                        case 4:
-                            lb
-                                    .addOneOfController("buyRent")
-                                    .addOneOfController("mainType");
-                                    //.addOneOfController("controller1");
-                            break;
-                        case 5:lb.addOneOfController("controller0").addOneOfController("controller1"); break;
-                    }
-                    lb.build(R.id.form_container);
-                }
-            }).start();
         }
+         private void buildFragments() {
+             final SchemaV4 schema = new SchemaV4();
+             try {
+                 schema.wrap(JsonElement.readFrom(new InputStreamReader(getActivity().getAssets().open("schema" + getArguments().getInt(ARG_SECTION_NUMBER) + ".json"))));
+             } catch (JsonException e) {
+                 e.printStackTrace();
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+
+
+             new Thread(new Runnable() {
+                 @Override
+                 public void run() {
+                     LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getChildFragmentManager());
+                     //add custom lb settings
+                     switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
+                         //case 1:lb.setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW);break;
+                         case 4:
+                             lb
+                                     .addOneOfController("buyRent")
+                                     .addOneOfController("mainType");
+                             //.addOneOfController("controller1");
+                             break;
+                         case 5:lb.addOneOfController("controller0").addOneOfController("controller1"); break;
+                     }
+                     lb.build(R.id.form_container);
+                 }
+             }).start();
+         }
     }
 
 }
