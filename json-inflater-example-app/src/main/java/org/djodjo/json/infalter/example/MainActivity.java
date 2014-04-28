@@ -203,7 +203,10 @@ public class MainActivity extends Activity
                                      .addOneOfController("mainType");
                              //.addOneOfController("controller1");
                              break;
-                         case 5:lb.addOneOfController("controller0").addOneOfController("controller1"); break;
+                         case 5://lb
+                                 //.addOneOfController("controller0")
+                                 //.addOneOfController("controller1")
+                         ; break;
                      }
                      lb.build(R.id.form_container);
                  }

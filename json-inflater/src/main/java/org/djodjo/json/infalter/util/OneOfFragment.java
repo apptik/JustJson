@@ -21,6 +21,7 @@ import org.djodjo.json.android.fragment.ControllerCallback;
 import org.djodjo.json.android.fragment.EnumFragment;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.infalter.FragmentBuilder;
+import org.djodjo.json.infalter.InflaterSettings;
 import org.djodjo.json.infalter.LayoutBuilder;
 import org.djodjo.json.infalter.R;
 import org.djodjo.json.schema.Schema;
@@ -356,7 +357,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
 
             LayoutBuilder<Schema> lb = new LayoutBuilder<Schema>(schema, getFragmentManager(), addedFragmentBuilders)
                     //ignore properties that are controllers as they are handled directly from here
-                    .setSettingsBundle(settingsArgs)
+                    .setInflaterSettings(new InflaterSettings().setSettingsBundle(settingsArgs))
                     .ignoreProperties(controllers)
                     .prepFragments();
 
@@ -391,7 +392,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 bundle.putString(BasePropertyFragment.ARG_LABEL, controller);
 
                 bundle.putInt(BasePropertyFragment.ARG_BUTTON_SELECTOR,
-                        ((HashMap<String, Integer>) settingsArgs.getSerializable(LayoutBuilder.ARG_GLOBAL_BOTTON_SELECTORS)).get(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR));
+                        ((HashMap<String, Integer>) settingsArgs.getSerializable(InflaterSettings.ARG_GLOBAL_BOTTON_SELECTORS)).get(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR));
                 //TODO doesnt work like this for fragment builder
                 //bundle.putBundle(ARG_SETTING_BUNDLE, settingsArgs);
                 frag.setArguments(bundle);
@@ -423,9 +424,13 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 getFragmentManager().beginTransaction().add(containerId, fragment, builder.getKey()).commit();
                 //add the fragment sow we on resume we can check whe it is available
                 newlyAddedFrags.add(builder.getKey());
-                LayoutBuilder.allAddedFragments.add(builder.getKey());
+                //now set all known fragments sub builders should know about
+
 
             }
+        }
+        for(LayoutBuilder currLb:layoutBuilders.values()) {
+            currLb.getKnownFragments().addAll(newlyAddedFrags);
         }
     }
 

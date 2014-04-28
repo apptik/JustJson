@@ -19,53 +19,30 @@ package org.djodjo.json.infalter;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.os.Bundle;
+import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import org.djodjo.json.android.fragment.BasePropertyFragment;
 import org.djodjo.json.android.fragment.DisplayType;
 import org.djodjo.json.infalter.util.OneOfFragment;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
 import org.djodjo.json.util.LinkedTreeMap;
-import org.hamcrest.Matcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class LayoutBuilder<T extends Schema> {
 
-
-    public static List<String> allAddedFragments =  Collections.synchronizedList(new ArrayList<String>());;
-
-    //setings bundle args
-    private static final String ARG_DISPLAY_TYPES = "displayTypes";
-
-    private static final String ARG_BUTTON_SELECTORS = "customButtonSelectors";
-    private static final String ARG_CUSTOM_TITLE_STYLE = "customTitleTextAppearances";
-    private static final String ARG_CUSTOM_DESC_STYLE = "customDescTextAppearances";
-    private static final String ARG_CUSTOM_VALUE_TEXT_STYLE = "customValueTextAppearances";
-    private static final String ARG_NO_TITLE = "noTitle";
-    private static final String ARG_NO_DESC = "noDescription";
-
-    private static final String ARG_GLOBAL_DISPLAY_TYPES = "globalDisplayTypes";
-
-    private static final String ARG_GLOBAL_THEME_COLOR = "globalThemeColor";
+    private Set<String> knownFragments = Collections.synchronizedSet(new TreeSet<String>());
 
 
-    //used for the hashmap containing all possible global selectors
-    public static final String ARG_GLOBAL_BOTTON_SELECTORS = "globalButtonSelectors";
-    private static final String ARG_GLOBAL_TITLE_STYLE = "globalTitleTextAppearance";
-    private static final String ARG_GLOBAL_DESC_STYLE = "globalDescTextAppearance";
-    private static final String ARG_GLOBAL_VALUE_TEXT_STYLE = "globalValuesTextAppearance";
-    private static final String ARG_GLOBAL_NO_DESC = "globalNoDescription";
-    private static final String ARG_GLOBAL_NO_TITLE = "globalNoTitle";
-
+    private InflaterSettings inflaterSettings =  new InflaterSettings();
 
     // private final Activity activity;
     private final FragmentManager fragmentManager;
@@ -98,38 +75,16 @@ public class LayoutBuilder<T extends Schema> {
      */
     private static HashMap<String, FragmentBuilder.FragmentPack> customFragments = new HashMap<String, FragmentBuilder.FragmentPack>();
 
-    /**
-     * custom matchers to be used to match custom Fragment to a specific property schema type.
-     * if any they all need to be passed to the fragment builders
-     */
-    private static LinkedTreeMap<Matcher<Schema>, FragmentBuilder.FragmentPack> customPropertyMatchers = new LinkedTreeMap<Matcher<Schema>, FragmentBuilder.FragmentPack>();
-
-    private HashMap<String, Integer> displayTypes = new HashMap<String, Integer>();
-    private HashMap<String, Integer> customButtonSelectors =  new HashMap<String, Integer>();
-    private HashMap<String, Integer> customTitleTextAppearances = new HashMap<String, Integer>();
-    private HashMap<String, Integer> customDescTextAppearances =  new HashMap<String, Integer>();
-    private HashMap<String, Integer> customValueTextAppearances = new HashMap<String, Integer>();
-    private HashMap<String, Boolean> noTitle =  new HashMap<String, Boolean>();
-    private HashMap<String, Boolean> noDescription = new HashMap<String, Boolean>();
-
-    /**
-     * a mask of the possible display types for all elements
-     */
-    private HashMap<String, Integer> globalDisplayTypes = new HashMap<String, Integer>();
 
 
-    private int globalThemeColor = -1;
 
-    HashMap<String, Integer> globalButtonSelectors = new HashMap<String, Integer>();
-    //style ref
-    private int globalTitleTextAppearance = R.style.textTitle;
-    //style ref
-    private int globalDescTextAppearance = R.style.textDesc;
-    //style ref
-    private int globalValuesTextAppearance = R.style.textValue;
-    private boolean globalNoDescription = false;
-    private boolean globalNoTitle = false;
+    public Set<String> getKnownFragments() {
+        return knownFragments;
+    }
 
+    public void setKnownFragments(Set<String> knownFragments) {
+        this.knownFragments = knownFragments;
+    }
 
     public LinkedTreeMap<String, FragmentBuilder> getFragBuilders() {
         return fragBuilders;
@@ -146,245 +101,13 @@ public class LayoutBuilder<T extends Schema> {
     }
 
     public LayoutBuilder(T schema, FragmentManager fragmentManager) {
-        //allAddedFragments =  Collections.synchronizedList(new ArrayList<String>());
+        //knownFragments =  Collections.synchronizedList(new ArrayList<String>());
         this.fragmentManager = fragmentManager;
         this.schema = schema;
-        this.globalButtonSelectors =  new HashMap<String, Integer>();
-        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_CHECKBOX_SELECTOR,0);
-        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR,0);
-        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_THUMB_SELECTOR,0);
-        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE,0);
-        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_TOGGLEBUTTON_SELECTOR,0);
-        globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SWITCHBUTTON_SELECTOR,0);
 
-        this.globalDisplayTypes = new HashMap<String, Integer>();
-        setGlobalStringDisplayType(DisplayType.DISPLAY_TYPE_TEXT);
-        setGlobalNumberDisplayType(DisplayType.DISPLAY_TYPE_TEXT);
-        setGlobalLimitedNumberDisplayType(DisplayType.DISPLAY_TYPE_SLIDER);
-        setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW);
-        setGlobalArrayDisplayType(DisplayType.DISPLAY_TYPE_LISTVIEW);
-        setGlobalArrayEnumDisplayType(DisplayType.DISPLAY_TYPE_SPINNER); //multi select
-        setGlobalEnumDisplayType(DisplayType.DISPLAY_TYPE_SPINNER); //single select
-        setGlobalRangeDisplayType(DisplayType.DISPLAY_TYPE_SLIDER);
-    }
-
-    public LayoutBuilder<T> setSettingsBundle(Bundle args) {
-        //populate hashmaps and values
-        if(args == null) return this;
-
-        displayTypes = (HashMap<String, Integer>)args.getSerializable(ARG_DISPLAY_TYPES);
-        customButtonSelectors =  (HashMap<String, Integer>)args.getSerializable(ARG_BUTTON_SELECTORS);
-        customTitleTextAppearances = (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_TITLE_STYLE);
-        customDescTextAppearances =  (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_DESC_STYLE);
-        customValueTextAppearances = (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_VALUE_TEXT_STYLE);
-        noTitle =   (HashMap<String, Boolean>)args.getSerializable(ARG_NO_TITLE);
-        noDescription = ( HashMap<String, Boolean>)args.getSerializable(ARG_NO_DESC);
-
-        globalDisplayTypes = (HashMap<String, Integer>) args.getSerializable(ARG_GLOBAL_DISPLAY_TYPES);
-        globalThemeColor = args.getInt(ARG_GLOBAL_THEME_COLOR, -1);
-        globalButtonSelectors = (HashMap<String, Integer>) args.getSerializable(ARG_GLOBAL_BOTTON_SELECTORS);
-        globalTitleTextAppearance = args.getInt(ARG_GLOBAL_TITLE_STYLE, R.style.textTitle);
-        globalDescTextAppearance = args.getInt(ARG_GLOBAL_DESC_STYLE, R.style.textDesc);
-        globalValuesTextAppearance = args.getInt(ARG_GLOBAL_VALUE_TEXT_STYLE, R.style.textValue);
-        globalNoDescription = args.getBoolean(ARG_GLOBAL_NO_DESC, false);
-        globalNoTitle = args.getBoolean(ARG_GLOBAL_NO_TITLE, false);
-
-        return this;
-    }
-
-    private Bundle bundleSettings() {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_DISPLAY_TYPES, displayTypes);
-        bundle.putSerializable(ARG_BUTTON_SELECTORS, customButtonSelectors);
-        bundle.putSerializable(ARG_CUSTOM_TITLE_STYLE, customTitleTextAppearances);
-        bundle.putSerializable(ARG_CUSTOM_DESC_STYLE, customDescTextAppearances);
-        bundle.putSerializable(ARG_CUSTOM_VALUE_TEXT_STYLE, customValueTextAppearances);
-        bundle.putSerializable(ARG_NO_TITLE, noTitle);
-        bundle.putSerializable(ARG_NO_DESC, noDescription);
-
-        bundle.putSerializable(ARG_GLOBAL_DISPLAY_TYPES, globalDisplayTypes);
-        bundle.putInt(ARG_GLOBAL_THEME_COLOR, globalThemeColor);
-        bundle.putSerializable(ARG_GLOBAL_BOTTON_SELECTORS, globalButtonSelectors);
-        bundle.putInt(ARG_GLOBAL_TITLE_STYLE, globalTitleTextAppearance);
-        bundle.putInt(ARG_GLOBAL_DESC_STYLE, globalDescTextAppearance);
-        bundle.putInt(ARG_GLOBAL_VALUE_TEXT_STYLE, globalValuesTextAppearance);
-        bundle.putBoolean(ARG_GLOBAL_NO_DESC, globalNoDescription);
-        bundle.putBoolean(ARG_GLOBAL_NO_TITLE, globalNoTitle);
-
-        return bundle;
     }
 
 
-    /**
-     * Add cusotm selector for a specific property.
-     * @param propertyName the property to have this selector
-     * @param customButtonSelector the style id of the selector
-     * @return
-     */
-    public LayoutBuilder<T> addCustomButtonSelector(String propertyName, Integer customButtonSelector) {
-        this.customButtonSelectors.put(propertyName, customButtonSelector);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomButtonSelectors(HashMap<String, Integer> customButtonColors) {
-        this.customButtonSelectors.putAll(customButtonColors);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomTitleTextAppearance(String propertyName, Integer customTitleTextAppearance) {
-        this.customTitleTextAppearances.put(propertyName, customTitleTextAppearance);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomTitleTextAppearances(HashMap<String, Integer> customTitleTextAppearances) {
-        this.customTitleTextAppearances.putAll(customTitleTextAppearances);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomDescTextAppearance(String propertyName, Integer customDescTextAppearance) {
-        this.customDescTextAppearances.put(propertyName, customDescTextAppearance);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomDescTextAppearances(HashMap<String, Integer> customDescTextAppearances) {
-        this.customDescTextAppearances.putAll(customDescTextAppearances);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomValueTextAppearance(String propertyName, Integer customValueTextAppearance) {
-        this.customValueTextAppearances.put(propertyName, customValueTextAppearance);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomValueTextAppearances(HashMap<String, Integer> customValueTextAppearances) {
-        this.customValueTextAppearances.putAll(customValueTextAppearances);
-        return this;
-    }
-
-    public LayoutBuilder<T> addNoTitle(String propertyName) {
-        this.noTitle.put(propertyName, true);
-        return this;
-    }
-
-    public LayoutBuilder<T> addNoTitles(HashMap<String, Boolean> noTitles) {
-        this.noTitle.putAll(noTitles);
-        return this;
-    }
-
-    public LayoutBuilder<T> addNoDescription(String propertyName) {
-        this.noDescription.put(propertyName, true);
-        return this;
-    }
-
-    public LayoutBuilder<T> addNoDescriptions(HashMap<String, Boolean> noDescriptions) {
-        this.noDescription.putAll(noDescriptions);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalStringDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_STRING_DISPLAY_TYPE, globalDisplayType);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalNumberDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_NUMBER_DISPLAY_TYPE, globalDisplayType);
-        return this;
-    }
-
-    /**
-     * Set global display type of a limited number property. Limited means the property has "minimum" and "maximum" values defined.
-     * @param globalDisplayType
-     * @return
-     */
-    public LayoutBuilder<T> setGlobalLimitedNumberDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_LIMITED_NUMBER_DISPLAY_TYPE, globalDisplayType);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalBooleanDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_BOOLEAN_DISPLAY_TYPE, globalDisplayType);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalArrayDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_ARRAY_DISPLAY_TYPE, globalDisplayType);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalArrayEnumDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_ARRAY_ENUM_DISPLAY_TYPE, globalDisplayType);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalEnumDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_ENUM_DISPLAY_TYPE, globalDisplayType);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalRangeDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_RANGE_DISPLAY_TYPE, globalDisplayType);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalThemeColor(int globalThemeColor) {
-        this.globalThemeColor = globalThemeColor;
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalCheckBoxSelector(int globalCheckBoxSelector) {
-        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_CHECKBOX_SELECTOR, globalCheckBoxSelector);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalRadioButtonSelector(int globalRadioButtonSelector) {
-        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR, globalRadioButtonSelector);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalSliderThumbSelector(int globalSliderThumbSelector) {
-        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_THUMB_SELECTOR, globalSliderThumbSelector);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalSliderProgressDrawable(int globalSliderProgressDrawable) {
-        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE, globalSliderProgressDrawable);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalToggleButtonSelector(int globalToggleButtonSelector) {
-        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_TOGGLEBUTTON_SELECTOR, globalToggleButtonSelector);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalSwitchButtonSelector(int globalSwitchButtonSelector) {
-        this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SWITCHBUTTON_SELECTOR, globalSwitchButtonSelector);
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalTitleTextAppearance(int globalTitleTextAppearance) {
-        this.globalTitleTextAppearance = globalTitleTextAppearance;
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalDescTextAppearance(int globalDescTextAppearance) {
-        this.globalDescTextAppearance = globalDescTextAppearance;
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalValuesTextAppearance(int globalValuesTextAppearance) {
-        this.globalValuesTextAppearance = globalValuesTextAppearance;
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalNoDescription(boolean globalNoDescription) {
-        this.globalNoDescription = globalNoDescription;
-        return this;
-    }
-
-    public LayoutBuilder<T> setGlobalNoTitle(boolean globalNoTitle) {
-        this.globalNoTitle = globalNoTitle;
-        return this;
-    }
 
 
 
@@ -428,25 +151,6 @@ public class LayoutBuilder<T extends Schema> {
         return this;
     }
 
-    public LayoutBuilder<T> addCustomPropertyMatcher (Matcher<Schema> propertyMatcher,  FragmentBuilder.FragmentPack fragmentClass) {
-        customPropertyMatchers.put(propertyMatcher, fragmentClass);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomPropertyMatchers (Map<Matcher<Schema>, FragmentBuilder.FragmentPack> propertyMatchers) {
-        customPropertyMatchers.putAll(propertyMatchers);
-        return this;
-    }
-
-    public LayoutBuilder<T> addDisplayType (String propertyName, int displayType) {
-        displayTypes.put(propertyName, displayType);
-        return this;
-    }
-
-    public LayoutBuilder<T> addDisplayTypes (Map<String, Integer> propertyDisplayTypes) {
-        displayTypes.putAll(propertyDisplayTypes);
-        return this;
-    }
 
     public void reset() {
         fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
@@ -488,18 +192,18 @@ public class LayoutBuilder<T extends Schema> {
                     fragBuilders.put(genFragTag(property.getKey(), propSchema),
                             fragBuilder
                                     .withLayoutId(getCustomLayoutId(property.getKey()))
-                                    .withDisplayType(chooseDisplayType(property.getKey()))
-                                    .withThemeColor(globalThemeColor)
-                                    .withButtonSelector(chooseButtonSelectors(property.getKey()))
-                                    .withTitleTextAppearance(chooseTitleTextAppearance(property.getKey()))
-                                    .withDescTextAppearance(chooseDescTextAppearance(property.getKey()))
-                                    .withValueTextAppearance(chooseValueTextAppearance(property.getKey()))
-                                    .withNoTitle(isNoTile(property.getKey()))
-                                    .withNoDescription(isNoDescription(property.getKey()))
-                                    .withGlobalButtonSelectors(globalButtonSelectors)
-                                    .withGlobalDisplayTypes(globalDisplayTypes)
+                                    .withDisplayType(inflaterSettings.chooseDisplayType(property.getKey()))
+                                    .withThemeColor(inflaterSettings.globalThemeColor)
+                                    .withButtonSelector(inflaterSettings.chooseButtonSelectors(property.getKey()))
+                                    .withTitleTextAppearance(inflaterSettings.chooseTitleTextAppearance(property.getKey()))
+                                    .withDescTextAppearance(inflaterSettings.chooseDescTextAppearance(property.getKey()))
+                                    .withValueTextAppearance(inflaterSettings.chooseValueTextAppearance(property.getKey()))
+                                    .withNoTitle(inflaterSettings.isNoTile(property.getKey()))
+                                    .withNoDescription(inflaterSettings.isNoDescription(property.getKey()))
+                                    .withGlobalButtonSelectors(inflaterSettings.globalButtonSelectors)
+                                    .withGlobalDisplayTypes(inflaterSettings.globalDisplayTypes)
                                     .withCustomFragment(customFragments.get(property.getKey()))
-                                    .withCustomPropertyMatchers(customPropertyMatchers)
+                                    .withCustomPropertyMatchers(inflaterSettings.customPropertyMatchers)
                     );
                 }
             }
@@ -529,7 +233,7 @@ public class LayoutBuilder<T extends Schema> {
                 }
                 //
                 Log.d("JustJsonLayoutBulder", "end generate oneOf");
-                oneOfOneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers, bundleSettings());
+                oneOfOneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers, inflaterSettings.bundleSettings());
             } // <-- check for oneOf
 
         }
@@ -542,8 +246,8 @@ public class LayoutBuilder<T extends Schema> {
         Log.d("JustJsonLayoutBulder", "start build");
         if (fragBuilders == null || fragBuilders.size() < 1) this.prepFragments();
 
-        synchronized (allAddedFragments) {
-            Iterator<String> iterator = allAddedFragments.iterator();
+        synchronized (knownFragments) {
+            Iterator<String> iterator = knownFragments.iterator();
             while (iterator.hasNext()) {
                 String fragTag = iterator.next();
                 Fragment currFrag = fragmentManager.findFragmentByTag(fragTag);
@@ -565,23 +269,23 @@ public class LayoutBuilder<T extends Schema> {
 
                 if (oldFrag.isHidden())
                 {
-                    fragmentManager.beginTransaction().show(oldFrag).commit();
-                    if (!allAddedFragments.contains(builder.getKey())) {
-                        allAddedFragments.add(builder.getKey());
+                    fragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).show(oldFrag).commit();
+                    if (!knownFragments.contains(builder.getKey())) {
+                        knownFragments.add(builder.getKey());
                     }
                 }
                 if (oldFrag.isDetached())
                 {
                     fragmentManager.beginTransaction().attach(oldFrag).commit();
-                    if (!allAddedFragments.contains(builder.getKey())) {
-                        allAddedFragments.add(builder.getKey());
+                    if (!knownFragments.contains(builder.getKey())) {
+                        knownFragments.add(builder.getKey());
                     }
                 }
                 if(!oldFrag.isAdded())
                 {
                     fragmentManager.beginTransaction().add(containerId, oldFrag).commit();
-                    if (!allAddedFragments.contains(builder.getKey())) {
-                        allAddedFragments.add(builder.getKey());
+                    if (!knownFragments.contains(builder.getKey())) {
+                        knownFragments.add(builder.getKey());
                     }
                 }
 
@@ -591,8 +295,8 @@ public class LayoutBuilder<T extends Schema> {
                 if (fragment != null) {
                     Log.d("JustJsonLayoutBulder", "adding fragment: " + builder.getKey());
                     fragmentManager.beginTransaction().add(containerId, fragment, builder.getKey()).commit();
-                    if (!allAddedFragments.contains(builder.getKey())) {
-                        allAddedFragments.add(builder.getKey());
+                    if (!knownFragments.contains(builder.getKey())) {
+                        knownFragments.add(builder.getKey());
                     }
                 }
             }
@@ -618,83 +322,16 @@ public class LayoutBuilder<T extends Schema> {
         return res;
     }
 
-    private int chooseDisplayType(String property) {
-        int res = -1;
-
-        if(displayTypes.containsKey(property)) {
-            res = displayTypes.get(property);
-        }
-        else {
-            res = -1;
-        }
-
-        return res;
+    public InflaterSettings getInflaterSettings() {
+        return inflaterSettings;
     }
 
-    private int chooseButtonSelectors(String property) {
-        int res = 0;
-        if(customButtonSelectors.containsKey(property)) {
-            res = customButtonSelectors.get(property);
-        }
-        return res;
+    public LayoutBuilder<T> setInflaterSettings(InflaterSettings inflaterSettings) {
+        this.inflaterSettings = inflaterSettings;
+
+        return this;
     }
 
-
-    private int chooseTitleTextAppearance(String property) {
-        int res = 0;
-
-        if(customTitleTextAppearances.containsKey(property)) {
-            res = customTitleTextAppearances.get(property);
-        } else {
-            res = globalTitleTextAppearance;
-        }
-
-        return res;
-    }
-
-    private int chooseDescTextAppearance(String property) {
-        int res = 0;
-
-        if(customDescTextAppearances.containsKey(property)) {
-            res = customDescTextAppearances.get(property);
-        } else {
-            res = globalDescTextAppearance;
-        }
-
-        return res;
-    }
-
-    private int chooseValueTextAppearance(String property) {
-        int res = 0;
-
-        if(customValueTextAppearances.containsKey(property)) {
-            res = customValueTextAppearances.get(property);
-        } else {
-            res = globalValuesTextAppearance;
-        }
-
-        return res;
-    }
-
-    private boolean isNoTile(String property) {
-        boolean res = false;
-        if(noTitle.containsKey(property)) {
-            res = noTitle.get(property);
-        } else {
-            res = globalNoTitle;
-        }
-        return res;
-    }
-
-    private boolean isNoDescription(String property) {
-        boolean res = false;
-        if(noDescription.containsKey(property)) {
-            res = noDescription.get(property);
-        } else {
-            res = globalNoDescription;
-        }
-        return res;
-    }
 
 
 }
