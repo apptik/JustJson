@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class LayoutBuilder<T extends Schema> {
+public class LayoutFragmentBuilder<T extends Schema> {
 
     private Set<String> knownFragments = Collections.synchronizedSet(new TreeSet<String>());
 
@@ -74,12 +74,12 @@ public class LayoutBuilder<T extends Schema> {
     OneOfFragment oneOfOneOfFragment =  null;
 
 
-    public LayoutBuilder(T schema, FragmentManager fragmentManager, LinkedTreeMap<String, FragmentBuilder> addedFragmentsBuilders) {
+    public LayoutFragmentBuilder(T schema, FragmentManager fragmentManager, LinkedTreeMap<String, FragmentBuilder> addedFragmentsBuilders) {
         this(schema, fragmentManager);
         extraFragBuilders = addedFragmentsBuilders;
     }
 
-    public LayoutBuilder(T schema, FragmentManager fragmentManager) {
+    public LayoutFragmentBuilder(T schema, FragmentManager fragmentManager) {
         //knownFragments =  Collections.synchronizedList(new ArrayList<String>());
         this.fragmentManager = fragmentManager;
         this.schema = schema;
@@ -111,7 +111,7 @@ public class LayoutBuilder<T extends Schema> {
         build(containerId, false);
     }
 
-    public synchronized LayoutBuilder prepFragments() {
+    public synchronized LayoutFragmentBuilder prepFragments() {
         Log.d("JustJsonLayoutBulder", "start prep");
         if (fragmentManager == null) return this;
         if (fragBuilders == null || fragBuilders.size() < 1) {
@@ -260,7 +260,7 @@ public class LayoutBuilder<T extends Schema> {
         return inflaterSettings;
     }
 
-    public LayoutBuilder<T> setInflaterSettings(InflaterSettings inflaterSettings) {
+    public LayoutFragmentBuilder<T> setInflaterSettings(InflaterSettings inflaterSettings) {
         this.inflaterSettings = inflaterSettings;
 
         return this;

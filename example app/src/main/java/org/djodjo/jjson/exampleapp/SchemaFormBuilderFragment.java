@@ -23,7 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.djodjo.json.infalter.LayoutBuilder;
+import org.djodjo.json.infalter.LayoutFragmentBuilder;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.SchemaV4;
@@ -58,7 +58,7 @@ public class SchemaFormBuilderFragment extends BlankFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getFragmentManager());
+                LayoutFragmentBuilder<SchemaV4> lb  = new LayoutFragmentBuilder<SchemaV4>(schema, getFragmentManager());
                 lb
                         //.addOneOfController("controller1")
                         .build(R.id.form_container);

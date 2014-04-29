@@ -144,8 +144,7 @@ public class FragmentBuilder {
 
     //options for enums mostly
     public FragmentBuilder withOptions(ArrayList<String> options) {
-
-
+        args.putStringArrayList(EnumFragment.ARG_OPTIONS, options);
         return this;
     }
 
@@ -225,7 +224,7 @@ public class FragmentBuilder {
             }
         }
 
-        if(fragment==null) {
+        if(fragment==null && propertySchema!=null) {
             for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                 if (entry.getKey().matches(propertySchema)) {
                     try {

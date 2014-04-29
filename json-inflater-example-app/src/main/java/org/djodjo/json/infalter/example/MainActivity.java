@@ -31,8 +31,7 @@ import android.widget.TextView;
 
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.exception.JsonException;
-import org.djodjo.json.infalter.InflaterSettings;
-import org.djodjo.json.infalter.LayoutBuilder;
+import org.djodjo.json.infalter.LayoutViewBuilder;
 import org.djodjo.json.schema.SchemaV4;
 
 import java.io.IOException;
@@ -194,14 +193,15 @@ public class MainActivity extends Activity
              new Thread(new Runnable() {
                  @Override
                  public void run() {
-                     LayoutBuilder<SchemaV4> lb  = new LayoutBuilder<SchemaV4>(schema, getChildFragmentManager());
+                     //LayoutFragmentBuilder<SchemaV4> lb  = new LayoutFragmentBuilder<SchemaV4>(schema, getChildFragmentManager());
+                     LayoutViewBuilder<SchemaV4> lb  = new LayoutViewBuilder<SchemaV4>(schema, getActivity());
                      //add custom lb settings
                      switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
                          //case 1:lb.setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW);break;
                          case 4:
-                             lb.setInflaterSettings(new InflaterSettings() .addOneOfController("buyRent")
-                                     .addOneOfController("mainType"))
-                                    ;
+                           //  lb.setInflaterSettings(new InflaterSettings() .addOneOfController("buyRent")
+                           //          .addOneOfController("mainType"))
+                           //         ;
                              //.addOneOfController("controller1");
                              break;
                          case 5://lb
@@ -209,7 +209,7 @@ public class MainActivity extends Activity
                                  //.addOneOfController("controller1")
                          ; break;
                      }
-                     lb.build(R.id.form_container);
+                    lb.build((ViewGroup)getActivity().findViewById(R.id.form_container));
                  }
              }).start();
          }

@@ -133,7 +133,7 @@ public abstract class BasePropertyFragment extends Fragment {
         final TextView txtPropDesc =   (TextView)v.findViewById(R.id.txtPropDescription);
 
         if(txtTitle!=null) {
-            if (noTitle) {
+            if (noTitle || title==null) {
                 txtTitle.setVisibility(View.GONE);
             } else {
                 txtTitle.setText(title);
@@ -142,7 +142,6 @@ public abstract class BasePropertyFragment extends Fragment {
         }
 
         if(description != null && !description.trim().isEmpty() && !noDesc && txtPropDesc!=null) {
-
             txtPropDesc.setText(description);
             txtPropDesc.setTextAppearance(getActivity(), styleDesc);
             v.findViewById(R.id.btnPropHelp).setVisibility(View.VISIBLE);

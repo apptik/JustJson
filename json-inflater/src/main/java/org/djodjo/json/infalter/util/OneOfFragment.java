@@ -17,10 +17,11 @@ import android.widget.SpinnerAdapter;
 
 import org.djodjo.json.JsonObject;
 import org.djodjo.json.android.fragment.ControllerCallback;
+import org.djodjo.json.android.fragment.EnumFragment;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.infalter.FragmentBuilder;
 import org.djodjo.json.infalter.InflaterSettings;
-import org.djodjo.json.infalter.LayoutBuilder;
+import org.djodjo.json.infalter.LayoutFragmentBuilder;
 import org.djodjo.json.infalter.R;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
@@ -66,9 +67,9 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
      */
     Bundle settingsArgs = null;
 
-    private HashMap<ArrayList<Integer>,LayoutBuilder<Schema>> layoutBuilders =  new HashMap<ArrayList<Integer>, LayoutBuilder<Schema>>();
+    private HashMap<ArrayList<Integer>,LayoutFragmentBuilder<Schema>> layoutBuilders =  new HashMap<ArrayList<Integer>, LayoutFragmentBuilder<Schema>>();
 
-    //this is the current selection object used a key to find the right LayoutBuilder
+    //this is the current selection object used a key to find the right LayoutFragmentBuilder
     //its size should equal to controllers.size
     private LinkedTreeMap<String,Integer> currSelection = new LinkedTreeMap<String, Integer>();
 
@@ -241,7 +242,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                LayoutBuilder<Schema> lb = layoutBuilders.get(new ArrayList<Integer>(currSelection.values()));
+                LayoutFragmentBuilder<Schema> lb = layoutBuilders.get(new ArrayList<Integer>(currSelection.values()));
                 //note that if controllers not chosen wisely there could be a combination where there are no layout matching
                 while (!isInitialised) {
                     try {
@@ -353,7 +354,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 customCtrlKeys.add(hs);
             }
 
-            LayoutBuilder<Schema> lb = new LayoutBuilder<Schema>(schema, getFragmentManager(), addedFragmentBuilders)
+            LayoutFragmentBuilder<Schema> lb = new LayoutFragmentBuilder<Schema>(schema, getFragmentManager(), addedFragmentBuilders)
                     //ignore properties that are controllers as they are handled directly from here
                     .setInflaterSettings(new InflaterSettings().setSettingsBundle(settingsArgs).ignoreProperties(controllers))
 
@@ -388,6 +389,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                         .withInflaterSettings(new InflaterSettings().setSettingsBundle(settingsArgs))
                         .withOptions(opts)
                         .setController(true)
+                        .withCustomFragment(new FragmentBuilder.FragmentPack(EnumFragment.class))
                         .build();
 //                android.app.Fragment frag = new EnumFragment();
 //                Bundle bundle = new Bundle();
@@ -411,7 +413,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
         //--> now attach all sub allOf props in the order they shoudl appear for each schema case
         LinkedTreeMap<String, FragmentBuilder> orderedFragmentBuilders = new LinkedTreeMap<String, FragmentBuilder>();
         for(int i=0;i<maxNoOfFragBuildersPerSchema;i++) {
-            for(LayoutBuilder currLb:layoutBuilders.values()) {
+            for(LayoutFragmentBuilder currLb:layoutBuilders.values()) {
                 if(currLb.getFragBuilders().size()>i) {
                     String tmpKey = (String)currLb.getFragBuilders().keySet().toArray()[i];
                     if(!orderedFragmentBuilders.containsKey(tmpKey)) {
@@ -435,7 +437,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
 
             }
         }
-        for(LayoutBuilder currLb:layoutBuilders.values()) {
+        for(LayoutFragmentBuilder currLb:layoutBuilders.values()) {
             currLb.getKnownFragments().addAll(newlyAddedFrags);
         }
     }
