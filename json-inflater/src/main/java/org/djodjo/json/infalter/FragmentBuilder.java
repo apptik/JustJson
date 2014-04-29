@@ -137,6 +137,11 @@ public class FragmentBuilder {
         return this;
     }
 
+    public FragmentBuilder setController(Boolean value) {
+        args.putBoolean(EnumFragment.ARG_IS_CONTROLLER, value);
+        return this;
+    }
+
     //options for enums mostly
     public FragmentBuilder withOptions(ArrayList<String> options) {
 
@@ -154,7 +159,8 @@ public class FragmentBuilder {
         return this;
     }
 
-    public FragmentBuilder withInflaterSettings(InflaterSettings inflaterSettings,String label) {
+    public FragmentBuilder withInflaterSettings(InflaterSettings inflaterSettings) {
+        String label = args.getString(BasePropertyFragment.ARG_LABEL);
         this
                 .withLayoutId(inflaterSettings.getCustomLayoutId(label))
                 .withDisplayType(inflaterSettings.chooseDisplayType(label))

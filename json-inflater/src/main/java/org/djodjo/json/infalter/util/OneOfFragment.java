@@ -16,9 +16,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import org.djodjo.json.JsonObject;
-import org.djodjo.json.android.fragment.BasePropertyFragment;
 import org.djodjo.json.android.fragment.ControllerCallback;
-import org.djodjo.json.android.fragment.EnumFragment;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.infalter.FragmentBuilder;
 import org.djodjo.json.infalter.InflaterSettings;
@@ -383,19 +381,27 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
 
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             for (String controller : controllers) {
-                android.app.Fragment frag = new EnumFragment();
-                Bundle bundle = new Bundle();
                 ArrayList<String> opts = new ArrayList<String>();
                 opts.addAll(controllerOptions.get(controller));
-                bundle.putStringArrayList(EnumFragment.ARG_OPTIONS, opts);
-                bundle.putBoolean(EnumFragment.ARG_IS_CONTROLLER, true);
-                bundle.putString(BasePropertyFragment.ARG_LABEL, controller);
 
-                bundle.putInt(BasePropertyFragment.ARG_BUTTON_SELECTOR,
-                        ((HashMap<String, Integer>) settingsArgs.getSerializable(InflaterSettings.ARG_GLOBAL_BOTTON_SELECTORS)).get(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR));
-                //TODO doesnt work like this for fragment builder
-                //bundle.putBundle(ARG_SETTING_BUNDLE, settingsArgs);
-                frag.setArguments(bundle);
+                Fragment frag =  new FragmentBuilder(controller, null)
+                        .withInflaterSettings(new InflaterSettings().setSettingsBundle(settingsArgs))
+                        .withOptions(opts)
+                        .setController(true)
+                        .build();
+//                android.app.Fragment frag = new EnumFragment();
+//                Bundle bundle = new Bundle();
+//                ArrayList<String> opts = new ArrayList<String>();
+//                opts.addAll(controllerOptions.get(controller));
+//                bundle.putStringArrayList(EnumFragment.ARG_OPTIONS, opts);
+//                bundle.putBoolean(EnumFragment.ARG_IS_CONTROLLER, true);
+//                bundle.putString(BasePropertyFragment.ARG_LABEL, controller);
+//
+//                bundle.putInt(BasePropertyFragment.ARG_BUTTON_SELECTOR,
+//                        ((HashMap<String, Integer>) settingsArgs.getSerializable(InflaterSettings.ARG_GLOBAL_BOTTON_SELECTORS)).get(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR));
+//                //TODO doesnt work like this for fragment builder
+//                //bundle.putBundle(ARG_SETTING_BUNDLE, settingsArgs);
+//                frag.setArguments(bundle);
                 transaction.add(R.id.oneOfControllers, frag, controller);
             }
 
