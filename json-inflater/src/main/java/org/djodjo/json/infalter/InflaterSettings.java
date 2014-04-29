@@ -24,6 +24,7 @@ import org.djodjo.json.schema.Schema;
 import org.djodjo.json.util.LinkedTreeMap;
 import org.hamcrest.Matcher;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,6 +84,29 @@ public class InflaterSettings {
     private int globalValuesTextAppearance = R.style.textValue;
     private boolean globalNoDescription = false;
     private boolean globalNoTitle = false;
+
+    //the following controllers are used instead of a general selector
+    //these are actual Json Object properties with Enum values,
+    //where the name of the property is added to the list
+    //the generation of the other Views will depend on the value of these
+    //the they are picked in the order defined and control the following ones
+    //i.e the first controller will get all possible values displayed,
+    //the next one just the ones under the specific schema and sub-schemas, etc.
+
+    ArrayList<String> oneOfControllers = new ArrayList<String>();
+    ArrayList<String> ignoredProperties = new ArrayList<String>();
+
+    //map for custom layouts for specific properties for this object
+    private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
+
+
+    //TODO Use singleton containing settings instances instead of static here
+    /**
+     * used to specify exact fragment for a property.
+     */
+    static HashMap<String, FragmentBuilder.FragmentPack> customFragments = new HashMap<String, FragmentBuilder.FragmentPack>();
+
+
 
     public InflaterSettings() {
         this.globalButtonSelectors =  new HashMap<String, Integer>();
@@ -342,6 +366,47 @@ public class InflaterSettings {
         return this;
     }
 
+    public InflaterSettings addOneOfController(String propertyName) {
+        oneOfControllers.add(propertyName);
+        return this;
+    }
+
+    public InflaterSettings addOneOfControllers(ArrayList<String> propertyNames) {
+        oneOfControllers.addAll(propertyNames);
+        return this;
+    }
+
+    public InflaterSettings ignoreProperty(String propertyName) {
+        ignoredProperties.add(propertyName);
+        return this;
+    }
+
+    public InflaterSettings ignoreProperties(ArrayList<String> propertyNames) {
+        ignoredProperties.addAll(propertyNames);
+        return this;
+    }
+
+    public InflaterSettings addCustomLayout (String propertyName, int layoutId) {
+        customLayouts.put(propertyName, layoutId);
+        return this;
+    }
+
+    public InflaterSettings addCustomLayouts (Map<String, Integer> propertyLayouts) {
+        customLayouts.putAll(propertyLayouts);
+        return this;
+    }
+
+    public InflaterSettings addCustomFragment(String propertyName, FragmentBuilder.FragmentPack fragmentClass) {
+        customFragments.put(propertyName, fragmentClass);
+        return this;
+    }
+
+    public InflaterSettings addCustomFragments(Map<String, FragmentBuilder.FragmentPack> customFragments) {
+        this.customFragments.putAll(customFragments);
+        return this;
+    }
+
+
 
     int chooseDisplayType(String property) {
         int res = -1;
@@ -421,5 +486,12 @@ public class InflaterSettings {
         return res;
     }
 
+    int getCustomLayoutId(String propertyName) {
+        int res = 0;
+        if(customLayouts.containsKey(propertyName)) {
+            res = customLayouts.get(propertyName);
+        }
+        return res;
+    }
 
 }

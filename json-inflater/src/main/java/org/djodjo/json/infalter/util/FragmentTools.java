@@ -39,7 +39,7 @@ public class FragmentTools {
 
         //args.putStringArrayList(EnumFragment.ARG_OPTIONS, schema.getEnum());
         if(schema.getEnum()!=null)
-            args.putStringArrayList(EnumFragment.ARG_OPTIONS, FragmentTools.genEnumStringList(schema));
+        args.putStringArrayList(EnumFragment.ARG_OPTIONS, FragmentTools.genEnumStringList(schema));
         args.putString(BasePropertyFragment.ARG_TITLE, schema.getTitle());
         args.putString(BasePropertyFragment.ARG_DESC, schema.getDescription());
         args.putString(BasePropertyFragment.ARG_DEFAULT_VAL, schema.getDefault());

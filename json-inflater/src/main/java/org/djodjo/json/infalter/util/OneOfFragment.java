@@ -357,8 +357,8 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
 
             LayoutBuilder<Schema> lb = new LayoutBuilder<Schema>(schema, getFragmentManager(), addedFragmentBuilders)
                     //ignore properties that are controllers as they are handled directly from here
-                    .setInflaterSettings(new InflaterSettings().setSettingsBundle(settingsArgs))
-                    .ignoreProperties(controllers)
+                    .setInflaterSettings(new InflaterSettings().setSettingsBundle(settingsArgs).ignoreProperties(controllers))
+
                     .prepFragments();
 
             addedFragmentBuilders.putAll(lb.getFragBuilders());

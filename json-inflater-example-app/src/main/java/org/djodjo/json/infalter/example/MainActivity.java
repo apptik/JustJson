@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.exception.JsonException;
+import org.djodjo.json.infalter.InflaterSettings;
 import org.djodjo.json.infalter.LayoutBuilder;
 import org.djodjo.json.schema.SchemaV4;
 
@@ -198,9 +199,9 @@ public class MainActivity extends Activity
                      switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
                          //case 1:lb.setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW);break;
                          case 4:
-                             lb
-                                     .addOneOfController("buyRent")
-                                     .addOneOfController("mainType");
+                             lb.setInflaterSettings(new InflaterSettings() .addOneOfController("buyRent")
+                                     .addOneOfController("mainType"))
+                                    ;
                              //.addOneOfController("controller1");
                              break;
                          case 5://lb

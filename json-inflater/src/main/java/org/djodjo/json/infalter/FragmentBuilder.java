@@ -32,15 +32,12 @@ import org.djodjo.json.schema.Schema;
 import org.djodjo.json.util.LinkedTreeMap;
 import org.hamcrest.Matcher;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isBooleanType;
-import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isEnum;
-import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isLimitedNumber;
-import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isNumberType;
-import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isRangeObject;
-import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.isStringType;
+import static org.djodjo.json.infalter.matcher.SchemaDefMatchers.*;
+
 
 /**
  * View Builder that is used to generate all vies from JsonSchema describing a JsonObject
@@ -135,22 +132,59 @@ public class FragmentBuilder {
         this.customPropertyMatchers = customPropertyMatchers;
         return this;
     }
+    public FragmentBuilder withTitle(String title) {
+        args.putString(BasePropertyFragment.ARG_TITLE, title);
+        return this;
+    }
+
+    //options for enums mostly
+    public FragmentBuilder withOptions(ArrayList<String> options) {
+
+
+        return this;
+    }
+
+    public FragmentBuilder withDescription(String description) {
+        args.putString(BasePropertyFragment.ARG_DESC, description);
+        return this;
+    }
+
+    public FragmentBuilder withDefaultValue(String defaultValue) {
+        args.putString(BasePropertyFragment.ARG_DEFAULT_VAL, defaultValue);
+        return this;
+    }
+
+    public FragmentBuilder withInflaterSettings(InflaterSettings inflaterSettings,String label) {
+        this
+                .withLayoutId(inflaterSettings.getCustomLayoutId(label))
+                .withDisplayType(inflaterSettings.chooseDisplayType(label))
+                .withThemeColor(inflaterSettings.globalThemeColor)
+                .withButtonSelector(inflaterSettings.chooseButtonSelectors(label))
+                .withTitleTextAppearance(inflaterSettings.chooseTitleTextAppearance(label))
+                .withDescTextAppearance(inflaterSettings.chooseDescTextAppearance(label))
+                .withValueTextAppearance(inflaterSettings.chooseValueTextAppearance(label))
+                .withNoTitle(inflaterSettings.isNoTile(label))
+                .withNoDescription(inflaterSettings.isNoDescription(label))
+                .withGlobalButtonSelectors(inflaterSettings.globalButtonSelectors)
+                .withGlobalDisplayTypes(inflaterSettings.globalDisplayTypes)
+                .withCustomFragment(inflaterSettings.customFragments.get(label))
+                .withCustomPropertyMatchers(inflaterSettings.customPropertyMatchers);
+        return this;
+    }
 
     public Fragment build() {
-//        if(fragmentWeakReference != null && fragmentWeakReference.get()!=null) {
-//            return fragmentWeakReference.get();
-//        }
-
         Fragment fragment = null;
 
 
-        if((propertySchema.getType()==null || propertySchema.getType().isEmpty()) && propertySchema.getEnum() == null) {
-            //("No type defined. OneOfFragment builder needs at least one defined type for a property");
-            return null;
-        }
+//        if((propertySchema.getType()==null || propertySchema.getType().isEmpty()) && propertySchema.getEnum() == null) {
+//            //("No type defined. OneOfFragment builder needs at least one defined type for a property");
+//            return null;
+//        }
 
         //generate all available arguments, depending on the property type some may not be used
-        FragmentTools.genFragmentArgs(args, propertySchema);
+        if(propertySchema!=null) {
+            FragmentTools.genFragmentArgs(args, propertySchema);
+        }
 
         //TODO use MIXED fragment
 

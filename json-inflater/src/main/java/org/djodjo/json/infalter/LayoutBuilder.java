@@ -31,7 +31,6 @@ import org.djodjo.json.util.LinkedTreeMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -54,26 +53,6 @@ public class LayoutBuilder<T extends Schema> {
     private int typeChooser4OneOf = DisplayType.DISPLAY_TYPE_SPINNER;
 
 
-    //the following controllers are used instead of a general selector
-    //these are actual Json Object properties with Enum values,
-    //where the name of the property is added to the list
-    //the generation of the other Views will depend on the value of these
-    //the they are picked in the order defined and control the following ones
-    //i.e the first controller will get all possible values displayed,
-    //the next one just the ones under the specific schema and sub-schemas, etc.
-
-    private ArrayList<String> oneOfControllers = new ArrayList<String>();
-    private ArrayList<String> ignoredProperties = new ArrayList<String>();
-
-    //map for custom layouts for specific properties for this object
-    private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
-
-
-    //TODO Use singleton containing settings instances instead of static here
-    /**
-     * used to specify exact fragment for a property.
-     */
-    private static HashMap<String, FragmentBuilder.FragmentPack> customFragments = new HashMap<String, FragmentBuilder.FragmentPack>();
 
 
 
@@ -111,45 +90,7 @@ public class LayoutBuilder<T extends Schema> {
 
 
 
-    public LayoutBuilder<T> addOneOfController(String propertyName) {
-        oneOfControllers.add(propertyName);
-        return this;
-    }
 
-    public LayoutBuilder<T> addOneOfControllers(ArrayList<String> propertyNames) {
-        oneOfControllers.addAll(propertyNames);
-        return this;
-    }
-
-    public LayoutBuilder<T> ignoreProperty(String propertyName) {
-        ignoredProperties.add(propertyName);
-        return this;
-    }
-
-    public LayoutBuilder<T> ignoreProperties(ArrayList<String> propertyNames) {
-        ignoredProperties.addAll(propertyNames);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomLayout (String propertyName, int layoutId) {
-        customLayouts.put(propertyName, layoutId);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomLayouts (Map<String, Integer> propertyLayouts) {
-        customLayouts.putAll(propertyLayouts);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomFragment(String propertyName, FragmentBuilder.FragmentPack fragmentClass) {
-        customFragments.put(propertyName, fragmentClass);
-        return this;
-    }
-
-    public LayoutBuilder<T> addCustomFragments(Map<String, FragmentBuilder.FragmentPack> customFragments) {
-        this.customFragments.putAll(customFragments);
-        return this;
-    }
 
 
     public void reset() {
@@ -181,7 +122,7 @@ public class LayoutBuilder<T extends Schema> {
             // --> First find basic properties
             if (schemaTopProperties != null) {
                 for (Map.Entry<String, Schema> property : schemaTopProperties) {
-                    if (ignoredProperties.contains(property.getKey())) continue;
+                    if (inflaterSettings.ignoredProperties.contains(property.getKey())) continue;
                     Schema propSchema = property.getValue();
                     FragmentBuilder fragBuilder;
                     if(extraFragBuilders!=null && extraFragBuilders.containsKey(genFragTag(property.getKey(), propSchema))) {
@@ -191,7 +132,7 @@ public class LayoutBuilder<T extends Schema> {
                     }
                     fragBuilders.put(genFragTag(property.getKey(), propSchema),
                             fragBuilder
-                                    .withLayoutId(getCustomLayoutId(property.getKey()))
+                                    .withLayoutId(inflaterSettings.getCustomLayoutId(property.getKey()))
                                     .withDisplayType(inflaterSettings.chooseDisplayType(property.getKey()))
                                     .withThemeColor(inflaterSettings.globalThemeColor)
                                     .withButtonSelector(inflaterSettings.chooseButtonSelectors(property.getKey()))
@@ -202,7 +143,7 @@ public class LayoutBuilder<T extends Schema> {
                                     .withNoDescription(inflaterSettings.isNoDescription(property.getKey()))
                                     .withGlobalButtonSelectors(inflaterSettings.globalButtonSelectors)
                                     .withGlobalDisplayTypes(inflaterSettings.globalDisplayTypes)
-                                    .withCustomFragment(customFragments.get(property.getKey()))
+                                    .withCustomFragment(inflaterSettings.customFragments.get(property.getKey()))
                                     .withCustomPropertyMatchers(inflaterSettings.customPropertyMatchers)
                     );
                 }
@@ -233,7 +174,7 @@ public class LayoutBuilder<T extends Schema> {
                 }
                 //
                 Log.d("JustJsonLayoutBulder", "end generate oneOf");
-                oneOfOneOfFragment = OneOfFragment.newInstance(stringSchemas, oneOfControllers, inflaterSettings.bundleSettings());
+                oneOfOneOfFragment = OneOfFragment.newInstance(stringSchemas, inflaterSettings.oneOfControllers, inflaterSettings.bundleSettings());
             } // <-- check for oneOf
 
         }
@@ -314,13 +255,6 @@ public class LayoutBuilder<T extends Schema> {
     }
 
 
-    private int getCustomLayoutId(String propertyName) {
-        int res = 0;
-        if(customLayouts.containsKey(propertyName)) {
-            res = customLayouts.get(propertyName);
-        }
-        return res;
-    }
 
     public InflaterSettings getInflaterSettings() {
         return inflaterSettings;
