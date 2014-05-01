@@ -4,9 +4,9 @@ package org.djodjo.json.infalter;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
 
+import org.djodjo.json.android.view.BasePropertyView;
 import org.djodjo.json.android.view.StringPropertyView;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
@@ -20,7 +20,7 @@ import java.util.TreeSet;
 public class LayoutViewBuilder<T extends Schema> {
 
     private Set<String> knownFragments = Collections.synchronizedSet(new TreeSet<String>());
-    private ArrayList<View> views =  new ArrayList<View>();
+    private ArrayList<BasePropertyView> views =  new ArrayList<BasePropertyView>();
 
 
     private InflaterSettings inflaterSettings =  new InflaterSettings();
@@ -47,6 +47,7 @@ public class LayoutViewBuilder<T extends Schema> {
                 Schema propSchema = property.getValue();
                 String label = property.getKey();
                 views.add(new StringPropertyView(context)
+                        .setTitle("test")
                         .prepare());
 //                                .withLayoutId(inflaterSettings.getCustomLayoutId(property.getKey()))
 //                                .withDisplayType(inflaterSettings.chooseDisplayType(property.getKey()))
@@ -72,7 +73,7 @@ public class LayoutViewBuilder<T extends Schema> {
             @Override
             public void run() {
                 vg.removeAllViews();
-                for(View view:views) {
+                for(BasePropertyView view:views) {
                     vg.addView(view);
                 }
             }

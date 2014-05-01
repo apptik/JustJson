@@ -2,16 +2,19 @@ package org.djodjo.json.android.view;
 
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.djodjo.json.android.R;
-import org.djodjo.json.schema.Schema;
 
 import java.util.HashMap;
 
 public abstract class BasePropertyView extends LinearLayout{
+    private final String LOG_TAG = "JJSON Inflater:BasePropertyView";
 
 
     TextView txtTitle;
@@ -49,22 +52,44 @@ public abstract class BasePropertyView extends LinearLayout{
         init();
     }
 
-    public <T extends BasePropertyView> T setSchema(Schema schema) {
+    public <T extends BasePropertyView> T setTitle(String title) {
+        this.title = title;
         return (T)this;
     }
 
     private void init() {
         layoutId = 0;
-        title = "Ttile";
+        title = "";
     }
 
     public <T extends BasePropertyView> T prepare() {
         if (layoutId == 0) layoutId = getLayoutId();
         inflate(getContext(), layoutId, this);
         txtTitle =  (TextView)findViewById(R.id.txtPropTitle);
-        txtTitle.setText(title);
+        if(txtTitle!=null) {
+            if (noTitle || title==null) {
+                txtTitle.setVisibility(View.GONE);
+            } else {
+                txtTitle.setText(title);
+                txtTitle.setTextAppearance(getContext(), styleTitle);
+            }
+        }
         return (T)this;
     }
 
     protected abstract int getLayoutId();
+
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(state);
+        Log.d(LOG_TAG,"onRestoreInstanceState");
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Log.d(LOG_TAG,"onSaveInstanceState");
+        return super.onSaveInstanceState();
+
+    }
 }
