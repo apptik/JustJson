@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.djodjo.json.JsonElement;
-import org.djodjo.json.android.fragment.DisplayType;
+import org.djodjo.json.android.DisplayType;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.infalter.InflaterSettings;
 import org.djodjo.json.infalter.LayoutFragmentBuilder;
