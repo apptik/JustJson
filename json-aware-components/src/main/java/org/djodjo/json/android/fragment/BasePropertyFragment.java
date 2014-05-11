@@ -39,7 +39,7 @@ public abstract class BasePropertyFragment extends Fragment {
 
     public static final String ARG_DISPLAY_TYPE = "display_type";
     //if ARG_DISPLAY_TYPE is not set or < 0 we check global types
-    public static final String ARG_DISPLAY_TYPES = "display_types";
+    public static final String ARG_GLOBAL_LAYOUTS = "display_types";
     public static final String ARG_THEME_COLOR = "theme_color";
     public static final String ARG_BUTTON_SELECTOR = "button_selector";
     public static final String ARG_CUSTOM_BUTTON_SELECTORS = "custom_button_selectors";
@@ -51,16 +51,16 @@ public abstract class BasePropertyFragment extends Fragment {
 
 
 
-    public static final String ARG_GLOBAL_STRING_DISPLAY_TYPE = "globalStringDisplayType";
-    public static final String ARG_GLOBAL_NUMBER_DISPLAY_TYPE = "globalNumberDisplayType";
-    public static final String ARG_GLOBAL_LIMITED_NUMBER_DISPLAY_TYPE = "globalLimitedNumberDisplayType";
-    public static final String ARG_GLOBAL_BOOLEAN_DISPLAY_TYPE = "globalBooleanDisplayType";
+    public static final String ARG_GLOBAL_STRING_LAYOUT = "globalStringLayout";
+    public static final String ARG_GLOBAL_NUMBER_LAYOUT = "globalNumberLayout";
+    public static final String ARG_GLOBAL_LIMITED_NUMBER_LAYOUT = "globalLimitedNumberLayout";
+    public static final String ARG_GLOBAL_BOOLEAN_LAYOUT = "globalBooleanLayout";
     //array with any items
-    public static final String ARG_GLOBAL_ARRAY_DISPLAY_TYPE = "globalArrayDisplayType";
+    public static final String ARG_GLOBAL_ARRAY_LAYOUT = "globalArrayLayout";
     //array with enum items
-    public static final String ARG_GLOBAL_ARRAY_ENUM_DISPLAY_TYPE = "globalArrayEnumDisplayType";
-    public static final String ARG_GLOBAL_ENUM_DISPLAY_TYPE = "globalEnumDisplayType";
-    public static final String ARG_GLOBAL_RANGE_DISPLAY_TYPE = "globalRangeDisplayType";
+    public static final String ARG_GLOBAL_ARRAY_ENUM_LAYOUT = "globalArrayEnumLayout";
+    public static final String ARG_GLOBAL_ENUM_LAYOUT = "globalEnumLayout";
+    public static final String ARG_GLOBAL_RANGE_LAYOUT = "globalRangeLayout";
 
     public static final String ARG_GLOBAL_CHECKBOX_SELECTOR = "globalCheckBoxSelector";
     public static final String ARG_GLOBAL_RADIOBUTTON_SELECTOR = "globalRadioButtonSelector";
@@ -80,8 +80,7 @@ public abstract class BasePropertyFragment extends Fragment {
 
     protected int layoutId;
 
-    protected int displayType;
-    protected HashMap<String,Integer> displayTypes;
+    protected HashMap<String,Integer> globalLayouts;
     protected int themeColor;
     protected int buttonSelector;
     protected HashMap<String,Integer> customButtonSelectors;
@@ -105,8 +104,8 @@ public abstract class BasePropertyFragment extends Fragment {
             description = getArguments().getString(ARG_DESC);
             layoutId = getArguments().getInt(ARG_LAYOUT, 0);
 
-            displayType = getArguments().getInt(ARG_DISPLAY_TYPE, -1);
-            displayTypes = (HashMap<String,Integer>)getArguments().getSerializable(ARG_DISPLAY_TYPES);
+
+            globalLayouts = (HashMap<String,Integer>)getArguments().getSerializable(ARG_GLOBAL_LAYOUTS);
             themeColor = getArguments().getInt(ARG_THEME_COLOR, -1);
             buttonSelector = getArguments().getInt(ARG_BUTTON_SELECTOR);
             customButtonSelectors = (HashMap<String,Integer>)getArguments().getSerializable(ARG_CUSTOM_BUTTON_SELECTORS);

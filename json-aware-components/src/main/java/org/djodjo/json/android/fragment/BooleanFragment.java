@@ -45,15 +45,11 @@ public class BooleanFragment extends BasePropertyFragment {
 
     @Override
     protected int getLayoutId() {
-        int currDisplType = (displayType>=0)?displayType:displayTypes.get(ARG_GLOBAL_BOOLEAN_DISPLAY_TYPE);
-        switch (currDisplType) {
-            case DisplayType.DISPLAY_TYPE_CHECKBOX: return LAYOUT_BOOL_CHECKBOX;
-            case DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW: return LAYOUT_BOOL_CHECKED_TEXTVIEW;
-            case DisplayType.DISPLAY_TYPE_SWITCH: return LAYOUT_BOOL_SWITCH;
-            case DisplayType.DISPLAY_TYPE_TOGGLE: return LAYOUT_BOOL_TOGGLE;
+        int currLayoutId =  globalLayouts.get(ARG_GLOBAL_BOOLEAN_LAYOUT);
+        if(currLayoutId==0) {
+            currLayoutId = LAYOUT_BOOL_CHECKED_TEXTVIEW;
         }
-
-        return LAYOUT_BOOL_CHECKED_TEXTVIEW;
+        return currLayoutId;
     }
 
     @Override

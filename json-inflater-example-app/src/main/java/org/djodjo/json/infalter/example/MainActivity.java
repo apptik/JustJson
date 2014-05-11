@@ -197,7 +197,7 @@ public class MainActivity extends Activity
                      LayoutViewBuilder<SchemaV4> lb  = new LayoutViewBuilder<SchemaV4>(schema, getActivity());
                      //add custom lb settings
                      switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
-                         //case 1:lb.setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW);break;
+                         //case 1:lb.setGlobalBooleanLayout(FragmentLayouts.DISPLAY_TYPE_CHECKED_TEXTVIEW);break;
                          case 4:
                            //  lb.setInflaterSettings(new InflaterSettings() .addOneOfController("buyRent")
                            //          .addOneOfController("mainType"))

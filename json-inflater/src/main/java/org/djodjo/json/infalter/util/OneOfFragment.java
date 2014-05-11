@@ -59,6 +59,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
     LinkedTreeMap<String, FragmentBuilder> addedFragmentBuilders = new LinkedTreeMap<String, FragmentBuilder>();
 
     private ArrayList<String> controllers = null;
+    //private ArrayList<Schema> controllerSchemas =  new ArrayList<Schema>();
     private ArrayList<Schema> schemas =  new ArrayList<Schema>();
 
     /**
@@ -93,6 +94,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("JustJsonOneOfFragment", "onCreate");
         if (getArguments() != null) {
             settingsArgs = getArguments().getBundle(ARG_SETTING_BUNDLE);
 
@@ -109,9 +111,11 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 }
             }
         }
+
         for (String controller : controllers) {
             currSelection.put(controller,0);
         }
+        Log.d("JustJsonOneOfFragment", "onCreate exit");
     }
 
     @Override
@@ -194,7 +198,13 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 });
             }
         }
-        performLayout();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                performLayout();
+            }
+        }).start();
+
         return v;
     }
 
@@ -205,60 +215,25 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
     @Override
     public void onResume() {
         super.onResume();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                while(newlyAddedFrags.size()>0) {
-                    synchronized (newlyAddedFrags) {
-                        Iterator<String> iterator = newlyAddedFrags.iterator();
-                        while (iterator.hasNext()) {
-                            Fragment frag = getFragmentManager().findFragmentByTag(iterator.next());
-                            if (frag != null)
-                                iterator.remove();
-                        }
-                    }
-
-                    try {
-                        Thread.sleep(33);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                isInitialised = true;
-            }
-        }).start();
-
     }
 
 
 
     @Override
     public void onValueChanged(final String name, final int position) {
-        if(position>=0)
-            currSelection.put(name,position);
+        Log.d("JustJsonOneOfFragment", "onValueChanged");
+        if(position>=0 && currSelection.get(name)!=position) {
+            currSelection.put(name, position);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LayoutFragmentBuilder<Schema> lb = layoutBuilders.get(new ArrayList<Integer>(currSelection.values()));
-                //note that if controllers not chosen wisely there could be a combination where there are no layout matching
-                while (!isInitialised) {
-                    try {
-                        Thread.sleep(33);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if(lb!=null)
-                    lb.build(R.id.oneOfContainer);
-            }
-        }).start();
+            Log.d("JustJsonOneOfFragment", "onValueChanged updatinging...");
+            update();
+        }
+        Log.d("JustJsonOneOfFragment", "onValueChanged exit");
     }
 
 
-    private void performLayout() {
+    synchronized private void performLayout() {
+        isInitialised = false;
         int maxNoOfFragBuildersPerSchema = 0;
         //used to populate values for controllers
         LinkedTreeMap<String, LinkedHashSet<String>> controllerOptions =  new LinkedTreeMap<String, LinkedHashSet<String>>();
@@ -354,11 +329,13 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 customCtrlKeys.add(hs);
             }
 
-            LayoutFragmentBuilder<Schema> lb = new LayoutFragmentBuilder<Schema>(schema, getFragmentManager(), addedFragmentBuilders)
+            final LayoutFragmentBuilder<Schema> lb = new LayoutFragmentBuilder<Schema>(schema, getFragmentManager(), addedFragmentBuilders)
                     //ignore properties that are controllers as they are handled directly from here
                     .setInflaterSettings(new InflaterSettings().setSettingsBundle(settingsArgs).ignoreProperties(controllers))
+                    ;
+            //TODO prep them async
+            lb.prepFragments();
 
-                    .prepFragments();
 
             addedFragmentBuilders.putAll(lb.getFragBuilders());
 
@@ -388,26 +365,16 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 Fragment frag =  new FragmentBuilder(controller, null)
                         .withInflaterSettings(new InflaterSettings().setSettingsBundle(settingsArgs))
                         .withOptions(opts)
+                        //TODO
+                        .withNoTitle(true)
                         .setController(true)
                         .withCustomFragment(new FragmentBuilder.FragmentPack(EnumFragment.class))
                         .build();
-//                android.app.Fragment frag = new EnumFragment();
-//                Bundle bundle = new Bundle();
-//                ArrayList<String> opts = new ArrayList<String>();
-//                opts.addAll(controllerOptions.get(controller));
-//                bundle.putStringArrayList(EnumFragment.ARG_OPTIONS, opts);
-//                bundle.putBoolean(EnumFragment.ARG_IS_CONTROLLER, true);
-//                bundle.putString(BasePropertyFragment.ARG_LABEL, controller);
-//
-//                bundle.putInt(BasePropertyFragment.ARG_BUTTON_SELECTOR,
-//                        ((HashMap<String, Integer>) settingsArgs.getSerializable(InflaterSettings.ARG_GLOBAL_BOTTON_SELECTORS)).get(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR));
-//                //TODO doesnt work like this for fragment builder
-//                //bundle.putBundle(ARG_SETTING_BUNDLE, settingsArgs);
-//                frag.setArguments(bundle);
                 transaction.add(R.id.oneOfControllers, frag, controller);
             }
 
-            transaction.commit();
+            transaction.commitAllowingStateLoss();
+            transaction = null;
         }
 
         //--> now attach all sub allOf props in the order they shoudl appear for each schema case
@@ -425,21 +392,110 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
 
         int containerId = R.id.oneOfContainer;
         // --> then add all in all  schemas in order
+
         for(Map.Entry<String, FragmentBuilder> builder : orderedFragmentBuilders.entrySet()) {
-            Fragment fragment = builder.getValue().build();
+            Fragment fragment = null;
+            fragment = builder.getValue().build();
+//            while(fragment==null) {
+//                fragment = builder.getValue().build();
+//            }
+
             if (fragment != null) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 Log.d("JustJsonLayoutBulder ONEOF", "adding fragment: " + builder.getKey());
-                getFragmentManager().beginTransaction().add(containerId, fragment, builder.getKey()).commit();
+                transaction.add(containerId, fragment, builder.getKey());
+                transaction.commitAllowingStateLoss();
+                transaction = null;
                 //add the fragment sow we on resume we can check whe it is available
                 newlyAddedFrags.add(builder.getKey());
                 //now set all known fragments sub builders should know about
-
-
             }
+
         }
+
         for(LayoutFragmentBuilder currLb:layoutBuilders.values()) {
             currLb.getKnownFragments().addAll(newlyAddedFrags);
         }
+        try {
+            Thread.sleep(13);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //now wait for the frags to be initialized
+        while(newlyAddedFrags.size()>0) {
+            synchronized (newlyAddedFrags) {
+                Iterator<String> iterator = newlyAddedFrags.iterator();
+                while (iterator.hasNext()) {
+                    Fragment frag = getFragmentManager().findFragmentByTag(iterator.next());
+                    if (frag != null && frag.isAdded() && !frag.isDetached())
+                        iterator.remove();
+                }
+            }
+
+            try {
+                Thread.sleep(13);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+        isInitialised = true;
+
+        //then do the first update
+        update();
     }
+
+    private void update() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("JustJsonOneOfFragment", "update started");
+                LayoutFragmentBuilder<Schema> lb = layoutBuilders.get(new ArrayList<Integer>(currSelection.values()));
+                //note that if controllers not chosen wisely there could be a combination where there are no layout matching
+                while (!isInitialised) {
+                    try {
+                        Thread.sleep(33);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (lb != null) {
+                    lb.build(R.id.oneOfContainer);
+                } else {
+                    Log.d("JustJsonOneOfFragment", "update LB is null");
+                }
+                Log.d("JustJsonOneOfFragment", "update finished");
+            }
+        }).start();
+    }
+
+
+//    @Override
+//    public void onHiddenChanged(boolean hidden) {
+//        super.onHiddenChanged(hidden);
+//        Log.d("JustJsonOneOfFragment", "update onDetach");
+//        if(layoutBuilders!=null && layoutBuilders.values()!=null)
+//            for(LayoutFragmentBuilder currLb:layoutBuilders.values()) {
+//                if(currLb!=null)
+//                    try {
+//                        currLb.hideAllFragments();
+//                    } catch (Exception ex) {};
+//            }
+//
+//    }
+//
+//    @Override
+//    public void onDetach() {
+//        Log.d("JustJsonOneOfFragment", "update onDetach");
+//        if(layoutBuilders!=null && layoutBuilders.values()!=null)
+//            for(LayoutFragmentBuilder currLb:layoutBuilders.values()) {
+//                if(currLb!=null)
+//                    try {
+//                        currLb.reset();
+//                    } catch (Exception ex) {};
+//            }
+//        super.onDetach();
+//    }
+
 
 }

@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.djodjo.json.JsonElement;
-import org.djodjo.json.android.DisplayType;
+import org.djodjo.json.android.FragmentLayouts;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.infalter.InflaterSettings;
 import org.djodjo.json.infalter.LayoutFragmentBuilder;
@@ -76,8 +76,8 @@ public class SchemaFormRendererFragment extends BlankFragment {
                                         .addOneOfController("controller0")
                                         .addOneOfController("controller1")
                                         .setGlobalNoDescription(true)
-                                        .setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_NUMBER_PICKER)
-                                        .addDisplayType("additionalOption3", DisplayType.DISPLAY_TYPE_TOGGLE)
+                                        .setGlobalBooleanLayout(FragmentLayouts.NUMBER_PICKER)
+                                        .addCustomLayout("additionalOption3", FragmentLayouts.BOOLEAN_TOGGLE)
                                 //.setGlobalRadioButtonSelector(R.drawable.red_radio_selector)
                                 //.setGlobalCheckBoxSelector(R.drawable.apptheme_btn_check_holo_light)
                                 //.setGlobalSliderThumbSelector(R.drawable.apptheme_scrubber_control_selector_holo_light)

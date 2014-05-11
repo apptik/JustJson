@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import org.djodjo.json.android.view.BasePropertyView;
-import org.djodjo.json.android.view.StringPropertyView;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
 
@@ -23,7 +22,7 @@ public class LayoutViewBuilder<T extends Schema> {
     private ArrayList<BasePropertyView> views =  new ArrayList<BasePropertyView>();
 
 
-    private InflaterSettings inflaterSettings =  new InflaterSettings();
+    private ViewInflaterSettings inflaterSettings =  new ViewInflaterSettings();
 
     private final T schema;
     private final Context context;
@@ -46,9 +45,8 @@ public class LayoutViewBuilder<T extends Schema> {
                 if (inflaterSettings.ignoredProperties.contains(property.getKey())) continue;
                 Schema propSchema = property.getValue();
                 String label = property.getKey();
-                views.add(new StringPropertyView(context)
-                        .setTitle("test")
-                        .prepare());
+                views.add(new ViewBuilder(context, label, propSchema)
+                        .inflate());
 //                                .withLayoutId(inflaterSettings.getCustomLayoutId(property.getKey()))
 //                                .withDisplayType(inflaterSettings.chooseDisplayType(property.getKey()))
 //                                .withThemeColor(inflaterSettings.globalThemeColor)
@@ -59,7 +57,7 @@ public class LayoutViewBuilder<T extends Schema> {
 //                                .withNoTitle(inflaterSettings.isNoTile(property.getKey()))
 //                                .withNoDescription(inflaterSettings.isNoDescription(property.getKey()))
 //                                .withGlobalButtonSelectors(inflaterSettings.globalButtonSelectors)
-//                                .withGlobalDisplayTypes(inflaterSettings.globalDisplayTypes)
+//                                .withGlobalLayouts(inflaterSettings.globalLayouts)
 //                                .withCustomFragment(inflaterSettings.customFragments.get(property.getKey()))
 //                                .withCustomPropertyMatchers(inflaterSettings.customPropertyMatchers)
 
@@ -74,10 +72,24 @@ public class LayoutViewBuilder<T extends Schema> {
             public void run() {
                 vg.removeAllViews();
                 for(BasePropertyView view:views) {
-                    vg.addView(view);
+                    if(view!=null)
+                        vg.addView(view);
                 }
             }
         });
 
     }
+
+    public ViewInflaterSettings getInflaterSettings() {
+        return inflaterSettings;
+    }
+
+    public LayoutViewBuilder<T> setInflaterSettings(ViewInflaterSettings inflaterSettings) {
+        this.inflaterSettings = inflaterSettings;
+
+        return this;
+    }
+
+
+
 }

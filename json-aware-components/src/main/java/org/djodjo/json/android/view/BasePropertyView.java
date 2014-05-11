@@ -52,8 +52,23 @@ public abstract class BasePropertyView extends LinearLayout{
         init();
     }
 
+    public <T extends BasePropertyView> T setLabel(String label) {
+        this.label = label;
+        return (T)this;
+    }
+
     public <T extends BasePropertyView> T setTitle(String title) {
         this.title = title;
+        return (T)this;
+    }
+
+    public <T extends BasePropertyView> T setDescription(String description) {
+        this.description = description;
+        return (T)this;
+    }
+
+    public <T extends BasePropertyView> T setDisplayType(int displayType) {
+        this.displayType = displayType;
         return (T)this;
     }
 
@@ -62,7 +77,7 @@ public abstract class BasePropertyView extends LinearLayout{
         title = "";
     }
 
-    public <T extends BasePropertyView> T prepare() {
+    public <T extends BasePropertyView> T inflate() {
         if (layoutId == 0) layoutId = getLayoutId();
         inflate(getContext(), layoutId, this);
         txtTitle =  (TextView)findViewById(R.id.txtPropTitle);

@@ -23,7 +23,6 @@ import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import org.djodjo.json.android.fragment.DisplayType;
 import org.djodjo.json.infalter.util.OneOfFragment;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
@@ -48,9 +47,9 @@ public class LayoutFragmentBuilder<T extends Schema> {
     private final T schema;
 
     //othe options are radio or other selector buttons alike
-    private int typeChooser4AnyOf = DisplayType.DISPLAY_TYPE_SPINNER;
-    private int typeChooser4AllOf = DisplayType.DISPLAY_TYPE_SPINNER;
-    private int typeChooser4OneOf = DisplayType.DISPLAY_TYPE_SPINNER;
+//    private int typeChooser4AnyOf = FragmentLayouts.DISPLAY_TYPE_SPINNER;
+//    private int typeChooser4AllOf = FragmentLayouts.DISPLAY_TYPE_SPINNER;
+//    private int typeChooser4OneOf = FragmentLayouts.DISPLAY_TYPE_SPINNER;
 
 
 
@@ -93,9 +92,46 @@ public class LayoutFragmentBuilder<T extends Schema> {
 
 
 
-    public void reset() {
+    public LayoutFragmentBuilder reset() {
+        Log.d("JustJsonLayoutBulder", "start reset");
+        if (knownFragments == null || knownFragments.isEmpty()) return this;
+
+        Log.d("JustJsonLayoutBulder", "resetting...");
+        synchronized (knownFragments) {
+            Iterator<String> iterator = knownFragments.iterator();
+            while (iterator.hasNext()) {
+                String fragTag = iterator.next();
+                Fragment currFrag = fragmentManager.findFragmentByTag(fragTag);
+                if (currFrag != null) {
+                    fragmentManager.beginTransaction().remove(currFrag).commitAllowingStateLoss();
+                }
+            }
+        }
         fragBuilders = new LinkedTreeMap<String, FragmentBuilder>();
+        knownFragments = Collections.synchronizedSet(new TreeSet<String>());
+        Log.d("JustJsonLayoutBulder", "end reset");
+        return this;
     }
+
+    public LayoutFragmentBuilder hideAllFragments() {
+        Log.d("JustJsonLayoutBulder", "start hideAllFragments");
+        if (knownFragments == null || knownFragments.isEmpty()) return this;
+
+        Log.d("JustJsonLayoutBulder", "hiding...");
+        synchronized (knownFragments) {
+            Iterator<String> iterator = knownFragments.iterator();
+            while (iterator.hasNext()) {
+                String fragTag = iterator.next();
+                Fragment currFrag = fragmentManager.findFragmentByTag(fragTag);
+                if (currFrag != null && !currFrag.isHidden()) {
+                    fragmentManager.beginTransaction().hide(currFrag).commitAllowingStateLoss();
+                }
+            }
+        }
+        Log.d("JustJsonLayoutBulder", "end hideAllFragments");
+        return this;
+    }
+
 
     private String genFragTag(String label, Schema propSchema) {
         return label + "_" +propSchema.getJson().toString().hashCode();
@@ -114,6 +150,7 @@ public class LayoutFragmentBuilder<T extends Schema> {
     public synchronized LayoutFragmentBuilder prepFragments() {
         Log.d("JustJsonLayoutBulder", "start prep");
         if (fragmentManager == null) return this;
+
         if (fragBuilders == null || fragBuilders.size() < 1) {
 
             Log.d("JustJsonLayoutBulder", "start generate main props");
@@ -133,7 +170,6 @@ public class LayoutFragmentBuilder<T extends Schema> {
                     fragBuilders.put(genFragTag(property.getKey(), propSchema),
                             fragBuilder
                                     .withLayoutId(inflaterSettings.getCustomLayoutId(property.getKey()))
-                                    .withDisplayType(inflaterSettings.chooseDisplayType(property.getKey()))
                                     .withThemeColor(inflaterSettings.globalThemeColor)
                                     .withButtonSelector(inflaterSettings.chooseButtonSelectors(property.getKey()))
                                     .withTitleTextAppearance(inflaterSettings.chooseTitleTextAppearance(property.getKey()))
@@ -142,7 +178,7 @@ public class LayoutFragmentBuilder<T extends Schema> {
                                     .withNoTitle(inflaterSettings.isNoTile(property.getKey()))
                                     .withNoDescription(inflaterSettings.isNoDescription(property.getKey()))
                                     .withGlobalButtonSelectors(inflaterSettings.globalButtonSelectors)
-                                    .withGlobalDisplayTypes(inflaterSettings.globalDisplayTypes)
+                                    .withGlobalLayouts(inflaterSettings.globalLayouts)
                                     .withCustomFragment(inflaterSettings.customFragments.get(property.getKey()))
                                     .withCustomPropertyMatchers(inflaterSettings.customPropertyMatchers)
                     );
@@ -195,7 +231,7 @@ public class LayoutFragmentBuilder<T extends Schema> {
                 if (currFrag != null) {
                     if (!fragBuilders.containsKey(fragTag)  && !currFrag.isHidden()  && !currFrag.isDetached())
                     {
-                        fragmentManager.beginTransaction().hide(currFrag).commit();
+                        fragmentManager.beginTransaction().hide(currFrag).commitAllowingStateLoss();
                     }
                 } else {
                     iterator.remove();
@@ -210,21 +246,21 @@ public class LayoutFragmentBuilder<T extends Schema> {
 
                 if (oldFrag.isHidden())
                 {
-                    fragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).show(oldFrag).commit();
+                    fragmentManager.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).show(oldFrag).commitAllowingStateLoss();
                     if (!knownFragments.contains(builder.getKey())) {
                         knownFragments.add(builder.getKey());
                     }
                 }
                 if (oldFrag.isDetached())
                 {
-                    fragmentManager.beginTransaction().attach(oldFrag).commit();
+                    fragmentManager.beginTransaction().attach(oldFrag).commitAllowingStateLoss();
                     if (!knownFragments.contains(builder.getKey())) {
                         knownFragments.add(builder.getKey());
                     }
                 }
                 if(!oldFrag.isAdded())
                 {
-                    fragmentManager.beginTransaction().add(containerId, oldFrag).commit();
+                    fragmentManager.beginTransaction().add(containerId, oldFrag).commitAllowingStateLoss();
                     if (!knownFragments.contains(builder.getKey())) {
                         knownFragments.add(builder.getKey());
                     }
@@ -235,7 +271,7 @@ public class LayoutFragmentBuilder<T extends Schema> {
                 Fragment fragment = builder.getValue().build();
                 if (fragment != null) {
                     Log.d("JustJsonLayoutBulder", "adding fragment: " + builder.getKey());
-                    fragmentManager.beginTransaction().add(containerId, fragment, builder.getKey()).commit();
+                    fragmentManager.beginTransaction().add(containerId, fragment, builder.getKey()).commitAllowingStateLoss();
                     if (!knownFragments.contains(builder.getKey())) {
                         knownFragments.add(builder.getKey());
                     }
@@ -246,7 +282,7 @@ public class LayoutFragmentBuilder<T extends Schema> {
 
         //add oneOf fragment if exists
         if(oneOfOneOfFragment != null) {
-            fragmentManager.beginTransaction().add(containerId, oneOfOneOfFragment, "oneOf").commit();
+            fragmentManager.beginTransaction().add(containerId, oneOfOneOfFragment, "oneOf").commitAllowingStateLoss();
 
         }
 

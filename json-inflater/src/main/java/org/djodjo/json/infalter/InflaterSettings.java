@@ -19,7 +19,6 @@ package org.djodjo.json.infalter;
 import android.os.Bundle;
 
 import org.djodjo.json.android.fragment.BasePropertyFragment;
-import org.djodjo.json.android.fragment.DisplayType;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.util.LinkedTreeMap;
 import org.hamcrest.Matcher;
@@ -31,16 +30,16 @@ import java.util.Map;
 public class InflaterSettings {
 
     //setings bundle args
-    private static final String ARG_DISPLAY_TYPES = "displayTypes";
 
     private static final String ARG_BUTTON_SELECTORS = "customButtonSelectors";
     private static final String ARG_CUSTOM_TITLE_STYLE = "customTitleTextAppearances";
+    private static final String ARG_CUSTOM_LAYOUTS = "customLayouts";
     private static final String ARG_CUSTOM_DESC_STYLE = "customDescTextAppearances";
     private static final String ARG_CUSTOM_VALUE_TEXT_STYLE = "customValueTextAppearances";
     private static final String ARG_NO_TITLE = "noTitle";
     private static final String ARG_NO_DESC = "noDescription";
 
-    private static final String ARG_GLOBAL_DISPLAY_TYPES = "globalDisplayTypes";
+    private static final String ARG_GLOBAL_LAYOUTS = "globalLayouts";
 
     private static final String ARG_GLOBAL_THEME_COLOR = "globalThemeColor";
 
@@ -59,7 +58,8 @@ public class InflaterSettings {
      */
     static LinkedTreeMap<Matcher<Schema>, FragmentBuilder.FragmentPack> customPropertyMatchers = new LinkedTreeMap<Matcher<Schema>, FragmentBuilder.FragmentPack>();
 
-    private HashMap<String, Integer> displayTypes = new HashMap<String, Integer>();
+    //map for custom layouts for specific properties for this object
+    private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
     private HashMap<String, Integer> customButtonSelectors =  new HashMap<String, Integer>();
     private HashMap<String, Integer> customTitleTextAppearances = new HashMap<String, Integer>();
     private HashMap<String, Integer> customDescTextAppearances =  new HashMap<String, Integer>();
@@ -70,7 +70,7 @@ public class InflaterSettings {
     /**
      * a mask of the possible display types for all elements
      */
-    HashMap<String, Integer> globalDisplayTypes = new HashMap<String, Integer>();
+    HashMap<String, Integer> globalLayouts = new HashMap<String, Integer>();
 
 
     int globalThemeColor = -1;
@@ -96,8 +96,7 @@ public class InflaterSettings {
     ArrayList<String> oneOfControllers = new ArrayList<String>();
     ArrayList<String> ignoredProperties = new ArrayList<String>();
 
-    //map for custom layouts for specific properties for this object
-    private HashMap<String, Integer> customLayouts =  new HashMap<String, Integer>();
+
 
 
     //TODO Use singleton containing settings instances instead of static here
@@ -117,30 +116,39 @@ public class InflaterSettings {
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_TOGGLEBUTTON_SELECTOR,0);
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SWITCHBUTTON_SELECTOR,0);
 
-        this.globalDisplayTypes = new HashMap<String, Integer>();
-        setGlobalStringDisplayType(DisplayType.DISPLAY_TYPE_TEXT);
-        setGlobalNumberDisplayType(DisplayType.DISPLAY_TYPE_TEXT);
-        setGlobalLimitedNumberDisplayType(DisplayType.DISPLAY_TYPE_SLIDER);
-        setGlobalBooleanDisplayType(DisplayType.DISPLAY_TYPE_CHECKED_TEXTVIEW);
-        setGlobalArrayDisplayType(DisplayType.DISPLAY_TYPE_LISTVIEW);
-        setGlobalArrayEnumDisplayType(DisplayType.DISPLAY_TYPE_SPINNER); //multi select
-        setGlobalEnumDisplayType(DisplayType.DISPLAY_TYPE_SPINNER); //single select
-        setGlobalRangeDisplayType(DisplayType.DISPLAY_TYPE_SLIDER);
+        this.globalLayouts = new HashMap<String, Integer>();
+//        setGlobalStringLayout(FragmentLayouts.STRING_TEXT);
+//        setGlobalNumberLayout(FragmentLayouts.NUMBER_TEXT);
+//        setGlobalLimitedNumberLayout(FragmentLayouts.NUMBER_SLIDER);
+//        setGlobalBooleanLayout(FragmentLayouts.BOOLEAN_CHECKED_TEXTVIEW);
+//        setGlobalArrayLayout(FragmentLayouts.ENUM_SPINNER);
+//        setGlobalArrayEnumLayout(FragmentLayouts.ENUM_SPINNER); //multi select
+//        setGlobalEnumLayout(FragmentLayouts.ENUM_SPINNER); //single select
+//        setGlobalRangeLayout(FragmentLayouts.RANGE_SLIDER);
+
+        setGlobalStringLayout(0);
+        setGlobalNumberLayout(0);
+        setGlobalLimitedNumberLayout(0);
+        setGlobalBooleanLayout(0);
+        setGlobalArrayLayout(0);
+        setGlobalArrayEnumLayout(0); //multi select
+        setGlobalEnumLayout(0); //single select
+        setGlobalRangeLayout(0);
     }
 
     public InflaterSettings setSettingsBundle(Bundle args) {
         //populate hashmaps and values
         if(args == null) return this;
 
-        displayTypes = (HashMap<String, Integer>)args.getSerializable(ARG_DISPLAY_TYPES);
         customButtonSelectors =  (HashMap<String, Integer>)args.getSerializable(ARG_BUTTON_SELECTORS);
         customTitleTextAppearances = (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_TITLE_STYLE);
         customDescTextAppearances =  (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_DESC_STYLE);
         customValueTextAppearances = (HashMap<String, Integer>)args.getSerializable(ARG_CUSTOM_VALUE_TEXT_STYLE);
         noTitle =   (HashMap<String, Boolean>)args.getSerializable(ARG_NO_TITLE);
         noDescription = ( HashMap<String, Boolean>)args.getSerializable(ARG_NO_DESC);
+        customLayouts = (HashMap<String, Integer>) args.getSerializable(ARG_CUSTOM_LAYOUTS);
 
-        globalDisplayTypes = (HashMap<String, Integer>) args.getSerializable(ARG_GLOBAL_DISPLAY_TYPES);
+        globalLayouts = (HashMap<String, Integer>) args.getSerializable(ARG_GLOBAL_LAYOUTS);
         globalThemeColor = args.getInt(ARG_GLOBAL_THEME_COLOR, -1);
         globalButtonSelectors = (HashMap<String, Integer>) args.getSerializable(ARG_GLOBAL_BOTTON_SELECTORS);
         globalTitleTextAppearance = args.getInt(ARG_GLOBAL_TITLE_STYLE, R.style.textTitle);
@@ -154,7 +162,6 @@ public class InflaterSettings {
 
     public Bundle bundleSettings() {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_DISPLAY_TYPES, displayTypes);
         bundle.putSerializable(ARG_BUTTON_SELECTORS, customButtonSelectors);
         bundle.putSerializable(ARG_CUSTOM_TITLE_STYLE, customTitleTextAppearances);
         bundle.putSerializable(ARG_CUSTOM_DESC_STYLE, customDescTextAppearances);
@@ -162,7 +169,8 @@ public class InflaterSettings {
         bundle.putSerializable(ARG_NO_TITLE, noTitle);
         bundle.putSerializable(ARG_NO_DESC, noDescription);
 
-        bundle.putSerializable(ARG_GLOBAL_DISPLAY_TYPES, globalDisplayTypes);
+        bundle.putSerializable(ARG_CUSTOM_LAYOUTS, customLayouts);
+        bundle.putSerializable(ARG_GLOBAL_LAYOUTS, globalLayouts);
         bundle.putInt(ARG_GLOBAL_THEME_COLOR, globalThemeColor);
         bundle.putSerializable(ARG_GLOBAL_BOTTON_SELECTORS, globalButtonSelectors);
         bundle.putInt(ARG_GLOBAL_TITLE_STYLE, globalTitleTextAppearance);
@@ -241,13 +249,13 @@ public class InflaterSettings {
         return this;
     }
 
-    public InflaterSettings setGlobalStringDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_STRING_DISPLAY_TYPE, globalDisplayType);
+    public InflaterSettings setGlobalStringLayout(int globalDisplayType) {
+        this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_STRING_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalNumberDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_NUMBER_DISPLAY_TYPE, globalDisplayType);
+    public InflaterSettings setGlobalNumberLayout(int globalDisplayType) {
+        this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_NUMBER_LAYOUT, globalDisplayType);
         return this;
     }
 
@@ -256,33 +264,33 @@ public class InflaterSettings {
      * @param globalDisplayType
      * @return
      */
-    public InflaterSettings setGlobalLimitedNumberDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_LIMITED_NUMBER_DISPLAY_TYPE, globalDisplayType);
+    public InflaterSettings setGlobalLimitedNumberLayout(int globalDisplayType) {
+        this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_LIMITED_NUMBER_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalBooleanDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_BOOLEAN_DISPLAY_TYPE, globalDisplayType);
+    public InflaterSettings setGlobalBooleanLayout(int globalDisplayType) {
+        this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_BOOLEAN_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalArrayDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_ARRAY_DISPLAY_TYPE, globalDisplayType);
+    public InflaterSettings setGlobalArrayLayout(int globalDisplayType) {
+        this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_ARRAY_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalArrayEnumDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_ARRAY_ENUM_DISPLAY_TYPE, globalDisplayType);
+    public InflaterSettings setGlobalArrayEnumLayout(int globalDisplayType) {
+        this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_ARRAY_ENUM_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalEnumDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_ENUM_DISPLAY_TYPE, globalDisplayType);
+    public InflaterSettings setGlobalEnumLayout(int globalDisplayType) {
+        this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_ENUM_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalRangeDisplayType(int globalDisplayType) {
-        this.globalDisplayTypes.put(BasePropertyFragment.ARG_GLOBAL_RANGE_DISPLAY_TYPE, globalDisplayType);
+    public InflaterSettings setGlobalRangeLayout(int globalDisplayType) {
+        this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_RANGE_LAYOUT, globalDisplayType);
         return this;
     }
 
@@ -356,16 +364,6 @@ public class InflaterSettings {
         return this;
     }
 
-    public InflaterSettings addDisplayType (String propertyName, int displayType) {
-        displayTypes.put(propertyName, displayType);
-        return this;
-    }
-
-    public InflaterSettings addDisplayTypes (Map<String, Integer> propertyDisplayTypes) {
-        displayTypes.putAll(propertyDisplayTypes);
-        return this;
-    }
-
     public InflaterSettings addOneOfController(String propertyName) {
         oneOfControllers.add(propertyName);
         return this;
@@ -404,21 +402,6 @@ public class InflaterSettings {
     public InflaterSettings addCustomFragments(Map<String, FragmentBuilder.FragmentPack> customFragments) {
         this.customFragments.putAll(customFragments);
         return this;
-    }
-
-
-
-    int chooseDisplayType(String property) {
-        int res = -1;
-
-        if(displayTypes.containsKey(property)) {
-            res = displayTypes.get(property);
-        }
-        else {
-            res = -1;
-        }
-
-        return res;
     }
 
     int chooseButtonSelectors(String property) {

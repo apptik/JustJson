@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import org.djodjo.json.android.R;
 import org.djodjo.widget.MultiSlider;
 
@@ -68,10 +67,12 @@ public class RangeFragment extends BasePropertyFragment {
 
     @Override
     protected int getLayoutId() {
-        switch (displayType) {
-            case DisplayType.DISPLAY_TYPE_SLIDER: return LAYOUT_RANGE_SLIDER;
+        int currLayoutId =  globalLayouts.get(ARG_GLOBAL_RANGE_LAYOUT);
+        if(currLayoutId==0) {
+            currLayoutId = LAYOUT_RANGE_SLIDER;
         }
-        return LAYOUT_RANGE_SLIDER;
+        return currLayoutId;
+
     }
 
     @Override
@@ -107,9 +108,12 @@ public class RangeFragment extends BasePropertyFragment {
             seekBar.setMin(minVal1, true, true);
 
 
-
-            min.setText(String.valueOf(seekBar.getThumb(0).getValue()));
-            max.setText(String.valueOf(seekBar.getThumb(1).getValue()));
+            if(min!=null) {
+                min.setText(String.valueOf(seekBar.getThumb(0).getValue()));
+            }
+            if(max!=null) {
+                max.setText(String.valueOf(seekBar.getThumb(1).getValue()));
+            }
 
             seekBar.setOnThumbValueChangeListener(new MultiSlider.OnThumbValueChangeListener() {
                 @Override

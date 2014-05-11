@@ -29,6 +29,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+
 import org.djodjo.json.android.R;
 
 import java.util.ArrayList;
@@ -55,16 +56,17 @@ public class EnumFragment extends BasePropertyFragment {
 
     @Override
     protected int getLayoutId() {
-        switch (displayType) {
-            case DisplayType.DISPLAY_TYPE_SPINNER: return LAYOUT_ENUM_SPINNER;
-            case DisplayType.DISPLAY_TYPE_RADIO: return LAYOUT_ENUM_RADIO;
+        int currLayoutId = globalLayouts.get(ARG_GLOBAL_ENUM_LAYOUT);
+
+        if(currLayoutId==0) {
+            if (options.size() > 3)
+                currLayoutId = LAYOUT_ENUM_SPINNER;
+                //return LAYOUT_ENUM_LISTVIEW;
+            else
+                currLayoutId = LAYOUT_ENUM_RADIO;
         }
 
-        if(options.size()>3)
-            return LAYOUT_ENUM_SPINNER;
-            //return LAYOUT_ENUM_LISTVIEW;
-        else
-            return LAYOUT_ENUM_RADIO;
+        return currLayoutId;
     }
 
     @Override
@@ -85,9 +87,12 @@ public class EnumFragment extends BasePropertyFragment {
             } catch(Exception ex) {
             }
         }
+        RadioGroup enumRadioGroup = (RadioGroup) v.findViewById(R.id.enumRadioGroup);
+        Spinner enumSpinner = (Spinner) v.findViewById(R.id.enumSpinner);
+        ListView enumListView = (ListView) v.findViewById(R.id.enumListView);
 
-        if(layoutId == LAYOUT_ENUM_RADIO) {
-            RadioGroup enumRadioGroup = (RadioGroup) v.findViewById(R.id.enumRadioGroup);
+        if(enumRadioGroup!=null) {
+
             boolean checked = false;
             for(final String option:options) {
                 RadioButton button = (RadioButton)inflater.inflate(R.layout.radio_button, enumRadioGroup, false);
@@ -116,9 +121,9 @@ public class EnumFragment extends BasePropertyFragment {
                 }
             }
         }
-        else if(layoutId == LAYOUT_ENUM_SPINNER) {
-            Spinner enumSpinner = (Spinner) v.findViewById(R.id.enumSpinner);
-            SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, options);
+        else if(enumSpinner!=null) {
+
+            SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, options);
             enumSpinner.setAdapter(adapter);
             if(controllerCallback !=null) {
                 enumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -135,8 +140,8 @@ public class EnumFragment extends BasePropertyFragment {
             }
 
         }
-        else if(layoutId == LAYOUT_ENUM_LISTVIEW) {
-            ListView enumListView = (ListView) v.findViewById(R.id.enumListView);
+        else if(enumListView != null) {
+
             ArrayAdapter<String>  adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, options);
             enumListView.setAdapter(adapter);
             enumListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);

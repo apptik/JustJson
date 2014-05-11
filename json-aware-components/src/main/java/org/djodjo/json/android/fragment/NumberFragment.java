@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.djodjo.json.android.R;
@@ -46,12 +45,11 @@ public class NumberFragment extends BasePropertyFragment {
 
     @Override
     protected int getLayoutId() {
-        int currDisplType = (displayType>=0)?displayType:displayTypes.get(ARG_GLOBAL_NUMBER_DISPLAY_TYPE);
-        switch (currDisplType) {
-            case DisplayType.DISPLAY_TYPE_TEXT: return LAYOUT_NUMBER_TEXT;
-            case DisplayType.DISPLAY_TYPE_NUMBER_PICKER: return LAYOUT_NUMBER_PICKER;
+        int currLayoutId =  globalLayouts.get(ARG_GLOBAL_NUMBER_LAYOUT);
+        if(currLayoutId==0) {
+            currLayoutId = LAYOUT_NUMBER_TEXT;
         }
-        return LAYOUT_NUMBER_TEXT;
+        return currLayoutId;
     }
 
     @Override
@@ -63,10 +61,12 @@ public class NumberFragment extends BasePropertyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        if(displayType == LAYOUT_NUMBER_TEXT) {
-            TextView propValue = (TextView) v.findViewById(R.id.prop_value);
+
+        TextView propValue = (TextView) v.findViewById(R.id.prop_value);
+        if(propValue!=null) {
             propValue.setTextAppearance(getActivity(), styleValue);
         }
+
 
         return v;
     }

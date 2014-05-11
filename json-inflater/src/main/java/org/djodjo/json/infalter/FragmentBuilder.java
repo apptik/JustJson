@@ -162,7 +162,6 @@ public class FragmentBuilder {
         String label = args.getString(BasePropertyFragment.ARG_LABEL);
         this
                 .withLayoutId(inflaterSettings.getCustomLayoutId(label))
-                .withDisplayType(inflaterSettings.chooseDisplayType(label))
                 .withThemeColor(inflaterSettings.globalThemeColor)
                 .withButtonSelector(inflaterSettings.chooseButtonSelectors(label))
                 .withTitleTextAppearance(inflaterSettings.chooseTitleTextAppearance(label))
@@ -171,7 +170,7 @@ public class FragmentBuilder {
                 .withNoTitle(inflaterSettings.isNoTile(label))
                 .withNoDescription(inflaterSettings.isNoDescription(label))
                 .withGlobalButtonSelectors(inflaterSettings.globalButtonSelectors)
-                .withGlobalDisplayTypes(inflaterSettings.globalDisplayTypes)
+                .withGlobalLayouts(inflaterSettings.globalLayouts)
                 .withCustomFragment(inflaterSettings.customFragments.get(label))
                 .withCustomPropertyMatchers(inflaterSettings.customPropertyMatchers);
         return this;
@@ -253,8 +252,8 @@ public class FragmentBuilder {
         return this;
     }
 
-    public FragmentBuilder withGlobalDisplayTypes(HashMap<String, Integer> globalDisplayTypes) {
-        args.putSerializable(BasePropertyFragment.ARG_DISPLAY_TYPES, globalDisplayTypes);
+    public FragmentBuilder withGlobalLayouts(HashMap<String, Integer> globalDisplayTypes) {
+        args.putSerializable(BasePropertyFragment.ARG_GLOBAL_LAYOUTS, globalDisplayTypes);
         return this;
     }
 
