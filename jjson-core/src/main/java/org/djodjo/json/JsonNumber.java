@@ -35,7 +35,7 @@ public class JsonNumber extends JsonElement {
         this.value = string;
     }
 
-    JsonNumber( Number value ) {
+    public JsonNumber( Number value ) {
         if( value == null ) {
             throw new NullPointerException( "value is null" );
         }

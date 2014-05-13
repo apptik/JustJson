@@ -16,14 +16,13 @@
 
 package org.djodjo.json.jsonfier;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 
 import org.djodjo.json.JsonElement;
 
 
-public class JsonfiableFragment extends Fragment implements Jsonfiable{
+public abstract class JsonfiableFragment extends Fragment implements Jsonfiable{
 
 
     public static final String ARG_PARENT = "parent";
@@ -31,7 +30,7 @@ public class JsonfiableFragment extends Fragment implements Jsonfiable{
     private String parent;
 
     public JsonfiableFragment() {
-        // Required empty public constructor
+        //Required empty public constructor
     }
 
     @Override
@@ -39,31 +38,34 @@ public class JsonfiableFragment extends Fragment implements Jsonfiable{
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             parent = getArguments().getString(ARG_PARENT);
-            Jsonfier.get(parent).registerFragment(this);
+            if(parent!=null && !parent.trim().isEmpty()) {
+                Jsonfier.get(parent).register(this);
+            } else {
+                Jsonfier.get().register(this);
+            }
         } else {
-            Jsonfier.get().registerFragment(this);
+            Jsonfier.get().register(this);
         }
     }
 
     @Override
     public void onDestroy() {
-        if(parent!=null && !parent.isEmpty()) {
-            Jsonfier.get(parent).unregisterFragment(this);
+        if(parent!=null && !parent.trim().isEmpty()) {
+            Jsonfier.get(parent).unregister(this);
         } else {
-            Jsonfier.get().unregisterFragment(this);
+            Jsonfier.get().unregister(this);
         }
         super.onDestroy();
     }
 
     @Override
     public String getJsonString() {
-        return null;
+        JsonElement res = getJsonElement();
+        if(res!=null)
+            return res.toString();
+        else return null;
     }
 
-    @Override
-    public JsonElement getJsonElement() {
-        return null;
-    }
 
     @Override
     public String getLabel() {

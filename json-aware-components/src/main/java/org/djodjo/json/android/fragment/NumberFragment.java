@@ -24,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.djodjo.json.JsonElement;
+import org.djodjo.json.JsonNumber;
 import org.djodjo.json.android.R;
 
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class NumberFragment extends BasePropertyFragment {
     public final static int LAYOUT_NUMBER_PICKER = R.layout.fragment_number_picker;
 
     private ArrayList<String> options;
+    TextView propValue;
 
     public NumberFragment() {
         // Required empty public constructor
@@ -62,12 +65,21 @@ public class NumberFragment extends BasePropertyFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        TextView propValue = (TextView) v.findViewById(R.id.prop_value);
+        propValue = (TextView) v.findViewById(R.id.prop_value);
         if(propValue!=null) {
             propValue.setTextAppearance(getActivity(), styleValue);
         }
 
 
         return v;
+    }
+
+    @Override
+    public JsonElement getJsonElement() {
+        JsonNumber res = null;
+        if(propValue!=null) {
+            res = new JsonNumber(propValue.getText().toString().replace(" ","").replace(".","").replace(",",""));
+        }
+        return res;
     }
 }

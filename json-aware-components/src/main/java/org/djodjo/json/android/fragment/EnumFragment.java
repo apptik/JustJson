@@ -30,11 +30,13 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
+import org.djodjo.json.JsonElement;
+import org.djodjo.json.JsonString;
 import org.djodjo.json.android.R;
 
 import java.util.ArrayList;
 
-
+//TODO accept only strings now
 public class EnumFragment extends BasePropertyFragment {
 
     public final static int LAYOUT_ENUM_RADIO = R.layout.fragment_enum_radio;
@@ -49,6 +51,10 @@ public class EnumFragment extends BasePropertyFragment {
     protected boolean isController = false;
 
     protected ControllerCallback controllerCallback = null;
+
+    RadioGroup enumRadioGroup = null;
+    Spinner enumSpinner = null;
+    ListView enumListView = null;
 
     public EnumFragment() {
         // Required empty public constructor
@@ -87,9 +93,9 @@ public class EnumFragment extends BasePropertyFragment {
             } catch(Exception ex) {
             }
         }
-        RadioGroup enumRadioGroup = (RadioGroup) v.findViewById(R.id.enumRadioGroup);
-        Spinner enumSpinner = (Spinner) v.findViewById(R.id.enumSpinner);
-        ListView enumListView = (ListView) v.findViewById(R.id.enumListView);
+        enumRadioGroup = (RadioGroup) v.findViewById(R.id.enumRadioGroup);
+        enumSpinner = (Spinner) v.findViewById(R.id.enumSpinner);
+        enumListView = (ListView) v.findViewById(R.id.enumListView);
 
         if(enumRadioGroup!=null) {
 
@@ -123,7 +129,7 @@ public class EnumFragment extends BasePropertyFragment {
         }
         else if(enumSpinner!=null) {
 
-            SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, options);
+            SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, options);
             enumSpinner.setAdapter(adapter);
             if(controllerCallback !=null) {
                 enumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -158,12 +164,46 @@ public class EnumFragment extends BasePropertyFragment {
             params.height = totalHeight + (enumListView.getDividerHeight() * (adapter.getCount() - 1));
             enumListView.setLayoutParams(params);
             enumListView.requestLayout();
+            if(controllerCallback !=null) {
+                enumListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        controllerCallback.onValueChanged(label, position);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+            }
 
         }
 
         return v;
     }
 
+    @Override
+    public JsonElement getJsonElement() {
+        String value = null;
+        JsonString res= null;
+
+        if(enumRadioGroup!=null && enumRadioGroup.getCheckedRadioButtonId()!=-1) {
+            int id= enumRadioGroup.getCheckedRadioButtonId();
+            View radioButton = enumRadioGroup.findViewById(id);
+            int radioId = enumRadioGroup.indexOfChild(radioButton);
+            res = new JsonString(options.get(radioId));
+        } else if(enumSpinner!=null) {
+            res = new JsonString(options.get(enumSpinner.getSelectedItemPosition()));
+        }
+        else if(enumListView != null) {
+            res = new JsonString(options.get(enumListView.getSelectedItemPosition()));
+        }
+        if(value!=null) {
+            res = new JsonString(value);
+        }
+        return res;
+    }
 
 
 }

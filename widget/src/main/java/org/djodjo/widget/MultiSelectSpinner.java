@@ -20,6 +20,9 @@ public class MultiSelectSpinner extends Spinner implements
         OnMultiChoiceClickListener, DialogInterface.OnCancelListener {
 
     private List<String> items;
+
+
+
     private boolean[] selected;
     private String allCheckedText;
     private String allUncheckedText;
@@ -42,6 +45,9 @@ public class MultiSelectSpinner extends Spinner implements
         super(context, attrs, defStyle);
     }
 
+    public boolean[] getSelected() {
+        return selected;
+    }
     public boolean isSelectAll() {
         return selectAll;
     }
@@ -49,18 +55,20 @@ public class MultiSelectSpinner extends Spinner implements
     public MultiSelectSpinner setSelectAll(boolean selectAll) {
         if(this.selectAll != selectAll) {
             this.selectAll = selectAll;
-            if(selectAll) {
-                for (int i = 0; i < selected.length; i++) {
-                    selected[i] = true;
+            if (selected != null) {
+                if (selectAll) {
+                    for (int i = 0; i < selected.length; i++) {
+                        selected[i] = true;
+                    }
+                } else {
+                    for (int i = 0; i < selected.length; i++) {
+                        selected[i] = false;
+                    }
                 }
-            } else {
-                for (int i = 0; i < selected.length; i++) {
-                    selected[i] = false;
-                }
+                ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(),
+                        android.R.layout.simple_spinner_item, new String[]{(isSelectAll()) ? allCheckedText : allUncheckedText});
+                setAdapter(spinnerAdapter);
             }
-            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(),
-                    android.R.layout.simple_spinner_item, new String[] { (isSelectAll())?allCheckedText:allUncheckedText });
-            setAdapter(spinnerAdapter);
         }
         return this;
     }
@@ -69,16 +77,18 @@ public class MultiSelectSpinner extends Spinner implements
         return minSelectedItems;
     }
 
-    public void setMinSelectedItems(int minSelectedItems) {
+    public MultiSelectSpinner setMinSelectedItems(int minSelectedItems) {
         this.minSelectedItems = minSelectedItems;
+        return this;
     }
 
     public int getMaxSelectedItems() {
         return maxSelectedItems;
     }
 
-    public void setMaxSelectedItems(int maxSelectedItems) {
+    public MultiSelectSpinner setMaxSelectedItems(int maxSelectedItems) {
         this.maxSelectedItems = maxSelectedItems;
+        return this;
     }
 
 //    public int getCurrCheckedItems() {

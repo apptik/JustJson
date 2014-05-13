@@ -25,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import org.djodjo.json.JsonElement;
+import org.djodjo.json.JsonNumber;
 import org.djodjo.json.android.R;
 
 
@@ -39,6 +41,7 @@ public class LimitedNumberFragment extends BasePropertyFragment {
 
     private int minimum;
     private int maximum;
+    SeekBar seekBar;
 
     public LimitedNumberFragment() {
         // Required empty public constructor
@@ -72,7 +75,7 @@ public class LimitedNumberFragment extends BasePropertyFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         if(layoutId == LAYOUT_NUMBER_SLIDER) {
-            SeekBar seekBar = (SeekBar)v.findViewById(R.id.seekBar);
+            seekBar = (SeekBar)v.findViewById(R.id.seekBar);
             if(buttonSelector!=0){
                 seekBar.setThumb(getActivity().getResources().getDrawable(buttonSelector));
             } else if (customButtonSelectors!= null && customButtonSelectors.get(ARG_GLOBAL_SLIDER_THUMB_SELECTOR) != 0)
@@ -117,5 +120,14 @@ public class LimitedNumberFragment extends BasePropertyFragment {
         }
 
         return v;
+    }
+
+    @Override
+    public JsonElement getJsonElement() {
+        JsonNumber res = null;
+        if(seekBar!=null) {
+            res = new JsonNumber(seekBar.getProgress());
+        }
+        return res;
     }
 }

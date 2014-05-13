@@ -16,21 +16,28 @@
 
 package org.djodjo.json.jsonfier;
 
+import android.app.Fragment;
+
+import org.djodjo.json.JsonObject;
+import org.djodjo.json.exception.JsonException;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 
 public class Jsonfier {
 
-     private List<WeakReference<JsonfiableFragment>> jsonfiableFragments =
-            new ArrayList<WeakReference<JsonfiableFragment>>();
+//     private List<WeakReference<JsonfiableFragment>> jsonfiableFragments =
+//            new ArrayList<WeakReference<JsonfiableFragment>>();
 
 
     static Jsonfier defInstance = null;
-    static HashMap<String, Jsonfier> instances;
+    static HashMap<String, Jsonfier> instances = new HashMap<String, Jsonfier>();
+    private ArrayList<WeakReference<Jsonfiable>> jsonfiables;
 
     private Jsonfier() {
+        jsonfiables = new ArrayList<WeakReference<Jsonfiable>>();
     }
 
     /**
@@ -55,24 +62,71 @@ public class Jsonfier {
         return instances.get(name) ;
     }
 
-    void registerFragment(JsonfiableFragment fragment) {
-        jsonfiableFragments.add(new WeakReference<JsonfiableFragment>(fragment));
+//    void registerFragment(JsonfiableFragment fragment) {
+//        jsonfiableFragments.add(new WeakReference<JsonfiableFragment>(fragment));
+//    }
+//
+//    void unregisterFragment(JsonfiableFragment fragment) {
+//        jsonfiableFragments.remove(new WeakReference<JsonfiableFragment>(fragment));
+//    }
+//
+//    public List<JsonfiableFragment> getActiveFragments() {
+//        ArrayList<JsonfiableFragment> ret = new ArrayList<JsonfiableFragment>();
+//        for(WeakReference<JsonfiableFragment> ref : jsonfiableFragments) {
+//            JsonfiableFragment f = ref.get();
+//            if(f != null) {
+//                if(f.isVisible()) {
+//                    ret.add(f);
+//                }
+//            }
+//        }
+//        return ret;
+//    }
+
+    public Jsonfier register(Jsonfiable jsonfiable) {
+        jsonfiables.add(new WeakReference<Jsonfiable>(jsonfiable));
+        return this;
     }
 
-    void unregisterFragment(JsonfiableFragment fragment) {
-        jsonfiableFragments.remove(new WeakReference<JsonfiableFragment>(fragment));
-    }
-
-    public List<JsonfiableFragment> getActiveFragments() {
-        ArrayList<JsonfiableFragment> ret = new ArrayList<JsonfiableFragment>();
-        for(WeakReference<JsonfiableFragment> ref : jsonfiableFragments) {
-            JsonfiableFragment f = ref.get();
-            if(f != null) {
-                if(f.isVisible()) {
-                    ret.add(f);
-                }
+    public Jsonfier unregister(Jsonfiable jsonfiable) {
+        for (Iterator<WeakReference<Jsonfiable>> iterator = jsonfiables.iterator();
+             iterator.hasNext(); )
+        {
+            WeakReference<Jsonfiable> weakRef = iterator.next();
+            if (weakRef.get() == jsonfiable)
+            {
+                iterator.remove();
             }
         }
-        return ret;
+        return this;
     }
+
+    public JsonObject getJsonObject() {
+        JsonObject res = new JsonObject();
+        Jsonfiable jsonfiable;
+        for (Iterator<WeakReference<Jsonfiable>> iterator = jsonfiables.iterator();
+             iterator.hasNext(); )
+        {
+            WeakReference<Jsonfiable> weakRef = iterator.next();
+            jsonfiable =  weakRef.get();
+            if (jsonfiable !=null)
+            {
+                if(jsonfiable instanceof Fragment) {
+                    if(((Fragment) jsonfiable).isHidden() || !((Fragment) jsonfiable).isVisible() || ((Fragment) jsonfiable).isDetached()) {
+                        continue;
+                    }
+                }
+                try {
+                    res.put(jsonfiable.getLabel(),jsonfiable.getJsonElement());
+                } catch (JsonException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                iterator.remove();
+            }
+        }
+        return res;
+    }
+
+
 }

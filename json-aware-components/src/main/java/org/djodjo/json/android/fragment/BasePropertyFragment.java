@@ -17,7 +17,6 @@
 package org.djodjo.json.android.fragment;
 
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +24,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.djodjo.json.android.R;
+import org.djodjo.json.jsonfier.Jsonfiable;
+import org.djodjo.json.jsonfier.JsonfiableFragment;
 
 import java.util.HashMap;
 
 
-public abstract class BasePropertyFragment extends Fragment {
+public abstract class BasePropertyFragment extends JsonfiableFragment implements Jsonfiable {
 
     public static final String ARG_LABEL = "label";
     public static final String ARG_TITLE = "title";
@@ -70,6 +71,7 @@ public abstract class BasePropertyFragment extends Fragment {
     public static final String ARG_GLOBAL_SWITCHBUTTON_SELECTOR = "globalSwitchButtonSelector";
 
 
+    @Override
     public String getLabel() {
         return label;
     }
@@ -159,6 +161,8 @@ public abstract class BasePropertyFragment extends Fragment {
 
         return v;
     }
+
+
 
 
 }

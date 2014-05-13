@@ -23,14 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.djodjo.json.JsonElement;
+import org.djodjo.json.JsonString;
 import org.djodjo.json.android.R;
-
-import java.util.ArrayList;
 
 
 public class StringFragment extends BasePropertyFragment {
 
-    private ArrayList<String> options;
+    TextView propValue;
 
     public StringFragment() {
         // Required empty public constructor
@@ -45,9 +45,19 @@ public class StringFragment extends BasePropertyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        TextView propValue =  (TextView)v.findViewById(R.id.prop_value);
+        propValue =  (TextView)v.findViewById(R.id.prop_value);
 
         propValue.setTextAppearance(getActivity(), styleValue);
         return v;
+    }
+
+    @Override
+    public JsonElement getJsonElement() {
+        JsonString res= null;
+
+        if(propValue!=null) {
+            res = new JsonString(propValue.getText().toString());
+        }
+        return res;
     }
 }

@@ -23,7 +23,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.djodjo.json.JsonElement;
+import org.djodjo.json.JsonObject;
 import org.djodjo.json.android.R;
+import org.djodjo.json.exception.JsonException;
 import org.djodjo.widget.MultiSlider;
 
 
@@ -47,7 +50,7 @@ import org.djodjo.widget.MultiSlider;
  *
  */
 
-public class RangeFragment extends BasePropertyFragment {
+public class RangeFragment extends BasePropertyFragment{
 
     public final static int LAYOUT_RANGE_SLIDER = R.layout.fragment_range_slider;
     public static final String ARG_MIN_BUNDLE = "min";
@@ -134,18 +137,31 @@ public class RangeFragment extends BasePropertyFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("minVal", seekBar.getThumb(0).getValue());
-        outState.putInt("maxVal", seekBar.getThumb(1).getValue());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if(savedInstanceState!=null) {
-            seekBar.getThumb(0).setValue(savedInstanceState.getInt("minVal", minVal1));
-            seekBar.getThumb(1).setValue(savedInstanceState.getInt("maxVal", maxVal2));
+    public JsonElement getJsonElement() {
+        if(seekBar==null) return null;
+        JsonObject res = new JsonObject();
+        try {
+            res.put("min", seekBar.getThumb(0).getValue());
+            res.put("max", seekBar.getThumb(1).getValue());
+        } catch (JsonException e) {
+            e.printStackTrace();
         }
+        return res;
     }
+//TODO
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        outState.putInt("minVal", seekBar.getThumb(0).getValue());
+//        outState.putInt("maxVal", seekBar.getThumb(1).getValue());
+//        super.onSaveInstanceState(outState);
+//    }
+//
+//    @Override
+//    public void onViewStateRestored(Bundle savedInstanceState) {
+//        super.onViewStateRestored(savedInstanceState);
+//        if(savedInstanceState!=null) {
+//            seekBar.getThumb(0).setValue(savedInstanceState.getInt("minVal", minVal1));
+//            seekBar.getThumb(1).setValue(savedInstanceState.getInt("maxVal", maxVal2));
+//        }
+//    }
 }

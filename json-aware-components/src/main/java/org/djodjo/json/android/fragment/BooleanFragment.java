@@ -28,6 +28,8 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.ToggleButton;
 
+import org.djodjo.json.JsonBoolean;
+import org.djodjo.json.JsonElement;
 import org.djodjo.json.android.R;
 
 
@@ -92,4 +94,15 @@ public class BooleanFragment extends BasePropertyFragment {
 
         return v;
     }
+
+    @Override
+    public JsonElement getJsonElement() {
+        final Checkable checkable = (Checkable) (getView() != null ? getView().findViewById(R.id.prop_value) : null);
+        JsonBoolean res = null;
+        if(checkable!=null) {
+            res = new JsonBoolean(checkable.isChecked());
+        }
+        return res;
+    }
+
 }
