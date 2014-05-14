@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.infalter.example;
+package org.djodjo.json.infalter.example.fragments;
 
 
 import android.app.Activity;
