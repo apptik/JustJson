@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.infalter.example;
+package org.djodjo.json.infalter.example.views;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -31,7 +31,7 @@ import android.widget.TextView;
 
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.exception.JsonException;
-import org.djodjo.json.infalter.LayoutFragmentBuilder;
+import org.djodjo.json.infalter.LayoutViewBuilder;
 import org.djodjo.json.schema.SchemaV4;
 
 import java.io.IOException;
@@ -193,7 +193,7 @@ public class MainActivity extends Activity
              new Thread(new Runnable() {
                  @Override
                  public void run() {
-                     LayoutFragmentBuilder<SchemaV4> lb  = new LayoutFragmentBuilder<SchemaV4>(schema, getChildFragmentManager());
+                     LayoutViewBuilder<SchemaV4> lb  = new LayoutViewBuilder<SchemaV4>(schema, getActivity());
                      //add custom lb settings
                      switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
                          //case 1:lb.setGlobalBooleanLayout(FragmentLayouts.DISPLAY_TYPE_CHECKED_TEXTVIEW);break;
