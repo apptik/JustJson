@@ -197,8 +197,14 @@ public class MainActivity extends Activity
                      //add custom lb settings
                      switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
                          //case 1:lb.setGlobalBooleanLayout(FragmentLayouts.DISPLAY_TYPE_CHECKED_TEXTVIEW);break;
+                         case 3:
+                             lb.getFragmentInflaterSettings()
+                                     .addTranslateEnumsPrefix("baseProperty2", "_")
+                                     .setGlobalTranslateEnums(true);
+
+                             break;
                          case 4:
-                           //  lb.setInflaterSettings(new InflaterSettings() .addOneOfController("buyRent")
+                           //  lb.setFragmentInflaterSettings(new FragmentInflaterSettings() .addOneOfController("buyRent")
                            //          .addOneOfController("mainType"))
                            //         ;
                              //.addOneOfController("controller1");

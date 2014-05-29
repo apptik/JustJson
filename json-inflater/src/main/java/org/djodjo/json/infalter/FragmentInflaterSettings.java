@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InflaterSettings {
+public class FragmentInflaterSettings {
 
     //setings bundle args
 
@@ -38,6 +38,10 @@ public class InflaterSettings {
     private static final String ARG_CUSTOM_VALUE_TEXT_STYLE = "customValueTextAppearances";
     private static final String ARG_NO_TITLE = "noTitle";
     private static final String ARG_NO_DESC = "noDescription";
+    private static final String ARG_TRANSLATE_ENUMS = "translateEnums";
+    private static final String ARG_TRANSLATE_TITLE = "translateTitle";
+    private static final String ARG_TRANSLATE_ENUMS_PREFIX = "translateEnumsPrefix";
+    private static final String ARG_TRANSLATE_TITLE_PREFIX = "translateTitlePrefix";
 
     private static final String ARG_GLOBAL_LAYOUTS = "globalLayouts";
 
@@ -51,6 +55,10 @@ public class InflaterSettings {
     private static final String ARG_GLOBAL_VALUE_TEXT_STYLE = "globalValuesTextAppearance";
     private static final String ARG_GLOBAL_NO_DESC = "globalNoDescription";
     private static final String ARG_GLOBAL_NO_TITLE = "globalNoTitle";
+    private static final String ARG_GLOBAL_TRANSLATE_ENUMS = "globalTranslateEnums";
+    private static final String ARG_GLOBAL_TRANSLATE_TITLE = "globalTranslateTitle";
+    private static final String ARG_GLOBAL_TRANSLATE_ENUMS_PREFIX = "globalTranslateEnumsPrefix";
+    private static final String ARG_GLOBAL_TRANSLATE_TITLE_PREFIX = "globalTranslateTitlePrefix";
 
     /**
      * custom matchers to be used to match custom Fragment to a specific property schema type.
@@ -66,6 +74,10 @@ public class InflaterSettings {
     private HashMap<String, Integer> customValueTextAppearances = new HashMap<String, Integer>();
     private HashMap<String, Boolean> noTitle =  new HashMap<String, Boolean>();
     private HashMap<String, Boolean> noDescription = new HashMap<String, Boolean>();
+    private HashMap<String, Boolean> translateEnums = new HashMap<String, Boolean>();
+    private HashMap<String, Boolean> translateTitle = new HashMap<String, Boolean>();
+    private HashMap<String, String> translateEnumsPrefix = new HashMap<String, String>();
+    private HashMap<String, String> translateTitlePrefix = new HashMap<String, String>();
 
     /**
      * a mask of the possible display types for all elements
@@ -84,6 +96,10 @@ public class InflaterSettings {
     private int globalValuesTextAppearance = R.style.textValue;
     private boolean globalNoDescription = false;
     private boolean globalNoTitle = false;
+    private boolean globalTranslateEnums = false;
+    private boolean globalTranslateTitle = false;
+    private String globalTranslateEnumsPrefix = "";
+    private String globalTranslateTitlePrefix = "";
 
     //the following controllers are used instead of a general selector
     //these are actual Json Object properties with Enum values,
@@ -107,7 +123,7 @@ public class InflaterSettings {
 
 
 
-    public InflaterSettings() {
+    public FragmentInflaterSettings() {
         this.globalButtonSelectors =  new HashMap<String, Integer>();
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_CHECKBOX_SELECTOR,0);
         globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR,0);
@@ -136,7 +152,7 @@ public class InflaterSettings {
         setGlobalRangeLayout(0);
     }
 
-    public InflaterSettings setSettingsBundle(Bundle args) {
+    public FragmentInflaterSettings setSettingsBundle(Bundle args) {
         //populate hashmaps and values
         if(args == null) return this;
 
@@ -147,6 +163,10 @@ public class InflaterSettings {
         noTitle =   (HashMap<String, Boolean>)args.getSerializable(ARG_NO_TITLE);
         noDescription = ( HashMap<String, Boolean>)args.getSerializable(ARG_NO_DESC);
         customLayouts = (HashMap<String, Integer>) args.getSerializable(ARG_CUSTOM_LAYOUTS);
+        translateEnums =   (HashMap<String, Boolean>)args.getSerializable(ARG_TRANSLATE_ENUMS);
+        translateTitle =   (HashMap<String, Boolean>)args.getSerializable(ARG_TRANSLATE_TITLE);
+        translateEnumsPrefix =   (HashMap<String, String>)args.getSerializable(ARG_TRANSLATE_ENUMS_PREFIX);
+        translateTitlePrefix =   (HashMap<String, String>)args.getSerializable(ARG_TRANSLATE_TITLE_PREFIX);
 
         globalLayouts = (HashMap<String, Integer>) args.getSerializable(ARG_GLOBAL_LAYOUTS);
         globalThemeColor = args.getInt(ARG_GLOBAL_THEME_COLOR, -1);
@@ -156,6 +176,10 @@ public class InflaterSettings {
         globalValuesTextAppearance = args.getInt(ARG_GLOBAL_VALUE_TEXT_STYLE, R.style.textValue);
         globalNoDescription = args.getBoolean(ARG_GLOBAL_NO_DESC, false);
         globalNoTitle = args.getBoolean(ARG_GLOBAL_NO_TITLE, false);
+        globalTranslateEnums = args.getBoolean(ARG_GLOBAL_TRANSLATE_ENUMS, false);
+        globalTranslateTitle = args.getBoolean(ARG_GLOBAL_TRANSLATE_TITLE, false);
+        globalTranslateEnumsPrefix = args.getString(ARG_GLOBAL_TRANSLATE_ENUMS_PREFIX, "");
+        globalTranslateTitlePrefix = args.getString(ARG_GLOBAL_TRANSLATE_TITLE_PREFIX, "");
 
         return this;
     }
@@ -168,6 +192,10 @@ public class InflaterSettings {
         bundle.putSerializable(ARG_CUSTOM_VALUE_TEXT_STYLE, customValueTextAppearances);
         bundle.putSerializable(ARG_NO_TITLE, noTitle);
         bundle.putSerializable(ARG_NO_DESC, noDescription);
+        bundle.putSerializable(ARG_TRANSLATE_ENUMS, translateEnums);
+        bundle.putSerializable(ARG_TRANSLATE_TITLE, translateTitle);
+        bundle.putSerializable(ARG_TRANSLATE_ENUMS_PREFIX, translateEnumsPrefix);
+        bundle.putSerializable(ARG_TRANSLATE_TITLE_PREFIX, translateTitlePrefix);
 
         bundle.putSerializable(ARG_CUSTOM_LAYOUTS, customLayouts);
         bundle.putSerializable(ARG_GLOBAL_LAYOUTS, globalLayouts);
@@ -177,7 +205,10 @@ public class InflaterSettings {
         bundle.putInt(ARG_GLOBAL_DESC_STYLE, globalDescTextAppearance);
         bundle.putInt(ARG_GLOBAL_VALUE_TEXT_STYLE, globalValuesTextAppearance);
         bundle.putBoolean(ARG_GLOBAL_NO_DESC, globalNoDescription);
-        bundle.putBoolean(ARG_GLOBAL_NO_TITLE, globalNoTitle);
+        bundle.putBoolean(ARG_GLOBAL_TRANSLATE_ENUMS, globalTranslateEnums);
+        bundle.putBoolean(ARG_GLOBAL_TRANSLATE_TITLE, globalTranslateTitle);
+        bundle.putString(ARG_GLOBAL_TRANSLATE_ENUMS_PREFIX, globalTranslateEnumsPrefix);
+        bundle.putString(ARG_GLOBAL_TRANSLATE_TITLE_PREFIX, globalTranslateTitlePrefix);
 
         return bundle;
     }
@@ -189,72 +220,112 @@ public class InflaterSettings {
      * @param customButtonSelector the style id of the selector
      * @return
      */
-    public InflaterSettings addCustomButtonSelector(String propertyName, Integer customButtonSelector) {
+    public FragmentInflaterSettings addCustomButtonSelector(String propertyName, Integer customButtonSelector) {
         this.customButtonSelectors.put(propertyName, customButtonSelector);
         return this;
     }
 
-    public InflaterSettings addCustomButtonSelectors(HashMap<String, Integer> customButtonColors) {
+    public FragmentInflaterSettings addCustomButtonSelectors(HashMap<String, Integer> customButtonColors) {
         this.customButtonSelectors.putAll(customButtonColors);
         return this;
     }
 
-    public InflaterSettings addCustomTitleTextAppearance(String propertyName, Integer customTitleTextAppearance) {
+    public FragmentInflaterSettings addCustomTitleTextAppearance(String propertyName, Integer customTitleTextAppearance) {
         this.customTitleTextAppearances.put(propertyName, customTitleTextAppearance);
         return this;
     }
 
-    public InflaterSettings addCustomTitleTextAppearances(HashMap<String, Integer> customTitleTextAppearances) {
+    public FragmentInflaterSettings addCustomTitleTextAppearances(HashMap<String, Integer> customTitleTextAppearances) {
         this.customTitleTextAppearances.putAll(customTitleTextAppearances);
         return this;
     }
 
-    public InflaterSettings addCustomDescTextAppearance(String propertyName, Integer customDescTextAppearance) {
+    public FragmentInflaterSettings addCustomDescTextAppearance(String propertyName, Integer customDescTextAppearance) {
         this.customDescTextAppearances.put(propertyName, customDescTextAppearance);
         return this;
     }
 
-    public InflaterSettings addCustomDescTextAppearances(HashMap<String, Integer> customDescTextAppearances) {
+    public FragmentInflaterSettings addCustomDescTextAppearances(HashMap<String, Integer> customDescTextAppearances) {
         this.customDescTextAppearances.putAll(customDescTextAppearances);
         return this;
     }
 
-    public InflaterSettings addCustomValueTextAppearance(String propertyName, Integer customValueTextAppearance) {
+    public FragmentInflaterSettings addCustomValueTextAppearance(String propertyName, Integer customValueTextAppearance) {
         this.customValueTextAppearances.put(propertyName, customValueTextAppearance);
         return this;
     }
 
-    public InflaterSettings addCustomValueTextAppearances(HashMap<String, Integer> customValueTextAppearances) {
+    public FragmentInflaterSettings addCustomValueTextAppearances(HashMap<String, Integer> customValueTextAppearances) {
         this.customValueTextAppearances.putAll(customValueTextAppearances);
         return this;
     }
 
-    public InflaterSettings addNoTitle(String propertyName) {
+    public FragmentInflaterSettings addNoTitle(String propertyName) {
         this.noTitle.put(propertyName, true);
         return this;
     }
 
-    public InflaterSettings addNoTitles(HashMap<String, Boolean> noTitles) {
+    public FragmentInflaterSettings addNoTitles(HashMap<String, Boolean> noTitles) {
         this.noTitle.putAll(noTitles);
         return this;
     }
 
-    public InflaterSettings addNoDescription(String propertyName) {
+    public FragmentInflaterSettings addTranslateEnums(String label, boolean translate) {
+        this.translateEnums.put(label, translate);
+        return this;
+    }
+
+    public FragmentInflaterSettings addTranslateEnums(HashMap<String, Boolean> translateEnums) {
+        this.translateEnums.putAll(translateEnums);
+        return this;
+    }
+
+    public FragmentInflaterSettings addTranslateTitle(String label, boolean translate) {
+        this.translateTitle.put(label, translate);
+        return this;
+    }
+
+    public FragmentInflaterSettings addTranslateTitle(HashMap<String, Boolean> translateTitle) {
+        this.translateTitle.putAll(translateTitle);
+        return this;
+    }
+
+    public FragmentInflaterSettings addTranslateEnumsPrefix(String label, String prefix) {
+        this.translateEnumsPrefix.put(label, prefix);
+        return this;
+    }
+
+    public FragmentInflaterSettings addTranslateEnumsPrefix(HashMap<String, String> translateEnums) {
+        this.translateEnumsPrefix.putAll(translateEnums);
+        return this;
+    }
+
+    public FragmentInflaterSettings addTranslateTitlePrefix(String label, String prefix) {
+        this.translateTitlePrefix.put(label, prefix);
+        return this;
+    }
+
+    public FragmentInflaterSettings addTranslateTitlePrefix(HashMap<String, String> translateTitlePrefix) {
+        this.translateTitlePrefix.putAll(translateTitlePrefix);
+        return this;
+    }
+
+    public FragmentInflaterSettings addNoDescription(String propertyName) {
         this.noDescription.put(propertyName, true);
         return this;
     }
 
-    public InflaterSettings addNoDescriptions(HashMap<String, Boolean> noDescriptions) {
+    public FragmentInflaterSettings addNoDescriptions(HashMap<String, Boolean> noDescriptions) {
         this.noDescription.putAll(noDescriptions);
         return this;
     }
 
-    public InflaterSettings setGlobalStringLayout(int globalDisplayType) {
+    public FragmentInflaterSettings setGlobalStringLayout(int globalDisplayType) {
         this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_STRING_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalNumberLayout(int globalDisplayType) {
+    public FragmentInflaterSettings setGlobalNumberLayout(int globalDisplayType) {
         this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_NUMBER_LAYOUT, globalDisplayType);
         return this;
     }
@@ -264,142 +335,161 @@ public class InflaterSettings {
      * @param globalDisplayType
      * @return
      */
-    public InflaterSettings setGlobalLimitedNumberLayout(int globalDisplayType) {
+    public FragmentInflaterSettings setGlobalLimitedNumberLayout(int globalDisplayType) {
         this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_LIMITED_NUMBER_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalBooleanLayout(int globalDisplayType) {
+    public FragmentInflaterSettings setGlobalBooleanLayout(int globalDisplayType) {
         this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_BOOLEAN_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalArrayLayout(int globalDisplayType) {
+    public FragmentInflaterSettings setGlobalArrayLayout(int globalDisplayType) {
         this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_ARRAY_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalArrayEnumLayout(int globalDisplayType) {
+    public FragmentInflaterSettings setGlobalArrayEnumLayout(int globalDisplayType) {
         this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_ARRAY_ENUM_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalEnumLayout(int globalDisplayType) {
+    public FragmentInflaterSettings setGlobalEnumLayout(int globalDisplayType) {
         this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_ENUM_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalRangeLayout(int globalDisplayType) {
+    public FragmentInflaterSettings setGlobalRangeLayout(int globalDisplayType) {
         this.globalLayouts.put(BasePropertyFragment.ARG_GLOBAL_RANGE_LAYOUT, globalDisplayType);
         return this;
     }
 
-    public InflaterSettings setGlobalThemeColor(int globalThemeColor) {
+    public FragmentInflaterSettings setGlobalThemeColor(int globalThemeColor) {
         this.globalThemeColor = globalThemeColor;
         return this;
     }
 
-    public InflaterSettings setGlobalCheckBoxSelector(int globalCheckBoxSelector) {
+    public FragmentInflaterSettings setGlobalCheckBoxSelector(int globalCheckBoxSelector) {
         this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_CHECKBOX_SELECTOR, globalCheckBoxSelector);
         return this;
     }
 
-    public InflaterSettings setGlobalRadioButtonSelector(int globalRadioButtonSelector) {
+    public FragmentInflaterSettings setGlobalRadioButtonSelector(int globalRadioButtonSelector) {
         this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_RADIOBUTTON_SELECTOR, globalRadioButtonSelector);
         return this;
     }
 
-    public InflaterSettings setGlobalSliderThumbSelector(int globalSliderThumbSelector) {
+    public FragmentInflaterSettings setGlobalSliderThumbSelector(int globalSliderThumbSelector) {
         this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_THUMB_SELECTOR, globalSliderThumbSelector);
         return this;
     }
 
-    public InflaterSettings setGlobalSliderProgressDrawable(int globalSliderProgressDrawable) {
+    public FragmentInflaterSettings setGlobalSliderProgressDrawable(int globalSliderProgressDrawable) {
         this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SLIDER_PROGRESS_DRAWABLE, globalSliderProgressDrawable);
         return this;
     }
 
-    public InflaterSettings setGlobalToggleButtonSelector(int globalToggleButtonSelector) {
+    public FragmentInflaterSettings setGlobalToggleButtonSelector(int globalToggleButtonSelector) {
         this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_TOGGLEBUTTON_SELECTOR, globalToggleButtonSelector);
         return this;
     }
 
-    public InflaterSettings setGlobalSwitchButtonSelector(int globalSwitchButtonSelector) {
+    public FragmentInflaterSettings setGlobalSwitchButtonSelector(int globalSwitchButtonSelector) {
         this.globalButtonSelectors.put(BasePropertyFragment.ARG_GLOBAL_SWITCHBUTTON_SELECTOR, globalSwitchButtonSelector);
         return this;
     }
 
-    public InflaterSettings setGlobalTitleTextAppearance(int globalTitleTextAppearance) {
+    public FragmentInflaterSettings setGlobalTitleTextAppearance(int globalTitleTextAppearance) {
         this.globalTitleTextAppearance = globalTitleTextAppearance;
         return this;
     }
 
-    public InflaterSettings setGlobalDescTextAppearance(int globalDescTextAppearance) {
+    public FragmentInflaterSettings setGlobalDescTextAppearance(int globalDescTextAppearance) {
         this.globalDescTextAppearance = globalDescTextAppearance;
         return this;
     }
 
-    public InflaterSettings setGlobalValuesTextAppearance(int globalValuesTextAppearance) {
+    public FragmentInflaterSettings setGlobalValuesTextAppearance(int globalValuesTextAppearance) {
         this.globalValuesTextAppearance = globalValuesTextAppearance;
         return this;
     }
 
-    public InflaterSettings setGlobalNoDescription(boolean globalNoDescription) {
+    public FragmentInflaterSettings setGlobalNoDescription(boolean globalNoDescription) {
         this.globalNoDescription = globalNoDescription;
         return this;
     }
 
-    public InflaterSettings setGlobalNoTitle(boolean globalNoTitle) {
+    public FragmentInflaterSettings setGlobalNoTitle(boolean globalNoTitle) {
         this.globalNoTitle = globalNoTitle;
         return this;
     }
+    public FragmentInflaterSettings setGlobalTranslateEnums (boolean globalTranslateEnums) {
+        this.globalTranslateEnums = globalTranslateEnums;
+        return this;
+    }
 
-    public InflaterSettings addCustomPropertyMatcher (Matcher<Schema> propertyMatcher,  FragmentBuilder.FragmentPack fragmentClass) {
+    public FragmentInflaterSettings setGlobalTranslateTitle (boolean globalTranslateTitle) {
+        this.globalTranslateTitle = globalTranslateTitle;
+        return this;
+    }
+
+    public FragmentInflaterSettings setGlobalTranslateEnumsPrefix (String prefix) {
+        this.globalTranslateEnumsPrefix = prefix;
+        return this;
+    }
+
+    public FragmentInflaterSettings setGlobalTranslateTitlePrefix (String prefix) {
+        this.globalTranslateTitlePrefix = prefix;
+        return this;
+    }
+
+    public FragmentInflaterSettings addCustomPropertyMatcher (Matcher<Schema> propertyMatcher,  FragmentBuilder.FragmentPack fragmentClass) {
         customPropertyMatchers.put(propertyMatcher, fragmentClass);
         return this;
     }
 
-    public InflaterSettings addCustomPropertyMatchers (Map<Matcher<Schema>, FragmentBuilder.FragmentPack> propertyMatchers) {
+    public FragmentInflaterSettings addCustomPropertyMatchers (Map<Matcher<Schema>, FragmentBuilder.FragmentPack> propertyMatchers) {
         customPropertyMatchers.putAll(propertyMatchers);
         return this;
     }
 
-    public InflaterSettings addOneOfController(String propertyName) {
+    public FragmentInflaterSettings addOneOfController(String propertyName) {
         oneOfControllers.add(propertyName);
         return this;
     }
 
-    public InflaterSettings addOneOfControllers(ArrayList<String> propertyNames) {
+    public FragmentInflaterSettings addOneOfControllers(ArrayList<String> propertyNames) {
         oneOfControllers.addAll(propertyNames);
         return this;
     }
 
-    public InflaterSettings ignoreProperty(String propertyName) {
+    public FragmentInflaterSettings ignoreProperty(String propertyName) {
         ignoredProperties.add(propertyName);
         return this;
     }
 
-    public InflaterSettings ignoreProperties(ArrayList<String> propertyNames) {
+    public FragmentInflaterSettings ignoreProperties(ArrayList<String> propertyNames) {
         ignoredProperties.addAll(propertyNames);
         return this;
     }
 
-    public InflaterSettings addCustomLayout (String propertyName, int layoutId) {
+    public FragmentInflaterSettings addCustomLayout (String propertyName, int layoutId) {
         customLayouts.put(propertyName, layoutId);
         return this;
     }
 
-    public InflaterSettings addCustomLayouts (Map<String, Integer> propertyLayouts) {
+    public FragmentInflaterSettings addCustomLayouts (Map<String, Integer> propertyLayouts) {
         customLayouts.putAll(propertyLayouts);
         return this;
     }
 
-    public InflaterSettings addCustomFragment(String propertyName, FragmentBuilder.FragmentPack fragmentClass) {
+    public FragmentInflaterSettings addCustomFragment(String propertyName, FragmentBuilder.FragmentPack fragmentClass) {
         customFragments.put(propertyName, fragmentClass);
         return this;
     }
 
-    public InflaterSettings addCustomFragments(Map<String, FragmentBuilder.FragmentPack> customFragments) {
+    public FragmentInflaterSettings addCustomFragments(Map<String, FragmentBuilder.FragmentPack> customFragments) {
         this.customFragments.putAll(customFragments);
         return this;
     }
@@ -446,6 +536,46 @@ public class InflaterSettings {
             res = globalValuesTextAppearance;
         }
 
+        return res;
+    }
+
+    String getEnumTranslationPrefix(String property) {
+        String res = "";
+        if(translateEnumsPrefix.containsKey(property)) {
+            res = translateEnumsPrefix.get(property);
+        } else {
+            res = globalTranslateEnumsPrefix;
+        }
+        return res;
+    }
+
+    boolean hasEnumTranslation(String property) {
+        boolean res = false;
+        if(translateEnums.containsKey(property)) {
+            res = translateEnums.get(property);
+        } else {
+            res = globalTranslateEnums;
+        }
+        return res;
+    }
+
+    String getTitleTranslationPrefix(String property) {
+        String res = "";
+        if(translateTitlePrefix.containsKey(property)) {
+            res = translateTitlePrefix.get(property);
+        } else {
+            res = globalTranslateTitlePrefix;
+        }
+        return res;
+    }
+
+    boolean hasTitleTranslation(String property) {
+        boolean res = false;
+        if(translateTitle.containsKey(property)) {
+            res = translateTitle.get(property);
+        } else {
+            res = globalTranslateTitle;
+        }
         return res;
     }
 

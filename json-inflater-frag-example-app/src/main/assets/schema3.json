@@ -1,18 +1,18 @@
 {
     "type": "object",
-    "description" : "shows how to ignore property using LayoutBuilder.ignoreProperty(\"ignorableOption1\")",
+    "title": "Array Example",
     "properties": {
         "baseProperty1": {
             "title" : "baseProperty1",
             "type": "boolean"
         },
         "baseProperty2": {
-            "title" : "baseProperty2",
+            "title" : "Array 1",
             "enum" : [1,2,3,4,5,6]
         },
         "ignorableOption1": {
-              "title" : "ignorableOption1",
-        "enum": ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"]
+              "title" : "Array 2",
+             "enum": ["a", "b", "c", "d", "e", "f"]
         }
     }
 }

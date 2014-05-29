@@ -20,7 +20,7 @@ import org.djodjo.json.android.fragment.ControllerCallback;
 import org.djodjo.json.android.fragment.EnumFragment;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.infalter.FragmentBuilder;
-import org.djodjo.json.infalter.InflaterSettings;
+import org.djodjo.json.infalter.FragmentInflaterSettings;
 import org.djodjo.json.infalter.LayoutFragmentBuilder;
 import org.djodjo.json.infalter.R;
 import org.djodjo.json.schema.Schema;
@@ -331,7 +331,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
 
             final LayoutFragmentBuilder<Schema> lb = new LayoutFragmentBuilder<Schema>(schema, getFragmentManager(), addedFragmentBuilders)
                     //ignore properties that are controllers as they are handled directly from here
-                    .setInflaterSettings(new InflaterSettings().setSettingsBundle(settingsArgs).ignoreProperties(controllers))
+                    .setFragmentInflaterSettings(new FragmentInflaterSettings().setSettingsBundle(settingsArgs).ignoreProperties(controllers))
                     ;
             //TODO prep them async
             lb.prepFragments();
@@ -363,7 +363,7 @@ public class OneOfFragment extends Fragment implements ControllerCallback {
                 opts.addAll(controllerOptions.get(controller));
 
                 Fragment frag =  new FragmentBuilder(controller, null)
-                        .withInflaterSettings(new InflaterSettings().setSettingsBundle(settingsArgs))
+                        .withInflaterSettings(new FragmentInflaterSettings().setSettingsBundle(settingsArgs))
                         .withOptions(opts)
                         //TODO
                         .withNoTitle(true)

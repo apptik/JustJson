@@ -148,6 +148,16 @@ public class FragmentBuilder {
         return this;
     }
 
+    public FragmentBuilder setTranslateOptions(boolean translateOptions) {
+        args.putBoolean(EnumFragment.ARG_TRANSLATE_OPTIONS, translateOptions);
+        return this;
+    }
+
+    public FragmentBuilder setTranslateOptionsPrefix(String translateOptionsPrefix) {
+        args.putString(EnumFragment.ARG_TRANSLATE_OPTIONS_PREFIX, translateOptionsPrefix);
+        return this;
+    }
+
     public FragmentBuilder withDescription(String description) {
         args.putString(BasePropertyFragment.ARG_DESC, description);
         return this;
@@ -158,21 +168,24 @@ public class FragmentBuilder {
         return this;
     }
 
-    public FragmentBuilder withInflaterSettings(InflaterSettings inflaterSettings) {
+    public FragmentBuilder withInflaterSettings(FragmentInflaterSettings fragmentInflaterSettings) {
         String label = args.getString(BasePropertyFragment.ARG_LABEL);
         this
-                .withLayoutId(inflaterSettings.getCustomLayoutId(label))
-                .withThemeColor(inflaterSettings.globalThemeColor)
-                .withButtonSelector(inflaterSettings.chooseButtonSelectors(label))
-                .withTitleTextAppearance(inflaterSettings.chooseTitleTextAppearance(label))
-                .withDescTextAppearance(inflaterSettings.chooseDescTextAppearance(label))
-                .withValueTextAppearance(inflaterSettings.chooseValueTextAppearance(label))
-                .withNoTitle(inflaterSettings.isNoTile(label))
-                .withNoDescription(inflaterSettings.isNoDescription(label))
-                .withGlobalButtonSelectors(inflaterSettings.globalButtonSelectors)
-                .withGlobalLayouts(inflaterSettings.globalLayouts)
-                .withCustomFragment(inflaterSettings.customFragments.get(label))
-                .withCustomPropertyMatchers(inflaterSettings.customPropertyMatchers);
+                .withLayoutId(fragmentInflaterSettings.getCustomLayoutId(label))
+                .withThemeColor(fragmentInflaterSettings.globalThemeColor)
+                .withButtonSelector(fragmentInflaterSettings.chooseButtonSelectors(label))
+                .withTitleTextAppearance(fragmentInflaterSettings.chooseTitleTextAppearance(label))
+                .withDescTextAppearance(fragmentInflaterSettings.chooseDescTextAppearance(label))
+                .withValueTextAppearance(fragmentInflaterSettings.chooseValueTextAppearance(label))
+                .setTranslateOptions(fragmentInflaterSettings.hasEnumTranslation(label))
+                .setTranslateOptionsPrefix(fragmentInflaterSettings.getEnumTranslationPrefix(label))
+                .withNoTitle(fragmentInflaterSettings.isNoTile(label))
+                .withNoDescription(fragmentInflaterSettings.isNoDescription(label))
+                .withGlobalButtonSelectors(fragmentInflaterSettings.globalButtonSelectors)
+                .withGlobalLayouts(fragmentInflaterSettings.globalLayouts)
+                .withCustomFragment(fragmentInflaterSettings.customFragments.get(label))
+                .withCustomPropertyMatchers(fragmentInflaterSettings.customPropertyMatchers);
+
         return this;
     }
 

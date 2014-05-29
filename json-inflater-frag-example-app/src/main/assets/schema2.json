@@ -1,5 +1,5 @@
 {
-	"title": "Example Schema",
+	"title": "Range Example",
 	"type": "object",
 	"properties": {
 		"firstName": {

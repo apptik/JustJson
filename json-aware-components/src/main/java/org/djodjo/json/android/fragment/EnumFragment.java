@@ -18,6 +18,7 @@ package org.djodjo.json.android.fragment;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,9 +47,15 @@ public class EnumFragment extends BasePropertyFragment {
     public static final String ARG_OPTIONS = "options";
     public static final String ARG_IS_CONTROLLER = "isController";
 
+    public static final String ARG_TRANSLATE_OPTIONS = "translateOptions";
+    public static final String ARG_TRANSLATE_OPTIONS_PREFIX = "translateOptionsPrefix";
+
     protected ArrayList<String> options;
 
     protected boolean isController = false;
+    protected boolean translateOptions = false;
+    protected String translateOptionsPrefix = "";
+
 
     protected ControllerCallback controllerCallback = null;
 
@@ -81,6 +88,8 @@ public class EnumFragment extends BasePropertyFragment {
         if (getArguments() != null) {
             options = getArguments().getStringArrayList(ARG_OPTIONS);
             isController = getArguments().getBoolean(ARG_IS_CONTROLLER, false);
+            translateOptions = getArguments().getBoolean(ARG_TRANSLATE_OPTIONS, false);
+            translateOptionsPrefix = getArguments().getString(ARG_TRANSLATE_OPTIONS_PREFIX, "");
         }
     }
 
@@ -96,13 +105,16 @@ public class EnumFragment extends BasePropertyFragment {
         enumRadioGroup = (RadioGroup) v.findViewById(R.id.enumRadioGroup);
         enumSpinner = (Spinner) v.findViewById(R.id.enumSpinner);
         enumListView = (ListView) v.findViewById(R.id.enumListView);
-
+        ArrayList<String> inOptions = options;
+        if(translateOptions) {
+            inOptions = translateOptions(options, translateOptionsPrefix);
+        }
         if(enumRadioGroup!=null) {
 
             boolean checked = false;
             for(final String option:options) {
                 RadioButton button = (RadioButton)inflater.inflate(R.layout.radio_button, enumRadioGroup, false);
-                button.setText(option);
+                button.setText(inOptions.get(options.indexOf(option)));
                 button.setTextAppearance(getActivity(), styleValue);
                 if(buttonSelector!=0) {
                     button.setBackgroundResource(buttonSelector);
@@ -129,7 +141,8 @@ public class EnumFragment extends BasePropertyFragment {
         }
         else if(enumSpinner!=null) {
 
-            SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, options);
+
+            SpinnerAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, inOptions);
             enumSpinner.setAdapter(adapter);
             if(controllerCallback !=null) {
                 enumSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -148,7 +161,7 @@ public class EnumFragment extends BasePropertyFragment {
         }
         else if(enumListView != null) {
 
-            ArrayAdapter<String>  adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, options);
+            ArrayAdapter<String>  adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, inOptions);
             enumListView.setAdapter(adapter);
             enumListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
@@ -204,6 +217,33 @@ public class EnumFragment extends BasePropertyFragment {
         }
         return res;
     }
+
+
+    private ArrayList<String> translateOptions(ArrayList<String> in, String prefix) {
+        if(prefix==null) prefix = "";
+        ArrayList<String> out = new ArrayList<String>();
+        String packageName = getActivity().getPackageName();
+        for(String entry:in) {
+            try {
+                int resId = getResources().getIdentifier(prefix + entry, "string", packageName);
+                if (resId != 0) {
+                    String newStr = getString(resId);
+                    if (newStr != null && !newStr.trim().isEmpty()) {
+                        out.add(newStr);
+                    }
+                } else {
+                    out.add(entry);
+                    Log.d("EnumFragment", "not found resource for enum: " + entry);
+                }
+            } catch (Exception ex) {
+                out.add(entry);
+                Log.d("EnumFragment", "not found resource for enum: " + entry);
+            }
+        }
+
+        return out;
+    }
+
 
 
 }

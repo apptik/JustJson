@@ -27,7 +27,7 @@ import android.widget.TextView;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.android.FragmentLayouts;
 import org.djodjo.json.exception.JsonException;
-import org.djodjo.json.infalter.InflaterSettings;
+import org.djodjo.json.infalter.FragmentInflaterSettings;
 import org.djodjo.json.infalter.LayoutFragmentBuilder;
 import org.djodjo.json.schema.SchemaV4;
 
@@ -72,7 +72,7 @@ public class SchemaFormRendererFragment extends BlankFragment {
             public void run() {
                 LayoutFragmentBuilder<SchemaV4> lb  = new LayoutFragmentBuilder<SchemaV4>(schema, getFragmentManager());
                 lb
-                        .setInflaterSettings(new InflaterSettings()
+                        .setFragmentInflaterSettings(new FragmentInflaterSettings()
                                         .addOneOfController("controller0")
                                         .addOneOfController("controller1")
                                         .setGlobalNoDescription(true)

@@ -40,7 +40,7 @@ public class LayoutFragmentBuilder<T extends Schema> {
     private Set<String> knownFragments = Collections.synchronizedSet(new TreeSet<String>());
 
 
-    private InflaterSettings inflaterSettings =  new InflaterSettings();
+    private FragmentInflaterSettings fragmentInflaterSettings =  new FragmentInflaterSettings();
 
     // private final Activity activity;
     private final FragmentManager fragmentManager;
@@ -159,7 +159,7 @@ public class LayoutFragmentBuilder<T extends Schema> {
             // --> First find basic properties
             if (schemaTopProperties != null) {
                 for (Map.Entry<String, Schema> property : schemaTopProperties) {
-                    if (inflaterSettings.ignoredProperties.contains(property.getKey())) continue;
+                    if (fragmentInflaterSettings.ignoredProperties.contains(property.getKey())) continue;
                     Schema propSchema = property.getValue();
                     FragmentBuilder fragBuilder;
                     if(extraFragBuilders!=null && extraFragBuilders.containsKey(genFragTag(property.getKey(), propSchema))) {
@@ -169,18 +169,20 @@ public class LayoutFragmentBuilder<T extends Schema> {
                     }
                     fragBuilders.put(genFragTag(property.getKey(), propSchema),
                             fragBuilder
-                                    .withLayoutId(inflaterSettings.getCustomLayoutId(property.getKey()))
-                                    .withThemeColor(inflaterSettings.globalThemeColor)
-                                    .withButtonSelector(inflaterSettings.chooseButtonSelectors(property.getKey()))
-                                    .withTitleTextAppearance(inflaterSettings.chooseTitleTextAppearance(property.getKey()))
-                                    .withDescTextAppearance(inflaterSettings.chooseDescTextAppearance(property.getKey()))
-                                    .withValueTextAppearance(inflaterSettings.chooseValueTextAppearance(property.getKey()))
-                                    .withNoTitle(inflaterSettings.isNoTile(property.getKey()))
-                                    .withNoDescription(inflaterSettings.isNoDescription(property.getKey()))
-                                    .withGlobalButtonSelectors(inflaterSettings.globalButtonSelectors)
-                                    .withGlobalLayouts(inflaterSettings.globalLayouts)
-                                    .withCustomFragment(inflaterSettings.customFragments.get(property.getKey()))
-                                    .withCustomPropertyMatchers(inflaterSettings.customPropertyMatchers)
+                                    .withLayoutId(fragmentInflaterSettings.getCustomLayoutId(property.getKey()))
+                                    .withThemeColor(fragmentInflaterSettings.globalThemeColor)
+                                    .withButtonSelector(fragmentInflaterSettings.chooseButtonSelectors(property.getKey()))
+                                    .withTitleTextAppearance(fragmentInflaterSettings.chooseTitleTextAppearance(property.getKey()))
+                                    .withDescTextAppearance(fragmentInflaterSettings.chooseDescTextAppearance(property.getKey()))
+                                    .withValueTextAppearance(fragmentInflaterSettings.chooseValueTextAppearance(property.getKey()))
+                                    .setTranslateOptions(fragmentInflaterSettings.hasEnumTranslation(property.getKey()))
+                                    .setTranslateOptionsPrefix(fragmentInflaterSettings.getEnumTranslationPrefix(property.getKey()))
+                                    .withNoTitle(fragmentInflaterSettings.isNoTile(property.getKey()))
+                                    .withNoDescription(fragmentInflaterSettings.isNoDescription(property.getKey()))
+                                    .withGlobalButtonSelectors(fragmentInflaterSettings.globalButtonSelectors)
+                                    .withGlobalLayouts(fragmentInflaterSettings.globalLayouts)
+                                    .withCustomFragment(fragmentInflaterSettings.customFragments.get(property.getKey()))
+                                    .withCustomPropertyMatchers(fragmentInflaterSettings.customPropertyMatchers)
                     );
                 }
             }
@@ -210,7 +212,7 @@ public class LayoutFragmentBuilder<T extends Schema> {
                 }
                 //
                 Log.d("JustJsonLayoutBulder", "end generate oneOf");
-                oneOfOneOfFragment = OneOfFragment.newInstance(stringSchemas, inflaterSettings.oneOfControllers, inflaterSettings.bundleSettings());
+                oneOfOneOfFragment = OneOfFragment.newInstance(stringSchemas, fragmentInflaterSettings.oneOfControllers, fragmentInflaterSettings.bundleSettings());
             } // <-- check for oneOf
 
         }
@@ -292,12 +294,12 @@ public class LayoutFragmentBuilder<T extends Schema> {
 
 
 
-    public InflaterSettings getInflaterSettings() {
-        return inflaterSettings;
+    public FragmentInflaterSettings getFragmentInflaterSettings() {
+        return fragmentInflaterSettings;
     }
 
-    public LayoutFragmentBuilder<T> setInflaterSettings(InflaterSettings inflaterSettings) {
-        this.inflaterSettings = inflaterSettings;
+    public LayoutFragmentBuilder<T> setFragmentInflaterSettings(FragmentInflaterSettings fragmentInflaterSettings) {
+        this.fragmentInflaterSettings = fragmentInflaterSettings;
 
         return this;
     }
