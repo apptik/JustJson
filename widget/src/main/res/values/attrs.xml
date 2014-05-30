@@ -36,8 +36,6 @@
         <attr name="range1" format="reference"/>
         <attr name="range2" format="reference"/>
 
-
-
         <attr name="track" format="reference"/>
 
         <attr name="range" format="reference"/>

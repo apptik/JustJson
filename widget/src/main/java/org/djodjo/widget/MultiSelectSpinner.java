@@ -19,18 +19,16 @@ import java.util.List;
 public class MultiSelectSpinner extends Spinner implements
         OnMultiChoiceClickListener, DialogInterface.OnCancelListener {
 
-    private List<String> items;
+    protected List<String> items;
 
-
-
-    private boolean[] selected;
-    private String allCheckedText;
-    private String allUncheckedText;
-    private MultiSpinnerListener listener;
-    private ListAdapter listAdapter;
-    private boolean selectAll;
-    private int minSelectedItems =0;
-    private int maxSelectedItems = Integer.MAX_VALUE;
+    protected boolean[] selected;
+    protected String allCheckedText;
+    protected String allUncheckedText;
+    protected MultiSpinnerListener listener;
+    protected ListAdapter listAdapter;
+    protected boolean selectAll;
+    protected int minSelectedItems =0;
+    protected int maxSelectedItems = Integer.MAX_VALUE;
 
 
     public MultiSelectSpinner(Context context) {

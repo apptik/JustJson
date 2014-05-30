@@ -1,0 +1,9 @@
+<resources>
+    <declare-styleable name="FilterableListView">
+        <attr name="hint" format="string" />
+    </declare-styleable>
+    <!-- style reference -->
+    <declare-styleable name="FilterableListViewTheme">
+        <attr name="FilterableListViewStyle" format="reference"/>
+    </declare-styleable>
+</resources>
