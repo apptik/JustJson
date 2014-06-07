@@ -18,6 +18,7 @@
 package org.djodjo.json.wrapper;
 
 
+import org.djodjo.json.ElementWrapper;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.Validator;
 import org.djodjo.json.exception.JsonException;
@@ -28,7 +29,6 @@ import org.djodjo.json.schema.fetch.SchemaLocalFetcher;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -42,7 +42,7 @@ import java.util.LinkedHashSet;
  * Compared to full POJO mapping it performs much faster.
  *
  */
-public abstract class JsonElementWrapper implements Serializable {
+public abstract class JsonElementWrapper implements ElementWrapper {
 
     protected transient JsonElement json;
     private String contentType;
@@ -52,6 +52,7 @@ public abstract class JsonElementWrapper implements Serializable {
     private transient LinkedHashSet<SchemaFetcher> fetchers = new LinkedHashSet<SchemaFetcher>();
 
 
+    @Override
     public <T extends JsonElement> T getJson() {
         return (T)json;
     }
@@ -167,5 +168,10 @@ public abstract class JsonElementWrapper implements Serializable {
         ois.defaultReadObject();
         this.wrap(JsonElement.readFrom((String) ois.readObject()));
     }
+
+    public String toString() {
+        return getJson().toString();
+    }
+
 
 }

@@ -621,6 +621,49 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
         return result;
     }
 
+    public ArrayList<String> toArrayList() {
+        ArrayList<String> res = new ArrayList<String>();
+        for(JsonElement el:values) {
+            res.add(el.toString());
+        }
+        return res;
+    }
+
+    public boolean isOnlyStrings() {
+        for(JsonElement el:values) {
+            if(!el.isString()) return false;
+        }
+        return true;
+    }
+
+    public boolean isOnlyNumbers() {
+        for(JsonElement el:values) {
+            if(!el.isNumber()) return false;
+        }
+        return true;
+    }
+
+    public boolean isOnlyBooleans() {
+        for(JsonElement el:values) {
+            if(!el.isBoolean()) return false;
+        }
+        return true;
+    }
+
+    public boolean isOnlyObjects() {
+        for(JsonElement el:values) {
+            if(!el.isJsonObject()) return false;
+        }
+        return true;
+    }
+
+    public boolean isOnlyArrays() {
+        for(JsonElement el:values) {
+            if(!el.isJsonArray()) return false;
+        }
+        return true;
+    }
+
     @Override
     public void write( JsonWriter writer ) throws IOException {
         writer.beginArray();

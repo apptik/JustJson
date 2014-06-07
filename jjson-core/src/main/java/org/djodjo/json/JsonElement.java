@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
@@ -22,7 +23,7 @@ public abstract class JsonElement {
     }
 
     public static JsonElement readFrom( String text ) throws JsonException, IOException {
-       return JsonElement.readFrom(new StringReader(text));
+        return JsonElement.readFrom(new StringReader(text));
 
     }
 
@@ -121,29 +122,32 @@ public abstract class JsonElement {
         }
         if (o instanceof JsonElement) {
             return (JsonElement)o;
+        }if (o instanceof ElementWrapper) {
+            return ((ElementWrapper) o).getJson();
         }
-
-            if (o instanceof Collection) {
-                return new JsonArray((Collection) o);
-            } else if (o.getClass().isArray()) {
-                return new JsonArray(o);
-            }
-            if (o instanceof Map) {
-                return new JsonObject((Map) o);
-            }
-            if (o instanceof Boolean) {
-                return new JsonBoolean((Boolean)o);
-            }
-            if (o instanceof Number) {
-                return new JsonNumber((Number) o);
-            }
-            if (o instanceof String) {
-                return new JsonString((String)o);
-            }
-
-            if (o instanceof Character) {
-                return new JsonString(Character.toString((Character)o));
-            }
+        if (o instanceof Collection) {
+            return new JsonArray((Collection) o);
+        } else if (o.getClass().isArray()) {
+            return new JsonArray(o);
+        }
+        if (o instanceof Map) {
+            return new JsonObject((Map) o);
+        }
+        if (o instanceof Boolean) {
+            return new JsonBoolean((Boolean)o);
+        }
+        if (o instanceof Number) {
+            return new JsonNumber((Number) o);
+        }
+        if (o instanceof String) {
+            return new JsonString((String)o);
+        }
+        if (o instanceof Character) {
+            return new JsonString(Character.toString((Character)o));
+        }
+        if (o instanceof ByteBuffer) {
+            return new JsonString(((ByteBuffer) o).asCharBuffer().toString());
+        }
 
         return new JsonString(o.toString());
     }

@@ -19,6 +19,7 @@ package org.djodjo.json.wrapper;
 
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.exception.JsonException;
+import org.djodjo.json.util.LinkedTreeMap;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -53,9 +54,20 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
         }
     }
 
-    public TypedJsonObject<T> putValue(String key, T value) throws JsonException {
+    public <O extends TypedJsonObject<T>> O putValue(String key, T value) throws JsonException {
         getJson().put(key, to(value));
-        return this;
+        return (O)this;
+    }
+
+    public <O extends TypedJsonObject<T>> O  putAll(Map<String, T> map) {
+        for(Map.Entry<String, T> entry : map.entrySet()) {
+            try {
+                putValue(entry.getKey(),entry.getValue());
+            } catch (JsonException e) {
+                e.printStackTrace();
+            }
+        }
+        return (O)this;
     }
 
     protected abstract T get(JsonElement jsonElement);
@@ -84,6 +96,16 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
 
     public int length() {
         return getJson().length();
+    }
+
+    public Map<String, T> getEntries() {
+        Map<String, T> res = new LinkedTreeMap<String, T>();
+        Iterator<Map.Entry<String, T>> it = this.iterator();
+        while(it.hasNext()) {
+            Map.Entry<String, T> el = it.next();
+            res.put(el.getKey(), el.getValue());
+        }
+        return res;
     }
 
     final class TypedObjectEntry implements Map.Entry<String, T> {
