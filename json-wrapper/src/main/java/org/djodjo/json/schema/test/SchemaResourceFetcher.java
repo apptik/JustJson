@@ -14,37 +14,34 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.schema.fetch;
+package org.djodjo.json.schema.test;
 
 
 import org.djodjo.json.JsonElement;
+import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 
-import static org.junit.Assert.assertEquals;
 
-@RunWith(JUnit4.class)
-public class JsonSchemaReourceFetcherTest {
-    Schema schema;
+//TODO
+public class SchemaResourceFetcher implements SchemaFetcher {
 
-    @Before
-    public void setUp() throws Exception {
-        schema =  new SchemaV4();
+    @Override
+    public Schema fetch(URI schemaUri) {
+        Schema res = new SchemaV4();
+        final String resource = schemaUri.getPath();
+        try {
+            res.wrap(JsonElement.readFrom(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(resource))));
+        } catch (JsonException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
+
     }
-
-    @Test
-    public void testFetch() throws Exception {
-        Schema schemaSimple = new SchemaV4().wrap(JsonElement.readFrom("{\"key\": \"value\"}"));
-        SchemaResourceFetcher srf = new SchemaResourceFetcher();
-        Schema schema = srf.fetch(URI.create("resource:/fetch/simple.json"));
-        assertEquals(schemaSimple.getJson(), schema.getJson());
-    }
-
-
 }

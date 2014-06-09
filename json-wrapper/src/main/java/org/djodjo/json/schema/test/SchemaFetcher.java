@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.schema.fetch;
+package org.djodjo.json.schema.test;
 
 import org.djodjo.json.schema.Schema;
 

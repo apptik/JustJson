@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.schema.fetch;
+package org.djodjo.json.schema.test;
 
 
 import org.djodjo.json.JsonElement;
@@ -30,7 +30,7 @@ import java.net.URI;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
-public class JsonSchemaUriFetcherTest {
+public class JsonSchemaReourceFetcherTest {
     Schema schema;
 
     @Before
@@ -40,20 +40,10 @@ public class JsonSchemaUriFetcherTest {
 
     @Test
     public void testFetch() throws Exception {
-
-        Schema schemaGeo = new SchemaV4().wrap(JsonElement.readFrom("{\"description\":\"A geographical coordinate\",\"type\":\"object\",\"properties\":{\"latitude\":{\"type\":\"number\"},\"longitude\":{\"type\":\"number\"}}}"));
-       SchemaUriFetcher suf =  new SchemaUriFetcher();
-
-        final URI schemaUri = URI.create("http://json-schema.org/geo");
-
-        System.out.println(schemaUri.getPath());
-
-        Schema schema= suf.fetch(schemaUri);
-
-        System.out.println(schema.toString());
-
-        assertEquals(schemaGeo.getJson(), schema.getJson());
-
+        Schema schemaSimple = new SchemaV4().wrap(JsonElement.readFrom("{\"key\": \"value\"}"));
+        SchemaResourceFetcher srf = new SchemaResourceFetcher();
+        Schema schema = srf.fetch(URI.create("resource:/fetch/simple.json"));
+        assertEquals(schemaSimple.getJson(), schema.getJson());
     }
 
 

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.schema.fetch;
+package org.djodjo.json.schema.test;
 
 import junit.framework.TestCase;
 
