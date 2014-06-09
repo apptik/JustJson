@@ -24,6 +24,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 
@@ -475,30 +476,41 @@ public class CommonMatchers {
         };
     }
 
-    public static Matcher<JsonElement> additionalProperties(final boolean additionalProperties) {
+    public static Matcher<JsonElement> isPropertyPatternValid(final Validator validator, final String propertyPattern) {
         return new TypeSafeDiagnosingMatcher<JsonElement>() {
             @Override
             protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
                 //we do not care for the properties if parent item is not JsonObject
                 if(!item.isJsonObject()) return true;
 
+                //we also dont care if the property is not actually there
+                //if it is needed it will be handled by the "required" constraint on another matcher
 
-                if(item.asJsonObject().length() < minProperties) {
-                    mismatchDescription.appendText("properties in Json object less than defined");
-                    return false;
+                Pattern p = Pattern.compile(propertyPattern);
+                for(Map.Entry<String, JsonElement> entry : item.asJsonObject()) {
+                    if(p.matcher(entry.getKey()).matches()) {
+                        if(!validator.isValid(entry.getValue())) {
+                            mismatchDescription.appendText("property: '" + entry.getKey() + "' is not valid by propertyPattern: " + propertyPattern);
+                            return false;
+                        }
+                    }
                 }
-
                 return true;
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("object properties min count");
+                description.appendText("is object property valid");
             }
         };
     }
+
+
     // <== OBJECT <==
 
+
+
+    // ==> GENERAL ==>
 
     /**
      * General matcher
@@ -523,4 +535,27 @@ public class CommonMatchers {
             }
         };
     }
+
+    public static Matcher<CharSequence> hasPattern(final String regex) {
+        final Pattern p = Pattern.compile(regex);
+        return new TypeSafeDiagnosingMatcher<CharSequence>() {
+            @Override
+            protected boolean matchesSafely(CharSequence item, Description mismatchDescription) {
+                if (p.matcher(item).matches()) return true;
+                else {
+                    return false;
+                }
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("string matching pattern: " + p.pattern());
+            }
+        };
+    }
+
+
+
+    // <== GENERAL <==
+
 }

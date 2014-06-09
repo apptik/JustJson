@@ -36,6 +36,7 @@ import static org.djodjo.json.schema.validation.CommonMatchers.isMoreOrEqualThan
 import static org.djodjo.json.schema.validation.CommonMatchers.isMoreThan;
 import static org.djodjo.json.schema.validation.CommonMatchers.isMultipleOf;
 import static org.djodjo.json.schema.validation.CommonMatchers.isOfType;
+import static org.djodjo.json.schema.validation.CommonMatchers.isPropertyPatternValid;
 import static org.djodjo.json.schema.validation.CommonMatchers.isPropertyPresent;
 import static org.djodjo.json.schema.validation.CommonMatchers.isPropertyValid;
 import static org.djodjo.json.schema.validation.CommonMatchers.matchesPattern;
@@ -167,24 +168,19 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
             }
         }
 
-        SchemaMap schemaMap = schema.getProperties();
-        if(schemaMap != null && schemaMap.length() > 0) {
-            for(Map.Entry<String, Schema> entry : schemaMap) {
+        //validates only child properties if any found matching the property names
+        SchemaMap propertiesSchemaMap = schema.getProperties();
+        if(propertiesSchemaMap != null && propertiesSchemaMap.length() > 0) {
+            for(Map.Entry<String, Schema> entry : propertiesSchemaMap) {
                 allMatchers.add(isPropertyValid(entry.getValue().getDefaultValidator(), entry.getKey()));
             }
         }
 
-        SchemaMap schemaMap = schema.getPatternProperties();
-        if(schemaMap != null && schemaMap.length() > 0) {
-            for(Map.Entry<String, Schema> entry : schemaMap) {
-                allMatchers.add(isPropertyValid(entry.getValue().getDefaultValidator(), entry.getKey()));
-            }
-        }
-
-        SchemaMap schemaMap = schema.getAdditionalProperties();
-        if(schemaMap != null && schemaMap.length() > 0) {
-            for(Map.Entry<String, Schema> entry : schemaMap) {
-                allMatchers.add(isPropertyValid(entry.getValue().getDefaultValidator(), entry.getKey()));
+        //validates only child properties if any found matching the property patterns
+        SchemaMap patternPropertiesSchemaMap = schema.getPatternProperties();
+        if(patternPropertiesSchemaMap != null && patternPropertiesSchemaMap.length() > 0) {
+            for(Map.Entry<String, Schema> entry : patternPropertiesSchemaMap) {
+                allMatchers.add(isPropertyPatternValid(entry.getValue().getDefaultValidator(), entry.getKey()));
             }
         }
 
