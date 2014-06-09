@@ -146,6 +146,47 @@ public class JsonSchemaV4Validation {
     }
 
     @Test
+    public void testAdditionalProperties() throws Exception {
+        schema.wrap(JsonElement.readFrom("{" +
+                "\"additionalProperties\" : false," +
+                "\"type\" : \"object\"," +
+                "\"properties\" : {" +
+                "\"one\" : {\"type\" : \"string\"  } ," +
+                "\"two\" : {\"type\" : \"object\" }" +
+                "}" +
+                "}"));
+        Validator validator = schema.getDefaultValidator();
+        assertTrue(validator.isValid(JsonElement.readFrom("{ " +
+                "\"one\":\"string is good\"" +
+                "}")));
+
+        assertTrue(validator.isValid(JsonElement.readFrom("{ " +
+                "\"two\":{}" +
+                "}")));
+
+        assertTrue(validator.isValid(JsonElement.readFrom("{ " +
+                "\"one\":\"string is good\"," +
+                "\"two\":{}" +
+                "}")));
+
+        assertFalse(validator.isValid(JsonElement.readFrom("{ " +
+                "\"one\":\"string is good\"," +
+                "\"three\":{}" +
+                "}")));
+
+        assertFalse(validator.isValid(JsonElement.readFrom("{ " +
+                "\"two\":{}," +
+                "\"three\":{}" +
+                "}")));
+
+        assertFalse(validator.isValid(JsonElement.readFrom("{ " +
+                "\"one\":\"string is good\"," +
+                "\"two\":{}," +
+                "\"three\":{}" +
+                "}")));
+    }
+
+    @Test
     public void testRequired() throws Exception {
         schema.wrap(JsonElement.readFrom("{\"required\" : [\"other\"]}"));
         Validator validator = schema.getDefaultValidator();
