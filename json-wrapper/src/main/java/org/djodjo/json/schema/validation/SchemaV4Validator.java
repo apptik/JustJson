@@ -35,6 +35,7 @@ import static org.djodjo.json.schema.validation.CommonMatchers.isLessThan;
 import static org.djodjo.json.schema.validation.CommonMatchers.isMoreOrEqualThan;
 import static org.djodjo.json.schema.validation.CommonMatchers.isMoreThan;
 import static org.djodjo.json.schema.validation.CommonMatchers.isMultipleOf;
+import static org.djodjo.json.schema.validation.CommonMatchers.isNoAdditionalProperties;
 import static org.djodjo.json.schema.validation.CommonMatchers.isOfType;
 import static org.djodjo.json.schema.validation.CommonMatchers.isPropertyPatternValid;
 import static org.djodjo.json.schema.validation.CommonMatchers.isPropertyPresent;
@@ -184,7 +185,10 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
             }
         }
 
-        //TODO as per : http://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.4.4.4
+        boolean additionalProperties = schema.getAdditionalProperties();
+        if(!additionalProperties) {
+            allMatchers.add(isNoAdditionalProperties(propertiesSchemaMap.getEntries().keySet(), patternPropertiesSchemaMap.getEntries().keySet()));
+        }
 
         //TODO as per : http://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.4.5
 

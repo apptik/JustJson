@@ -24,7 +24,10 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 
@@ -501,6 +504,46 @@ public class CommonMatchers {
             @Override
             public void describeTo(Description description) {
                 description.appendText("is object property valid");
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> isNoAdditionalProperties(final Set<String> properties, final Set<String> patternProperties) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not JsonObject
+                if(!item.isJsonObject()) return true;
+
+                Set<String> objectProps = new HashSet<String>();
+                objectProps.addAll(item.asJsonObject().keySet());
+
+                objectProps.removeAll(properties);
+
+
+                for(String pattern:patternProperties) {
+                    Pattern p = Pattern.compile(pattern);
+                    Iterator<String> it = objectProps.iterator();
+                    while(it.hasNext()) {
+                        String prop = it.next();
+                        if(p.matcher(prop).matches()) {
+                            it.remove();
+                        }
+                    }
+                }
+
+                if(objectProps.size()>0) {
+                    for(String prop:objectProps) {
+                        mismatchDescription.appendText("property: '" + prop + "' is not defined in the schema. ");
+                    }
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("no additional properties exist except the ones defined in 'properties' and 'patternProperties' ");
             }
         };
     }
