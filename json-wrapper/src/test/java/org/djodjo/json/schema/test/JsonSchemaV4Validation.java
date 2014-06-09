@@ -28,8 +28,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -70,6 +68,7 @@ public class JsonSchemaV4Validation {
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("num")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("str")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("bool")));
+        assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("null")));
     }
     @Test
     public void testTypeArray() throws Exception {
@@ -79,6 +78,7 @@ public class JsonSchemaV4Validation {
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("num")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("str")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("bool")));
+        assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("null")));
     }
     @Test
     public void testTypeString() throws Exception {
@@ -88,6 +88,7 @@ public class JsonSchemaV4Validation {
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("num")));
         assertTrue(schema.getDefaultValidator().isValid(jsonObject.get("str")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("bool")));
+        assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("null")));
     }
     @Test
     public void testTypeNumber() throws Exception {
@@ -97,6 +98,7 @@ public class JsonSchemaV4Validation {
         assertTrue(schema.getDefaultValidator().isValid(jsonObject.get("num")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("str")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("bool")));
+        assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("null")));
     }
     @Test
     public void testTypeBool() throws Exception {
@@ -106,6 +108,7 @@ public class JsonSchemaV4Validation {
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("num")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("str")));
         assertTrue(schema.getDefaultValidator().isValid(jsonObject.get("bool")));
+        assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("null")));
     }
 
     @Test
