@@ -23,8 +23,8 @@ import org.djodjo.json.JsonElement;
 import org.djodjo.json.Validator;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.Schema;
-import org.djodjo.json.schema.test.SchemaFetcher;
-import org.djodjo.json.schema.test.SchemaResourceFetcher;
+import org.djodjo.json.schema.fetch.SchemaFetcher;
+import org.djodjo.json.schema.fetch.SchemaResourceFetcher;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

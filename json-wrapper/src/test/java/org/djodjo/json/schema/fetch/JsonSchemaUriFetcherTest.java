@@ -20,7 +20,6 @@ package org.djodjo.json.schema.fetch;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
-import org.djodjo.json.schema.test.SchemaUriFetcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

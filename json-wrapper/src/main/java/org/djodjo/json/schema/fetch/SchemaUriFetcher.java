@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.schema.test;
+package org.djodjo.json.schema.fetch;
 
 
 import org.djodjo.json.JsonElement;
@@ -28,20 +28,18 @@ import java.net.URI;
 
 
 //TODO
-public class SchemaResourceFetcher implements SchemaFetcher {
+public class SchemaUriFetcher implements SchemaFetcher {
 
     @Override
     public Schema fetch(URI schemaUri) {
         Schema res = new SchemaV4();
-        final String resource = schemaUri.getPath();
         try {
-            res.wrap(JsonElement.readFrom(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(resource))));
-        } catch (JsonException e) {
-            e.printStackTrace();
+            res.wrap(JsonElement.readFrom(new InputStreamReader(schemaUri.toURL().openStream())));
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JsonException e) {
             e.printStackTrace();
         }
         return res;
-
     }
 }
