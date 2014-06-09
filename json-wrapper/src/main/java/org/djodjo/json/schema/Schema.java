@@ -2,14 +2,13 @@ package org.djodjo.json.schema;
 
 
 import org.djodjo.json.JsonArray;
-import org.djodjo.json.wrapper.JsonElementWrapper;
-import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.JsonObject;
+import org.djodjo.json.Validator;
+import org.djodjo.json.exception.JsonException;
+import org.djodjo.json.wrapper.JsonElementWrapper;
 import org.djodjo.json.wrapper.JsonObjectArrayWrapper;
 import org.djodjo.json.wrapper.JsonObjectWrapper;
 import org.djodjo.json.wrapper.JsonStringArrayWrapper;
-import org.djodjo.json.Validator;
-import org.djodjo.json.wrapper.JsonObjectWrapper;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -254,11 +253,11 @@ public abstract class Schema extends JsonObjectWrapper {
 
     public SchemaMap getProperties() {
         if(!getJson().has("properties")) return null;
-        return (SchemaMap) new SchemaMap(this.getEmptySchema()).wrap(getJson().optJsonObject("properties"));
+        return new SchemaMap(this.getEmptySchema()).wrap(getJson().optJsonObject("properties"));
     }
 
-    public JsonObject getPatternProperties() {
-        return getJson().optJsonObject("patternProperties");
+    public SchemaMap getPatternProperties() {
+        return new SchemaMap(this.getEmptySchema()).wrap(getJson().optJsonObject("patternProperties"));
     }
 
     public JsonObject getDependencies() {

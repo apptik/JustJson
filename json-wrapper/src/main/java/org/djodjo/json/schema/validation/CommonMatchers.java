@@ -474,6 +474,29 @@ public class CommonMatchers {
             }
         };
     }
+
+    public static Matcher<JsonElement> additionalProperties(final boolean additionalProperties) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+                //we do not care for the properties if parent item is not JsonObject
+                if(!item.isJsonObject()) return true;
+
+
+                if(item.asJsonObject().length() < minProperties) {
+                    mismatchDescription.appendText("properties in Json object less than defined");
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("object properties min count");
+            }
+        };
+    }
     // <== OBJECT <==
 
 

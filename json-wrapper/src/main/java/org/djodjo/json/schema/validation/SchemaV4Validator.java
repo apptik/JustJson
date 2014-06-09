@@ -88,6 +88,7 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
         }
 
     }
+
     private void putMatchers4String() {
 
         int maxLength = schema.getMaxLength();
@@ -117,7 +118,7 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
                 allMatchers.add(areItemsValid(items.get(0).getDefaultValidator()));
             } else {
                 //tuple typing
-                //first check if schemas needs to be the same as the instance items
+                //first check if schemas needs to be the same number as the instance items
                 if(!schema.getAdditionalItems()) {
                     allMatchers.add(doesItemCountMatches(items.size()));
                 }
@@ -150,12 +151,12 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
     private void putMatcher4Object() {
 
         int maxProperties = schema.getMaxProperties();
-        if(maxProperties < Integer.MAX_VALUE) {
+        if(maxProperties != Double.NaN && maxProperties < Integer.MAX_VALUE) {
             allMatchers.add(maxProperties(maxProperties));
         }
 
         int minProperties = schema.getMinProperties();
-        if(minProperties > 0) {
+        if(minProperties != Double.NaN && minProperties > 0) {
             allMatchers.add(minProperties(minProperties));
         }
 
@@ -167,6 +168,20 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
         }
 
         SchemaMap schemaMap = schema.getProperties();
+        if(schemaMap != null && schemaMap.length() > 0) {
+            for(Map.Entry<String, Schema> entry : schemaMap) {
+                allMatchers.add(isPropertyValid(entry.getValue().getDefaultValidator(), entry.getKey()));
+            }
+        }
+
+        SchemaMap schemaMap = schema.getPatternProperties();
+        if(schemaMap != null && schemaMap.length() > 0) {
+            for(Map.Entry<String, Schema> entry : schemaMap) {
+                allMatchers.add(isPropertyValid(entry.getValue().getDefaultValidator(), entry.getKey()));
+            }
+        }
+
+        SchemaMap schemaMap = schema.getAdditionalProperties();
         if(schemaMap != null && schemaMap.length() > 0) {
             for(Map.Entry<String, Schema> entry : schemaMap) {
                 allMatchers.add(isPropertyValid(entry.getValue().getDefaultValidator(), entry.getKey()));
