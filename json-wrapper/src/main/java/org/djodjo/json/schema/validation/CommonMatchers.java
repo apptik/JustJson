@@ -17,6 +17,7 @@
 package org.djodjo.json.schema.validation;
 
 
+import org.djodjo.json.JsonArray;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.Validator;
 import org.hamcrest.Description;
@@ -252,6 +253,26 @@ public class CommonMatchers {
             @Override
             public void describeTo(Description description) {
                 description.appendText("is of Type: " + types.toString());
+            }
+        };
+    }
+
+    public static Matcher<JsonElement> isInEnums(final JsonArray enums) {
+        return new TypeSafeDiagnosingMatcher<JsonElement>() {
+            @Override
+            protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
+
+                if(enums.contains(item)) {
+                    return true;
+                }
+
+                mismatchDescription.appendText("expected value '\" + item.toString() +\"' was not equal to any of the enums: '" + enums.toString());
+                return false;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("equal to one of enum values: " + enums.toString());
             }
         };
     }
@@ -550,6 +571,7 @@ public class CommonMatchers {
 
 
     // <== OBJECT <==
+
 
 
 

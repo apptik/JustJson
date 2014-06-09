@@ -702,4 +702,11 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
         return "array";
     }
 
+    /**
+     * Returns true if this array contains {@code element}
+     */
+    public boolean contains(JsonElement element) {
+        return values.contains(element);
+    }
+
 }

@@ -205,6 +205,42 @@ public class JsonSchemaV4Validation {
     }
 
     @Test
+    public void testEnum() throws Exception {
+        schema.wrap(JsonElement.readFrom("{\"enum\" : [\"other\",1,true,null,{ \"one\": 1}, [1,2,3]]}"));
+        Validator validator = schema.getDefaultValidator();
+
+        JsonObject jobBad = JsonObject.readFrom("{ " +
+                "\"obj\":{\"two\": 2}," +
+                "\"arr\":[1,2,3,4]," +
+                "\"num\":5," +
+                "\"str\":\"123456\"," +
+                "\"bool\": false" +
+                "}").asJsonObject();
+
+        JsonObject jobGood = JsonObject.readFrom("{ " +
+                "\"obj\":{ \"one\": 1}," +
+                "\"arr\":[1,2,3]," +
+                "\"num\":1," +
+                "\"str\":\"other\"," +
+                "\"bool\": true," +
+                "\"null\": null" +
+                "}").asJsonObject();
+
+        assertFalse(validator.isValid(jobBad.get("obj")));
+        assertFalse(validator.isValid(jobBad.get("arr")));
+        assertFalse(validator.isValid(jobBad.get("num")));
+        assertFalse(validator.isValid(jobBad.get("str")));
+        assertFalse(validator.isValid(jobBad.get("bool")));
+
+        assertTrue(validator.isValid(jobGood.get("obj")));
+        assertTrue(validator.isValid(jobGood.get("arr")));
+        assertTrue(validator.isValid(jobGood.get("num")));
+        assertTrue(validator.isValid(jobGood.get("str")));
+        assertTrue(validator.isValid(jobGood.get("bool")));
+        assertTrue(validator.isValid(jobGood.get("null")));
+    }
+
+    @Test
     public void testMultipleOf() throws Exception {
         schema.wrap(JsonElement.readFrom("{" +
                 "\"type\" : \"object\"," +

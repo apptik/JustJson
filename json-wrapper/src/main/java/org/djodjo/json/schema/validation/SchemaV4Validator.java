@@ -17,6 +17,7 @@
 package org.djodjo.json.schema.validation;
 
 
+import org.djodjo.json.JsonArray;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
@@ -29,6 +30,7 @@ import java.util.Map;
 import static org.djodjo.json.schema.validation.CommonMatchers.areItemsUnique;
 import static org.djodjo.json.schema.validation.CommonMatchers.areItemsValid;
 import static org.djodjo.json.schema.validation.CommonMatchers.doesItemCountMatches;
+import static org.djodjo.json.schema.validation.CommonMatchers.isInEnums;
 import static org.djodjo.json.schema.validation.CommonMatchers.isItemValid;
 import static org.djodjo.json.schema.validation.CommonMatchers.isLessOrEqualThan;
 import static org.djodjo.json.schema.validation.CommonMatchers.isLessThan;
@@ -200,6 +202,13 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
         if(schemaType != null && !schemaType.isEmpty()) {
             allMatchers.add(isOfType(schemaType));
         }
+
+        JsonArray enums = schema.getEnum();
+        if(enums != null) {
+            allMatchers.add(isInEnums(enums));
+        }
+
+
     }
 
     @Override
