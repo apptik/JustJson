@@ -24,7 +24,7 @@ import org.djodjo.json.Validator;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.fetch.SchemaFetcher;
-import org.djodjo.json.schema.fetch.SchemaLocalFetcher;
+import org.djodjo.json.schema.fetch.SchemaResourceFetcher;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -67,7 +67,7 @@ public abstract class JsonElementWrapper implements ElementWrapper {
 
 
     public JsonElementWrapper() {
-        fetchers.add(new SchemaLocalFetcher());
+        fetchers.add(new SchemaResourceFetcher());
     }
 
     public JsonElementWrapper(JsonElement jsonElement) {

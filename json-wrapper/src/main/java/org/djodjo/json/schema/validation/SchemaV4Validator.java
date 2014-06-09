@@ -208,6 +208,7 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
             allMatchers.add(isInEnums(enums));
         }
 
+        //TODO anyOf,oneOf,allOf,no + optional format
 
     }
 

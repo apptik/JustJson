@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.schema.test;
+package org.djodjo.json.schema.fetch;
 
 
+import org.djodjo.json.JsonElement;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
 import org.junit.Before;
@@ -27,10 +28,9 @@ import org.junit.runners.JUnit4;
 import java.net.URI;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(JUnit4.class)
-public class JsonSchemaV4Test{
+public class JsonSchemaUriFetcherTest {
     Schema schema;
 
     @Before
@@ -39,14 +39,22 @@ public class JsonSchemaV4Test{
     }
 
     @Test
-    public void testSchemaUri() throws Exception {
-        assertEquals(schema.getSchema(),"http://json-schema.org/draft-04/schema#");
-        assertEquals(schema.getJsonSchemaUri(), URI.create("http://json-schema.org/draft-04/schema#"));
+    public void testFetch() throws Exception {
+
+        Schema schemaGeo = new SchemaV4().wrap(JsonElement.readFrom("{\"description\":\"A geographical coordinate\",\"type\":\"object\",\"properties\":{\"latitude\":{\"type\":\"number\"},\"longitude\":{\"type\":\"number\"}}}"));
+       SchemaUriFetcher suf =  new SchemaUriFetcher();
+
+        final URI schemaUri = URI.create("http://json-schema.org/geo");
+
+        System.out.println(schemaUri.getPath());
+
+        Schema schema= suf.fetch(schemaUri);
+
+        System.out.println(schema.toString());
+
+        assertEquals(schemaGeo.getJson(), schema.getJson());
+
     }
 
-    @Test
-    public void testValidator() throws Exception {
-        assertNotNull(schema.getDefaultValidator());
 
-    }
 }

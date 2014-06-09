@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.schema.test;
+package org.djodjo.json.schema.fetch;
 
 import java.io.IOException;
 import java.util.Arrays;

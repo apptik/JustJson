@@ -17,17 +17,34 @@
 package org.djodjo.json.schema.fetch;
 
 
+import org.djodjo.json.JsonElement;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.net.URI;
 
+import static org.junit.Assert.assertEquals;
 
-//TODO
-public class SchemaLocalFetcher implements SchemaFetcher {
+@RunWith(JUnit4.class)
+public class JsonSchemaReourceFetcherTest {
+    Schema schema;
 
-    @Override
-    public Schema fetch(URI schemaUri) {
-        return new SchemaV4();
+    @Before
+    public void setUp() throws Exception {
+        schema =  new SchemaV4();
     }
+
+    @Test
+    public void testFetch() throws Exception {
+        Schema schemaSimple = new SchemaV4().wrap(JsonElement.readFrom("{\"key\": \"value\"}"));
+        SchemaResourceFetcher srf = new SchemaResourceFetcher();
+        Schema schema = srf.fetch(URI.create("resource:/fetch/simple.json"));
+        assertEquals(schemaSimple.getJson(), schema.getJson());
+    }
+
+
 }
