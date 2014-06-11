@@ -44,7 +44,10 @@ public class JsonGenerationTest {
                     "\"one\" : {\"type\" : \"number\"  } ," +
                     "\"two\" : {\"type\" : \"string\" }" +
                     "}" +
-                    "}"+
+                    "},"+
+                "\"four\" : {\"type\" : \"boolean\"  }," +
+                "\"five\" : {\"type\" : \"integer\", \"minimum\": 200, \"maximum\":5000 }," +
+                "\"six\" : {\"enum\" : [\"one\", 2, 3.5, true, [\"almost empty aray\"], {\"one-item\":\"object\"}, null]  }" +
                 "}" +
                 "}"));
     }
@@ -55,7 +58,7 @@ public class JsonGenerationTest {
         JsonObject job = new Generator(schema).generate().asJsonObject();
 
         System.out.println(job.toString());
-        assertEquals(3,job.length());
+        assertEquals(6,job.length());
 
     }
 

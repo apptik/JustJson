@@ -16,11 +16,18 @@
 
 package org.djodjo.json.generator.generators;
 
+import org.djodjo.json.JsonElement;
+import org.djodjo.json.JsonNumber;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.schema.SchemaV4;
 
 public class LimitedNumberGenerator extends Generator {
     public LimitedNumberGenerator(SchemaV4 schema) {
         super(schema);
+    }
+
+    @Override
+    public JsonElement generate() {
+        return new JsonNumber((int)schema.getMinimum() + rnd.nextInt((int) (schema.getMaximum()-schema.getMinimum())));
     }
 }

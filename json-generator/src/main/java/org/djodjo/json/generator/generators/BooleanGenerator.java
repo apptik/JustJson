@@ -22,12 +22,13 @@ import org.djodjo.json.generator.Generator;
 import org.djodjo.json.schema.SchemaV4;
 
 public class BooleanGenerator extends Generator {
+
     public BooleanGenerator(SchemaV4 schema) {
         super(schema);
     }
 
     @Override
     public JsonElement generate() {
-        return new JsonBoolean(true);
+        return new JsonBoolean(rnd.nextBoolean());
     }
 }

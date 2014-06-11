@@ -20,9 +20,12 @@ import org.djodjo.json.JsonElement;
 import org.djodjo.json.generator.generators.ObjectGenerator;
 import org.djodjo.json.schema.SchemaV4;
 
+import java.util.Random;
+
 public class Generator {
 
     protected SchemaV4 schema;
+    protected static Random rnd = new Random();
 
     public Generator(SchemaV4 schema) {
         this.schema = schema;

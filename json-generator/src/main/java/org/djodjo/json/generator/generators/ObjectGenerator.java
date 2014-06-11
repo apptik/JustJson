@@ -16,6 +16,7 @@
 
 package org.djodjo.json.generator.generators;
 
+import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonObject;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.generator.Generator;
@@ -59,6 +60,7 @@ public class ObjectGenerator extends Generator {
     public JsonObject generate() {
         JsonObject res = new JsonObject();
         SchemaMap props = schema.getProperties();
+        JsonElement  newEl;
         if(props!=null) {
             for(Map.Entry<String,Schema> propItem : props) {
                 Schema propertySchema = propItem.getValue();
@@ -66,7 +68,9 @@ public class ObjectGenerator extends Generator {
                     if (entry.getKey().matches(propertySchema)) {
                         try {
                             Generator gen = (Generator)entry.getValue().getDeclaredConstructor(SchemaV4.class).newInstance(propertySchema);
-                            res.put(propItem.getKey(),gen.generate());
+                            newEl = gen.generate();
+                            if(newEl != null)
+                                res.put(propItem.getKey(),newEl);
                             break;
                         } catch (InstantiationException e) {
                             e.printStackTrace();

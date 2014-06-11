@@ -16,11 +16,18 @@
 
 package org.djodjo.json.generator.generators;
 
+import org.djodjo.json.JsonElement;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.schema.SchemaV4;
 
 public class EnumGenerator extends Generator {
     public EnumGenerator(SchemaV4 schema) {
         super(schema);
+    }
+
+    @Override
+    public JsonElement generate() {
+        if(schema.getEnum() == null && schema.getEnum().length()==0) return null;
+        return schema.getEnum().opt(rnd.nextInt(schema.getEnum().length()));
     }
 }

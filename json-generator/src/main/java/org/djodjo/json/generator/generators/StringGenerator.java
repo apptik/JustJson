@@ -28,6 +28,9 @@ public class StringGenerator extends Generator {
 
     @Override
     public JsonElement generate() {
-        return new JsonString("generated string");
+        String res = "";
+        int cnt = rnd.nextInt(15);
+        for(int i=0;i<cnt;i++) res += (rnd.nextBoolean())? (char)(65 + rnd.nextInt(25)):(char)(97 + rnd.nextInt(25));
+        return new JsonString(res);
     }
 }

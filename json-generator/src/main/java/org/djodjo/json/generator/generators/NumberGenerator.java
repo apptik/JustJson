@@ -28,6 +28,6 @@ public class NumberGenerator extends Generator {
 
     @Override
     public JsonElement generate() {
-        return new JsonNumber(123);
+        return new JsonNumber(Math.abs(rnd.nextInt()));
     }
 }
