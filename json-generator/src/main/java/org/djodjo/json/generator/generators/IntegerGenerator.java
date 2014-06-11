@@ -21,13 +21,13 @@ import org.djodjo.json.JsonNumber;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.schema.SchemaV4;
 
-public class NumberGenerator extends Generator {
-    public NumberGenerator(SchemaV4 schema) {
+public class IntegerGenerator extends Generator {
+    public IntegerGenerator(SchemaV4 schema) {
         super(schema);
     }
 
     @Override
     public JsonElement generate() {
-        return new JsonNumber(Math.abs(rnd.nextDouble()));
+        return new JsonNumber(Math.abs(rnd.nextInt()));
     }
 }

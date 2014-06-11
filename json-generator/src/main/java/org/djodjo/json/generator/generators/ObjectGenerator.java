@@ -23,35 +23,12 @@ import org.djodjo.json.generator.Generator;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
 import org.djodjo.json.schema.SchemaV4;
-import org.djodjo.json.util.LinkedTreeMap;
 import org.hamcrest.Matcher;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isBooleanType;
-import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isEnum;
-import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isLimitedNumber;
-import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isNumberType;
-import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isObjectType;
-import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isRangeObject;
-import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isStringType;
-
 public class ObjectGenerator extends Generator {
-
-    private static LinkedTreeMap<Matcher<org.djodjo.json.schema.Schema>, Class> commonPropertyMatchers;
-
-    //TODO implement custom matchers
-    static {
-        commonPropertyMatchers = new LinkedTreeMap<Matcher<Schema>, Class>();
-        commonPropertyMatchers.put(isEnum(), EnumGenerator.class);
-        commonPropertyMatchers.put(isStringType(), StringGenerator.class);
-        commonPropertyMatchers.put(isBooleanType(), BooleanGenerator.class);
-        commonPropertyMatchers.put(isLimitedNumber(), LimitedNumberGenerator.class);
-        commonPropertyMatchers.put(isNumberType(), NumberGenerator.class);
-        commonPropertyMatchers.put(isRangeObject(), RangeGenerator.class);
-        commonPropertyMatchers.put(isObjectType(), ObjectGenerator.class);
-    }
 
     public ObjectGenerator(SchemaV4 schema) {
         super(schema);
