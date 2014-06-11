@@ -19,6 +19,7 @@ package org.djodjo.json.generator.generators;
 import org.djodjo.json.JsonArray;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.generator.Generator;
+import org.djodjo.json.generator.GeneratorConfig;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
 import org.hamcrest.Matcher;
@@ -31,8 +32,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ArrayGenerator extends Generator {
 
-    public ArrayGenerator(SchemaV4 schema) {
-        super(schema);
+    public ArrayGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+        super(schema, configuration);
+    }
+
+    public ArrayGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+        super(schema, configuration, propertyName);
     }
 
     public JsonArray generate() {
@@ -40,7 +45,19 @@ public class ArrayGenerator extends Generator {
         ArrayList<Schema> items = schema.getItems();
         JsonElement  newEl;
         int minItems = schema.getMinItems();
-        int maxItems = minItems + rnd.nextInt(schema.getMaxItems()-minItems);
+        int maxItems = schema.getMaxItems();
+
+        if(configuration!=null) {
+            if (configuration.globalArrayItemsMin!=null) minItems = configuration.globalArrayItemsMin;
+            if (configuration.globalArrayItemsMax!=null) maxItems = configuration.globalArrayItemsMax;
+            if (propertyName != null ) {
+                if (configuration.arrayItemsMin.get(propertyName)!=null) minItems = configuration.arrayItemsMin.get(propertyName);
+                if (configuration.arrayItemsMax.get(propertyName)!=null) maxItems = configuration.arrayItemsMax.get(propertyName);
+
+            }
+        }
+        maxItems = minItems + rnd.nextInt(maxItems-minItems);
+
 
         //meant for JSON generator after all, not OutOfMemory generator :)
         if(minItems>500) minItems = 500;
@@ -53,7 +70,7 @@ public class ArrayGenerator extends Generator {
                     for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                         if (entry.getKey().matches(items.get(0))) {
                             try {
-                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(SchemaV4.class).newInstance(items.get(0));
+                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class).newInstance(items.get(0), configuration);
                                 newEl = gen.generate();
                                 if (newEl != null) {
                                     res.put(newEl);
@@ -77,7 +94,7 @@ public class ArrayGenerator extends Generator {
                     for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                         if (entry.getKey().matches(itemSchema)) {
                             try {
-                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(SchemaV4.class).newInstance(itemSchema);
+                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class).newInstance(itemSchema, configuration);
                                 newEl = gen.generate();
                                 if (newEl != null) {
                                     res.put(newEl);

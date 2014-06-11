@@ -20,6 +20,7 @@ import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonObject;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.generator.Generator;
+import org.djodjo.json.generator.GeneratorConfig;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
 import org.djodjo.json.schema.SchemaV4;
@@ -30,8 +31,12 @@ import java.util.Map;
 
 public class ObjectGenerator extends Generator {
 
-    public ObjectGenerator(SchemaV4 schema) {
-        super(schema);
+    public ObjectGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+        super(schema, configuration);
+    }
+
+    public ObjectGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+        super(schema, configuration, propertyName);
     }
 
     public JsonObject generate() {
@@ -44,11 +49,12 @@ public class ObjectGenerator extends Generator {
                 for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                     if (entry.getKey().matches(propertySchema)) {
                         try {
-                            Generator gen = (Generator)entry.getValue().getDeclaredConstructor(SchemaV4.class).newInstance(propertySchema);
+                            Generator gen = (Generator)entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class, String.class).newInstance(propertySchema, configuration, propItem.getKey());
                             newEl = gen.generate();
-                            if(newEl != null)
-                                res.put(propItem.getKey(),newEl);
-                            break;
+                            if(newEl != null) {
+                                res.put(propItem.getKey(), newEl);
+                                break;
+                            }
                         } catch (InstantiationException e) {
                             e.printStackTrace();
                         } catch (IllegalAccessException e) {

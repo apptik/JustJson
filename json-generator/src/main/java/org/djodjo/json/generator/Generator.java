@@ -46,6 +46,9 @@ import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isStringType;
 public class Generator {
 
     protected SchemaV4 schema;
+    protected GeneratorConfig configuration ;
+    //valid for elements which parent is of type Object
+    protected String propertyName;
     protected static Random rnd = new Random();
     protected static LinkedTreeMap<Matcher<Schema>, Class> commonPropertyMatchers;
 
@@ -63,13 +66,24 @@ public class Generator {
         commonPropertyMatchers.put(isArrayType(), ArrayGenerator.class);
     }
 
-    public Generator(SchemaV4 schema) {
+    public Generator(SchemaV4 schema, GeneratorConfig configuration) {
         this.schema = schema;
+        this.configuration = configuration;
+    }
+
+    public Generator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+        this(schema, configuration);
+        this.propertyName = propertyName;
     }
 
     public JsonElement generate() {
-        if(schema.getType().equals(SchemaV4.TYPE_ARRAY)) throw new UnsupportedOperationException();
+        if(schema.getType().get(0).equals(SchemaV4.TYPE_OBJECT)) {
+            return new ObjectGenerator(schema, configuration).generate();
+        }
+        if(schema.getType().get(0).equals(SchemaV4.TYPE_ARRAY)) {
+            return new ArrayGenerator(schema, configuration).generate();
+        }
 
-        return new ObjectGenerator(schema).generate();
+        throw new UnsupportedOperationException("Use Main generator only for full valid JSON object or array.");
     }
 }

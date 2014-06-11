@@ -14,25 +14,38 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.generator.generators;
+package org.djodjo.json.generator.generators.formats;
 
 import org.djodjo.json.JsonElement;
-import org.djodjo.json.JsonNumber;
+import org.djodjo.json.JsonString;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
 import org.djodjo.json.schema.SchemaV4;
 
-public class LimitedNumberGenerator extends Generator {
-    public LimitedNumberGenerator(SchemaV4 schema, GeneratorConfig configuration) {
-        super(schema,configuration);
+import java.net.URI;
+import java.net.URISyntaxException;
+
+public class UriGenerator extends Generator {
+
+    public UriGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+        super(schema, configuration);
     }
 
-    public LimitedNumberGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public UriGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 
     @Override
     public JsonElement generate() {
-        return new JsonNumber((int)schema.getMinimum() + rnd.nextInt((int) (schema.getMaximum()-schema.getMinimum())));
+        URI uri = null;
+
+        try {
+            uri = new URI("http", "google.com", "/abc", null);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new RuntimeException("We must not be here!");
+        }
+
+        return new JsonString(uri.toString());
     }
 }

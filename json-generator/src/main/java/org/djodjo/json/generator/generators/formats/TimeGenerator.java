@@ -14,25 +14,32 @@
  * limitations under the License.
  */
 
-package org.djodjo.json.generator.generators;
+package org.djodjo.json.generator.generators.formats;
 
 import org.djodjo.json.JsonElement;
-import org.djodjo.json.JsonNumber;
+import org.djodjo.json.JsonString;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
 import org.djodjo.json.schema.SchemaV4;
 
-public class LimitedNumberGenerator extends Generator {
-    public LimitedNumberGenerator(SchemaV4 schema, GeneratorConfig configuration) {
-        super(schema,configuration);
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class TimeGenerator extends Generator {
+
+    public TimeGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+        super(schema, configuration);
     }
 
-    public LimitedNumberGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public TimeGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 
     @Override
     public JsonElement generate() {
-        return new JsonNumber((int)schema.getMinimum() + rnd.nextInt((int) (schema.getMaximum()-schema.getMinimum())));
+        Date dateTime = new Date(System.currentTimeMillis() - Math.abs(rnd.nextInt(3600000) * rnd.nextInt(24)));
+        DateFormat df = new SimpleDateFormat("HH:mm:ssZ");
+        return new JsonString(df.format(dateTime));
     }
 }

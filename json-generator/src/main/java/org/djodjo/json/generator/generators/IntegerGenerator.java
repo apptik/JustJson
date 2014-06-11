@@ -19,15 +19,32 @@ package org.djodjo.json.generator.generators;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonNumber;
 import org.djodjo.json.generator.Generator;
+import org.djodjo.json.generator.GeneratorConfig;
 import org.djodjo.json.schema.SchemaV4;
 
 public class IntegerGenerator extends Generator {
-    public IntegerGenerator(SchemaV4 schema) {
-        super(schema);
+    public IntegerGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+        super(schema, configuration);
+    }
+
+    public IntegerGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+        super(schema, configuration, propertyName);
     }
 
     @Override
     public JsonElement generate() {
-        return new JsonNumber(Math.abs(rnd.nextInt()));
+        int minValue = 0;
+        int maxValue = Integer.MAX_VALUE;
+        if(configuration!=null) {
+            if (configuration.globalIntegerMin!=null) minValue = configuration.globalIntegerMin;
+            if (configuration.globalIntegerMax!=null) maxValue = configuration.globalIntegerMax;
+            if (propertyName != null ) {
+                if (configuration.integerMin.get(propertyName)!=null) minValue = configuration.integerMin.get(propertyName);
+                if (configuration.integerMax.get(propertyName)!=null) maxValue = configuration.integerMax.get(propertyName);
+            }
+
+        }
+
+        return new JsonNumber(minValue + rnd.nextInt(maxValue-minValue));
     }
 }
