@@ -76,9 +76,9 @@ public class GeneratorConfig {
     public HashMap<String, ArrayList<String>> uriPaths =  new HashMap<String, ArrayList<String>>();
 
 
-    public HashMap<String, Integer> uriPathsLengthMin =  new HashMap<String, Integer>();
-    public HashMap<String, Integer> uriPathsLengthMax =  new HashMap<String, Integer>();
-    public Integer globalUriPathsLengthMin = null;
-    public Integer globalUriPathsLengthMax = null;
+    public HashMap<String, Integer> uriPathLengthMin =  new HashMap<String, Integer>();
+    public HashMap<String, Integer> uriPathLengthMax =  new HashMap<String, Integer>();
+    public Integer globalUriPathLengthMin = null;
+    public Integer globalUriPathLengthMax = null;
 
 }

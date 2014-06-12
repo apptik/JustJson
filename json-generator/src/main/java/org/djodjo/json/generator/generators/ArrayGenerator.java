@@ -63,7 +63,15 @@ public class ArrayGenerator extends Generator {
         if(minItems>500) minItems = 500;
         if(maxItems>500) maxItems = 500;
 
-        if(items!=null && items.size()>0) {
+        int cnt = 0;
+
+        if(configuration.arrayPredefinedItems != null && propertyName!=null && configuration.arrayPredefinedItems.get(propertyName)!=null) {
+            for(JsonElement je:configuration.arrayPredefinedItems.get(propertyName)) {
+                res.put(je);
+                if(++cnt>maxItems) break;
+            }
+        }
+        else if(items!=null && items.size()>0) {
             //if we have array with
             if (items.size() == 1) {
                 for(int i =0;i<maxItems;i++) {
@@ -89,7 +97,7 @@ public class ArrayGenerator extends Generator {
                     }
                 }
             } else {
-                int cnt = 0;
+
                 for (Schema itemSchema : items) {
                     for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                         if (entry.getKey().matches(itemSchema)) {
