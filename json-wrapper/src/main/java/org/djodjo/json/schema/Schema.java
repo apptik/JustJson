@@ -2,6 +2,7 @@ package org.djodjo.json.schema;
 
 
 import org.djodjo.json.JsonArray;
+import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonObject;
 import org.djodjo.json.Validator;
 import org.djodjo.json.exception.JsonException;
@@ -124,6 +125,16 @@ public abstract class Schema extends JsonObjectWrapper {
     }
 
     @Override
+    public <T extends JsonElementWrapper> T wrap(JsonElement jsonElement) {
+        Schema schema = super.wrap(jsonElement);
+        if(schema.getRef()!=null && !schema.getRef().trim().isEmpty()) {
+            //populate values
+            //if there are title and description already do not change those.
+        }
+        return (T) schema;
+    }
+
+    @Override
     public URI getJsonSchemaUri() {
         return URI.create(getSchema());
     }
@@ -149,11 +160,15 @@ public abstract class Schema extends JsonObjectWrapper {
         return getJson().optString("$schema","");
     }
 
+    public String getRef() {
+        return getJson().optString("$ref","");
+    }
+
     public String getTitle() {
         return getJson().optString("title", "");
     }
 
-    //TODO validation
+    //TODO validation but optional
     public String getFormat() {
         return getJson().optString("format", "");
     }
