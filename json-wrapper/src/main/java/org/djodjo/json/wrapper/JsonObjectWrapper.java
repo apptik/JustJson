@@ -46,4 +46,15 @@ public class JsonObjectWrapper extends JsonElementWrapper {
         super(jsonObject);
     }
 
+    /**
+     * Merges JsonObjectWrapper with another.
+     * If values are already present they are not changed.
+     * @param anotherJsonObjectWrapper
+     * @return
+     */
+    public JsonObjectWrapper merge(JsonObjectWrapper anotherJsonObjectWrapper) {
+        this.getJson().merge(anotherJsonObjectWrapper.getJson());
+        return this;
+    }
+
 }

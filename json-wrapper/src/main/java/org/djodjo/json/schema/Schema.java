@@ -312,16 +312,4 @@ public abstract class Schema extends JsonObjectWrapper {
         return (Schema)getEmptySchema().wrap(getJson().optJsonObject("not"));
     }
 
-
-    /**
-     * Merges schema with another.
-     * If values are already present they are not changed.
-     * @param anotherSchema
-     * @return
-     */
-    public Schema merge(Schema anotherSchema) {
-        this.getJson().merge(anotherSchema.getJson());
-        return this;
-    }
-
 }
