@@ -47,9 +47,9 @@ public class UriGenerator extends Generator {
         ArrayList<String> hosts;
         ArrayList<String> paths;
 
-        if(propertyName!=null && configuration.uriSchemes.get(propertyName)!=null && configuration.uriSchemes.get(propertyName).size()>0) {
+        if(configuration!=null && propertyName!=null && configuration.uriSchemes.get(propertyName)!=null && configuration.uriSchemes.get(propertyName).size()>0) {
             schemes =  configuration.uriSchemes.get(propertyName);
-        } else if(configuration.globalUriSchemes!=null && configuration.globalUriSchemes.size()>0) {
+        } else if(configuration!=null && configuration.globalUriSchemes!=null && configuration.globalUriSchemes.size()>0) {
             schemes = configuration.globalUriSchemes;
         } else {
             schemes = new ArrayList<String>();
@@ -58,12 +58,12 @@ public class UriGenerator extends Generator {
             schemes.add("ftp");
             schemes.add("file");
             schemes.add("resource");
-            schemes.add("");
+            schemes.add(null);
         }
 
-        if(propertyName!=null && configuration.uriHosts.get(propertyName)!=null && configuration.uriHosts.get(propertyName).size()>0) {
+        if(configuration!=null && propertyName!=null && configuration.uriHosts.get(propertyName)!=null && configuration.uriHosts.get(propertyName).size()>0) {
             hosts =  configuration.uriHosts.get(propertyName);
-        } else if(configuration.globalUriHosts!=null & configuration.globalUriHosts.size()>0) {
+        } else if(configuration!=null && configuration.globalUriHosts!=null & configuration.globalUriHosts.size()>0) {
             hosts = configuration.globalUriHosts;
         } else {
             hosts = new ArrayList<String>();
@@ -71,13 +71,13 @@ public class UriGenerator extends Generator {
             hosts.add("yahoo.com");
             hosts.add("bing.com");
             hosts.add("djodjo.org");
-            hosts.add("");
+            hosts.add(null);
         }
 
 
-        if(propertyName!=null && configuration.uriPaths.get(propertyName)!=null && configuration.uriPaths.get(propertyName).size() >0) {
+        if(configuration!=null && propertyName!=null && configuration.uriPaths.get(propertyName)!=null && configuration.uriPaths.get(propertyName).size() >0) {
             paths =  configuration.uriPaths.get(propertyName);
-        } else if(configuration.globalUriPaths!=null && configuration.globalUriPaths.size() > 0) {
+        } else if(configuration!=null && configuration.globalUriPaths!=null && configuration.globalUriPaths.size() > 0) {
             paths = configuration.globalUriPaths;
         } else {
             paths = new ArrayList<String>();

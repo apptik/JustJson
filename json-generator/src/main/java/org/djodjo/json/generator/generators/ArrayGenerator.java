@@ -78,7 +78,7 @@ public class ArrayGenerator extends Generator {
                     for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                         if (entry.getKey().matches(items.get(0))) {
                             try {
-                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class).newInstance(items.get(0), configuration);
+                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class, String.class).newInstance(items.get(0), configuration, propertyName);
                                 newEl = gen.generate();
                                 if (newEl != null) {
                                     res.put(newEl);

@@ -66,7 +66,7 @@ public class StringGenerator extends Generator {
                 if (entry.getKey().matches(schema)) {
                     Generator gen = null;
                     try {
-                        gen = (Generator)entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class).newInstance(schema, configuration);
+                        gen = (Generator)entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class, String.class).newInstance(schema, configuration, propertyName);
                     } catch (InstantiationException e) {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {

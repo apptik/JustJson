@@ -25,6 +25,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.ArrayList;
+
 import static junit.framework.TestCase.assertEquals;
 
 @RunWith(JUnit4.class)
@@ -50,19 +52,26 @@ public class JsonGenerationTest {
                     "},"+
                 "\"four\" : {\"type\" : \"boolean\"  }," +
                 "\"five\" : {\"type\" : \"integer\", \"minimum\": 200, \"maximum\":5000 }," +
-                "\"six\" : {\"enum\" : [\"one\", 2, 3.5, true, [\"almost empty aray\"], {\"one-item\":\"object\"}, null]  }" +
+                "\"six\" : {\"enum\" : [\"one\", 2, 3.5, true, [\"almost empty aray\"], {\"one-item\":\"object\"}, null]  }, " +
+                "\"seven\" : {\"type\" : \"string\", \"format\": \"uri\" }" +
                 "}" +
                 "}"));
     }
 
     @Test
     public void testGenerate() throws Exception {
+        GeneratorConfig gConf = new GeneratorConfig();
+        ArrayList<String> images =  new ArrayList<String>();
+        images.add("/photos/image.jpg");
+        images.add("/photos/image.jpg");
 
-        JsonObject job = new Generator(schema, null).generate().asJsonObject();
+        gConf.uriPaths.put("seven", images);
+        // gConf.globalUriPaths = images;
+        JsonObject job = new Generator(schema, gConf).generate().asJsonObject();
 
         System.out.println(job.toString());
 
-        assertEquals(6,job.length());
+        assertEquals(7,job.length());
 
     }
 
