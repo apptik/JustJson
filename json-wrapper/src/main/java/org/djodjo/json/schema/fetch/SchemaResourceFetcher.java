@@ -25,6 +25,7 @@ import org.djodjo.json.schema.SchemaV4;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URL;
 
 
 //TODO
@@ -34,8 +35,15 @@ public class SchemaResourceFetcher implements SchemaFetcher {
     public Schema fetch(URI schemaUri) {
         Schema res = new SchemaV4();
         final String resource = schemaUri.getPath();
+
+        URL url = getClass().getClassLoader().getResource(resource);
+        System.out.println("Fetching res (simpple):" + resource);
+        System.out.println("Fetching res (full):" + url);
         try {
+
+
             res.wrap(JsonElement.readFrom(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(resource))));
+
         } catch (JsonException e) {
             e.printStackTrace();
         } catch (IOException e) {

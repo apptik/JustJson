@@ -17,12 +17,17 @@
 package org.djodjo.json.schema.fetch;
 
 
+import org.djodjo.json.JsonElement;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.net.URI;
+
+import static junit.framework.TestCase.assertEquals;
 
 @RunWith(JUnit4.class)
 public class JsonSchemaReourceFetcherTest {
@@ -34,11 +39,11 @@ public class JsonSchemaReourceFetcherTest {
     }
 
     @Test
-    public void testFetch() throws Exception {
-//        Schema schemaSimple = new SchemaV4().wrap(JsonElement.readFrom("{\"key\": \"value\"}"));
-//        SchemaResourceFetcher srf = new SchemaResourceFetcher();
-//        Schema schema = srf.fetch(URI.create("resource:/fetch/simple.json"));
-//        assertEquals(schemaSimple.getJson(), schema.getJson());
+    public void testResFetch() throws Exception {
+        Schema schemaSimple = new SchemaV4().wrap(JsonElement.readFrom("{\"key\": \"value\"}"));
+        SchemaResourceFetcher srf = new SchemaResourceFetcher();
+        Schema schema = srf.fetch(URI.create("fetch/simple.json"));
+        assertEquals(schemaSimple.getJson(), schema.getJson());
     }
 
 

@@ -18,9 +18,11 @@ package org.djodjo.json.schema.fetch;
 
 
 import org.djodjo.json.JsonElement;
+import org.djodjo.json.JsonObject;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.util.LinkedTreeMap;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,11 +32,29 @@ import java.net.URI;
 //TODO
 public class SchemaUriFetcher implements SchemaFetcher {
 
+    private LinkedTreeMap<String, String> replacements = new LinkedTreeMap<String, String>();
+
+    public URI resolveUri(URI schemaUri) {
+        URI res = schemaUri;
+
+        return res;
+    }
+
     @Override
     public Schema fetch(URI schemaUri) {
         Schema res = new SchemaV4();
         try {
-            res.wrap(JsonElement.readFrom(new InputStreamReader(schemaUri.toURL().openStream())));
+            String fragment = schemaUri.getFragment();
+            JsonObject el = JsonElement.readFrom(new InputStreamReader(schemaUri.toURL().openStream())).asJsonObject();
+            if(fragment!=null && !fragment.trim().isEmpty()) {
+                String[] pointers = fragment.split("/");
+                for (String pointer : pointers) {
+                    if (pointer != null && !pointer.trim().isEmpty()) {
+                        el = el.getJsonObject(pointer);
+                    }
+                }
+            }
+            ((Schema)res.wrap(el)).setSchemaFetcher(this);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JsonException e) {

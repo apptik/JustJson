@@ -13,7 +13,7 @@ public class SchemaV4 extends Schema {
 
     @Override
     public Schema getEmptySchema() {
-        return new SchemaV4();
+        return new SchemaV4().setSchemaFetcher(schemaFetcher);
     }
 
     @Override

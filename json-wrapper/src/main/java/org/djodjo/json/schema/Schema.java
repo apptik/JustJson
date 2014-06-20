@@ -6,6 +6,8 @@ import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonObject;
 import org.djodjo.json.Validator;
 import org.djodjo.json.exception.JsonException;
+import org.djodjo.json.schema.fetch.SchemaFetcher;
+import org.djodjo.json.schema.fetch.SchemaUriFetcher;
 import org.djodjo.json.wrapper.JsonElementWrapper;
 import org.djodjo.json.wrapper.JsonObjectArrayWrapper;
 import org.djodjo.json.wrapper.JsonObjectWrapper;
@@ -108,10 +110,30 @@ public abstract class Schema extends JsonObjectWrapper {
     public static final String FORMAT_HOST_NAME = "host-name"; //draft v3
     public static final String FORMAT_HOSTNAME = "hostname"; //draft v4
 
+    protected URI origSrc = null;
+
+    protected SchemaFetcher schemaFetcher = null;
+
     public Schema() {
         super();
         this.setContentType("application/schema+json");
     }
+
+    public Schema(URI schemaRef) {
+        this();
+        origSrc = schemaRef;
+        this.wrap(new SchemaUriFetcher().fetch(origSrc).getJson());
+    }
+
+    public SchemaFetcher getSchemaFetcher() {
+        return schemaFetcher;
+    }
+
+    public <O extends Schema> O setSchemaFetcher(SchemaFetcher schemaFetcher) {
+        this.schemaFetcher = schemaFetcher;
+        return (O)this;
+    }
+
 
     /**
      *
@@ -127,11 +149,22 @@ public abstract class Schema extends JsonObjectWrapper {
     @Override
     public <T extends JsonElementWrapper> T wrap(JsonElement jsonElement) {
         Schema schema = super.wrap(jsonElement);
-        if(schema.getRef()!=null && !schema.getRef().trim().isEmpty()) {
+        mergeWithRef();
+        return (T) schema;
+    }
+
+    private void mergeWithRef() {
+        if(this.getRef()!=null && !this.getRef().trim().isEmpty()) {
             //populate values
             //if there are title and description already do not change those.
+            Schema refSchema;
+            if(schemaFetcher==null) schemaFetcher = new SchemaUriFetcher();
+            refSchema = schemaFetcher.fetch(URI.create(this.getRef()));
+
+            if (refSchema!=null) {
+                getJson().merge(refSchema.getJson());
+            }
         }
-        return (T) schema;
     }
 
     @Override
