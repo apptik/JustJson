@@ -27,8 +27,8 @@ import android.widget.TextView;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.android.FragmentLayouts;
 import org.djodjo.json.exception.JsonException;
-import org.djodjo.json.infalter.FragmentInflaterSettings;
-import org.djodjo.json.infalter.LayoutFragmentBuilder;
+import org.djodjo.json.schemainfalter.FragmentInflaterSettings;
+import org.djodjo.json.schemainfalter.LayoutFragmentBuilder;
 import org.djodjo.json.schema.SchemaV4;
 
 import java.io.IOException;

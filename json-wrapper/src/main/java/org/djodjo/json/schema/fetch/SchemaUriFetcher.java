@@ -22,6 +22,7 @@ import org.djodjo.json.JsonObject;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.schema.SchemaV5;
 import org.djodjo.json.util.LinkedTreeMap;
 
 import java.io.IOException;
@@ -42,19 +43,28 @@ public class SchemaUriFetcher implements SchemaFetcher {
 
     @Override
     public Schema fetch(URI schemaUri) {
-        Schema res = new SchemaV4();
+        Schema res = null;
         try {
             String fragment = schemaUri.getFragment();
-            JsonObject el = JsonElement.readFrom(new InputStreamReader(schemaUri.toURL().openStream())).asJsonObject();
+            JsonObject schemaJson = JsonElement.readFrom(new InputStreamReader(schemaUri.toURL().openStream())).asJsonObject();
             if(fragment!=null && !fragment.trim().isEmpty()) {
                 String[] pointers = fragment.split("/");
                 for (String pointer : pointers) {
                     if (pointer != null && !pointer.trim().isEmpty()) {
-                        el = el.getJsonObject(pointer);
+                        schemaJson = schemaJson.getJsonObject(pointer);
                     }
                 }
             }
-            ((Schema)res.wrap(el)).setSchemaFetcher(this);
+
+            String version = schemaJson.optString("$schema","");
+            if(version.equals(Schema.VER_5)) {
+                res = new SchemaV5().setSchemaFetcher(this).wrap(schemaJson);
+            } else if(version.equals(Schema.VER_4)) {
+                res = new SchemaV4().setSchemaFetcher(this).wrap(schemaJson);
+            } else {
+                res = new SchemaV4().setSchemaFetcher(this).wrap(schemaJson);
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JsonException e) {

@@ -23,7 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.djodjo.json.infalter.LayoutFragmentBuilder;
+import org.djodjo.json.schemainfalter.LayoutFragmentBuilder;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.SchemaV4;

@@ -15,8 +15,12 @@ import org.djodjo.json.wrapper.JsonStringArrayWrapper;
 
 import java.net.URI;
 import java.util.ArrayList;
-
+//TODO BIG cleanup
 public abstract class Schema extends JsonObjectWrapper {
+
+    public static final String VER_4 = "http://json-schema.org/draft-04/schema#";
+    public static final String VER_5 = "http://json-schema.org/draft-05/schema#";
+
 
     public static final String TYPE_OBJECT = "object";
     public static final String TYPE_ARRAY = "array";
@@ -113,6 +117,7 @@ public abstract class Schema extends JsonObjectWrapper {
     protected URI origSrc = null;
 
     protected SchemaFetcher schemaFetcher = null;
+
 
     public Schema() {
         super();
