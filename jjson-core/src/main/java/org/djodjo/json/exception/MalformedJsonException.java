@@ -17,13 +17,11 @@
 
 package org.djodjo.json.exception;
 
-import java.io.IOException;
-
 /**
  * Thrown when a reader encounters malformed Util. Some syntax errors can be
  * ignored by calling {@link org.djodjo.json.JsonReader#setLenient(boolean)}.
  */
-public class MalformedJsonException extends IOException {
+public class MalformedJsonException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public MalformedJsonException(String message) {

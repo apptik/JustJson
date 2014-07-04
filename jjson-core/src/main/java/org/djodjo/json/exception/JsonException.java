@@ -20,29 +20,18 @@ package org.djodjo.json.exception;
 // Note: this class was written without inspecting the non-free org.json sourcecode.
 
 /**
- * Thrown to indicate a problem with the Util API. Such problems include:
+ * Thrown to indicate a problems such as:
  * <ul>
- *   <li>Attempts to parse or construct malformed documents
  *   <li>Use of null as a name
- *   <li>Use of numeric types not available to Util, such as {@link
+ *   <li>Use of numeric types not available, such as {@link
  *       Double#isNaN() NaNs} or {@link Double#isInfinite() infinities}.
  *   <li>Lookups using an out of range index or nonexistent name
  *   <li>Type mismatches on lookups
  * </ul>
  *
- * <p>Although this is a checked exception, it is rarely recoverable. Most
- * callers should simply wrap this exception in an unchecked exception and
- * rethrow:
- * <pre>  public JsonArray toJsonObject() {
- *     try {
- *         JsonObject result = new JsonObject();
- *         ...
- *     } catch (JsonException e) {
- *         throw new RuntimeException(e);
- *     }
- * }</pre>
+ * <p>This is an unchecked exception because it is rarely recoverable.
  */
-public class JsonException extends Exception {
+public class JsonException extends RuntimeException {
 
     public JsonException(String s) {
         super(s);

@@ -25,6 +25,7 @@ import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.fetch.SchemaFetcher;
 import org.djodjo.json.schema.fetch.SchemaUriFetcher;
+import org.djodjo.json.util.LinkedTreeMap;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -32,6 +33,7 @@ import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 
 /**
@@ -48,8 +50,9 @@ public abstract class JsonElementWrapper implements ElementWrapper {
     private String contentType;
     private URI jsonSchemaUri;
     private Schema jsonSchema;
+
     private transient LinkedHashSet<Validator> validators = new LinkedHashSet<Validator>();
-    private transient LinkedHashSet<SchemaFetcher> fetchers = new LinkedHashSet<SchemaFetcher>();
+    private transient LinkedTreeMap<String, SchemaFetcher> fetchers = new LinkedTreeMap<String, SchemaFetcher>();
 
 
     @Override
@@ -65,9 +68,12 @@ public abstract class JsonElementWrapper implements ElementWrapper {
         return jsonSchemaUri;
     }
 
+    public Schema getJsonSchema() {
+        return jsonSchema;
+    }
 
     public JsonElementWrapper() {
-        fetchers.add(new SchemaUriFetcher());
+        fetchers.put("defaultUriFetcher", new SchemaUriFetcher());
     }
 
     public JsonElementWrapper(JsonElement jsonElement) {
@@ -86,13 +92,15 @@ public abstract class JsonElementWrapper implements ElementWrapper {
         tryFetchSchema(this.jsonSchemaUri);
     }
 
+
+
+
     /**
      * Tries to fetch a schema and add the default Schema validator for it
      * @param jsonSchemaUri
      * @return
      */
     private Schema tryFetchSchema(URI jsonSchemaUri) {
-        Schema jsonSchema = null;
         if(jsonSchemaUri==null) return null;
         try {
             jsonSchema = doFetchSchema(jsonSchemaUri);
@@ -107,9 +115,13 @@ public abstract class JsonElementWrapper implements ElementWrapper {
 
     private Schema doFetchSchema(URI jsonSchemaUri) {
         Schema currSchema = null;
-        Iterator<SchemaFetcher> iterator = fetchers.iterator();
+
+        Iterator<Map.Entry<String,SchemaFetcher>> iterator =  fetchers.entrySet().iterator();
         while (iterator.hasNext() && currSchema==null){
-            currSchema = iterator.next().fetch(jsonSchemaUri);
+            Map.Entry<String,SchemaFetcher> entry = iterator.next();
+            System.out.println("JsonElementWrapper try fetch using: " + entry.getKey());
+            currSchema = entry.getValue().fetch(jsonSchemaUri);
+            System.out.println("JsonElementWrapper fetch result: " + ((currSchema==null)?"FAIL":"OK"));
         }
         return currSchema;
     }
@@ -124,15 +136,35 @@ public abstract class JsonElementWrapper implements ElementWrapper {
         return this;
     }
 
-    public JsonElementWrapper setJsonSchema(URI uri) {
+    public JsonElementWrapper setJsonSchemaUri(URI uri) {
         this.jsonSchemaUri = uri;
         tryFetchSchema(this.jsonSchemaUri);
+        return this;
+    }
+
+    public JsonElementWrapper setJsonSchema(Schema jsonSchema) {
+        this.jsonSchema = jsonSchema;
+        return this;
+    }
+
+    public JsonElementWrapper addSchemaFetcher(String name, SchemaFetcher fetcher) {
+        this.fetchers.put(name, fetcher);
+        return this;
+    }
+
+    public JsonElementWrapper setSchemaFetchers(Map<String, SchemaFetcher> newFetchers) {
+        this.fetchers.clear();
+        this.fetchers.putAll(newFetchers);
         return this;
     }
 
     public JsonElementWrapper addValidator(Validator validator) {
         this.validators.add(validator);
         return this;
+    }
+
+    public LinkedHashSet<Validator> getValidators() {
+        return validators;
     }
 
     public boolean isDataValid() {
@@ -144,13 +176,20 @@ public abstract class JsonElementWrapper implements ElementWrapper {
         return true;
     }
 
-    public String validateData() {
-        StringBuilder sb = new StringBuilder();
+    public boolean validateData(StringBuilder sb) {
+        boolean res = true;
         Iterator<Validator> iterator = validators.iterator();
+        System.out.println("JsonElementWrapper start validating ");
+        Validator validator;
         while (iterator.hasNext()){
-            iterator.next().validate(this.getJson(), sb);
+            validator =  iterator.next();
+            System.out.println("JsonElementWrapper validating using: " + validator.getTitle());
+
+            if(!validator.validate(this.getJson(), sb)) {
+                res = false;
+            }
         }
-        return sb.toString();
+        return res;
     }
 
     public Schema fetchJsonSchema() {

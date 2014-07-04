@@ -30,7 +30,7 @@ public class JsonNumber extends JsonElement {
 
    public JsonNumber( String string ) {
         if( string == null ) {
-            throw new NullPointerException( "value is null" );
+            throw new NullPointerException("value is null" );
         }
         this.value = string;
     }
@@ -121,7 +121,11 @@ public class JsonNumber extends JsonElement {
 
     @Override
     public String getJsonType() {
-        return "number";
+        if(this.asNumber().intValue() == this.asNumber().doubleValue()) {
+            return "integer";
+        } else {
+            return "number";
+        }
     }
 
 }

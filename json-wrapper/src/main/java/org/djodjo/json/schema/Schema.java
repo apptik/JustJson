@@ -147,7 +147,7 @@ public abstract class Schema extends JsonObjectWrapper {
     public abstract Schema getEmptySchema();
 
     @Override
-    public JsonElementWrapper setJsonSchema(URI uri) {
+    public JsonElementWrapper setJsonSchemaUri(URI uri) {
         throw new RuntimeException("Cannot set Schema on a Schema like this. Use setSchema method.");
     }
 

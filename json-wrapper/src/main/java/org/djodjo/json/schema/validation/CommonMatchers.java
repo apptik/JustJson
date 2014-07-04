@@ -20,6 +20,7 @@ package org.djodjo.json.schema.validation;
 import org.djodjo.json.JsonArray;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.Validator;
+import org.djodjo.json.schema.Schema;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -242,7 +243,7 @@ public class CommonMatchers {
         return new TypeSafeDiagnosingMatcher<JsonElement>() {
             @Override
             protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {
-                if(types.contains(item.getJsonType()))
+                if(types.contains(item.getJsonType()) || (item.getJsonType().equals(Schema.TYPE_INTEGER) && types.contains(Schema.TYPE_NUMBER)))
                     return true;
                 else {
                     mismatchDescription.appendText("expected type was any of '" + types.toString() + "' but found '" + item.getJsonType() +"'");

@@ -55,6 +55,7 @@ import static org.hamcrest.Matchers.allOf;
 public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
 
     ArrayList<Matcher<? super JsonElement>> allMatchers =  new ArrayList<Matcher<? super JsonElement>>();
+
     public SchemaV4Validator(SchemaV4 schema) {
         super(schema);
         //allMatchers
@@ -214,12 +215,15 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
 
     @Override
     protected boolean doValidate(JsonElement el, StringBuilder sb) {
+        System.out.println("SchemaV4Validator start: " + this.getTitle());
         //check if empty schema
-        if(allMatchers == null || allMatchers.isEmpty())
+        if(allMatchers == null || allMatchers.isEmpty()) {
+            System.out.println("SchemaV4Validator NO MATCHERS end: " + this.getTitle());
             return true;
+        }
 
         Matcher<JsonElement> matcher = allOf(allMatchers);
-
+        System.out.println("SchemaV4Validator end: " + this.getTitle());
         return matcher.matches(el);
     }
 }

@@ -285,7 +285,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
         return this;
     }
 
-    String checkName(String name) throws JsonException {
+    String checkName(String name){
         if (name == null) {
             throw new JsonException("Names must be non-null");
         }
