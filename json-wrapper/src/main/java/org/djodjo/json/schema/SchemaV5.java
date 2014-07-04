@@ -103,4 +103,90 @@ public class SchemaV5 extends Schema {
         }
         return this;
     }
+
+    //replaces title if not object
+    public SchemaV5 addDescription(String title, String locale) {
+        JsonElement tit = getJson().opt("description");
+        if(tit!=null && !tit.isJsonObject()) {
+            getJson().remove("description");
+            try {
+                getJson().put("description", new JsonObject());
+            } catch (JsonException e) {
+                e.printStackTrace();
+            }
+        }  else if(tit==null) {
+            try {
+                getJson().put("description", new JsonObject());
+            } catch (JsonException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        try {
+            getJson().optJsonObject("description").put(locale, title);
+        } catch (JsonException e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
+
+
+    public String getDescription(String locale) {
+        String res = "";
+
+        if (getJson().opt("description").isString()) {
+            res = getJson().optString("description") ;
+        } else {
+            JsonObject titles = getJson().optJsonObject("description");
+            if(titles!=null && titles.length()>0) {
+                res = titles.optString(locale);
+            } else {
+                res = null;
+            }
+        }
+
+        return res;
+    }
+
+    @Override
+    public String getDescription() {
+        String res = null;
+
+        if(getJson().opt("description").isString()) {
+            res = getJson().optString("description") ;
+        } else {
+            JsonObject titles = getJson().optJsonObject("description");
+            if(titles!=null && titles.length()>0) {
+                res = titles.valuesSet().toArray(new String[0])[0];
+            } else {
+                res = null;
+            }
+        }
+
+
+        return res;
+    }
+
+    public JsonObject getDescriptions() {
+        JsonObject res = new JsonObject();
+
+        if(getJson().opt("description").isString()) {
+            try {
+                res.put("default", getJson().optString("description"));
+            } catch (JsonException e) {
+                e.printStackTrace();
+            }
+        } else {
+            res = getJson().optJsonObject("description");
+        }
+
+        return res;
+    }
+
+
+
+
+
 }
