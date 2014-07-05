@@ -65,17 +65,17 @@ public class SchemaJJv1 extends SchemaV5 {
         return new SchemaJJv1().setSchemaFetcher(schemaFetcher);
     }
 
-    protected Schema setSuperSchema(URI superSchema) {
+    public Schema setSuperSchema(URI superSchema) {
         getJson().put("extends", getSchemaFetcher().fetch(superSchema));
         return this;
     }
 
-    protected  <O extends SchemaJJv1> O setSuperSchemaRef(String superSchemaUri) {
+    public  <O extends SchemaJJv1> O setSuperSchemaRef(String superSchemaUri) {
         getJson().put("extends", new JsonObject().put("$ref", superSchemaUri));
         return (O)this;
     }
 
-    protected <O extends SchemaJJv1> O setExtends(Schema superSchema) {
+    public <O extends SchemaJJv1> O setExtends(Schema superSchema) {
         getJson().put("extends", superSchema);
         return (O)this;
     }
@@ -86,20 +86,20 @@ public class SchemaJJv1 extends SchemaV5 {
 
 
     public <O extends SchemaJJv1> O addEquivalent(String equivalent) {
-        JsonArray equivArray = getJson().getJsonArray("equivalent");
+        JsonArray equivArray = getJson().optJsonArray("equivalent");
         if(equivArray==null) getJson().put("equivalent", new JsonArray());
         getJson().getJsonArray("equivalent").put(equivalent);
         return (O)this;
     }
 
     public <O extends SchemaJJv1> O addEquivalentList(Collection<String> equivalents) {
-        JsonArray equivArray = getJson().getJsonArray("equivalent");
+        JsonArray equivArray = getJson().optJsonArray("equivalent");
         if(equivArray==null) getJson().put("equivalent", equivalents);
         return (O)this;
     }
 
     public ArrayList<String> getEquivalents() {
-        JsonArray equivArray = getJson().getJsonArray("equivalent");
+        JsonArray equivArray = getJson().optJsonArray("equivalent");
         if(equivArray==null) return null;
         return equivArray.toArrayList();
     }
