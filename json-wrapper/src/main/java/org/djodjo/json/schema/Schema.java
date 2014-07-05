@@ -5,7 +5,6 @@ import org.djodjo.json.JsonArray;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonObject;
 import org.djodjo.json.Validator;
-import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.fetch.SchemaFetcher;
 import org.djodjo.json.schema.fetch.SchemaUriFetcher;
 import org.djodjo.json.wrapper.JsonElementWrapper;
@@ -186,11 +185,7 @@ public abstract class Schema extends JsonObjectWrapper {
     }
 
     protected Schema setSchema(String schemaUri) {
-        try {
-            getJson().put("$schema", schemaUri);
-        } catch (JsonException e) {
-            e.printStackTrace();
-        }
+        getJson().put("$schema", schemaUri);
         return this;
     }
 
