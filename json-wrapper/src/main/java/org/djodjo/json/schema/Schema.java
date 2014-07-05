@@ -184,6 +184,17 @@ public abstract class Schema extends JsonObjectWrapper {
         return getJson().optString("id","");
     }
 
+    /**
+     * Should be URI
+     * @param schemaId
+     * @param <O>
+     * @return
+     */
+    public <O extends Schema> O setId(String schemaId) {
+        getJson().put("id", schemaId);
+        return (O)this;
+    }
+
     protected Schema setSchema(String schemaUri) {
         getJson().put("$schema", schemaUri);
         return this;

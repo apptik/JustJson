@@ -16,9 +16,12 @@
 
 package org.djodjo.json.schema;
 
+import org.djodjo.json.JsonArray;
 import org.djodjo.json.JsonObject;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * New keyword is "extends" which is used as "merge" but with easier syntax. es:
@@ -46,6 +49,9 @@ import java.net.URI;
  * }
  *
  * This is really powerful when used with $ref
+ *
+ *
+ * "equivalent keyword is used here to provide list of links to equivalent schemas/rdf classes"
  */
 public class SchemaJJv1 extends SchemaV5 {
 
@@ -64,19 +70,37 @@ public class SchemaJJv1 extends SchemaV5 {
         return this;
     }
 
-    protected Schema setSuperSchemaRef(String superSchemaUri) {
+    protected  <O extends SchemaJJv1> O setSuperSchemaRef(String superSchemaUri) {
         getJson().put("extends", new JsonObject().put("$ref", superSchemaUri));
-        return this;
+        return (O)this;
     }
 
-    protected Schema setExtends(Schema superSchema) {
+    protected <O extends SchemaJJv1> O setExtends(Schema superSchema) {
         getJson().put("extends", superSchema);
-        return this;
+        return (O)this;
     }
 
-    public String getExtends() {
-        return getJson().optString("extends","");
+    public Schema getExtends() {
+        return (Schema)getEmptySchema().wrap(getJson().optJsonObject("extends"));
     }
 
 
+    public <O extends SchemaJJv1> O addEquivalent(String equivalent) {
+        JsonArray equivArray = getJson().getJsonArray("equivalent");
+        if(equivArray==null) getJson().put("equivalent", new JsonArray());
+        getJson().getJsonArray("equivalent").put(equivalent);
+        return (O)this;
+    }
+
+    public <O extends SchemaJJv1> O addEquivalentList(Collection<String> equivalents) {
+        JsonArray equivArray = getJson().getJsonArray("equivalent");
+        if(equivArray==null) getJson().put("equivalent", equivalents);
+        return (O)this;
+    }
+
+    public ArrayList<String> getEquivalents() {
+        JsonArray equivArray = getJson().getJsonArray("equivalent");
+        if(equivArray==null) return null;
+        return equivArray.toArrayList();
+    }
 }
