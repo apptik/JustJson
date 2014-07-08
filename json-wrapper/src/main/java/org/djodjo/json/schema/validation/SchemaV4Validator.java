@@ -23,6 +23,7 @@ import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
 import org.djodjo.json.schema.SchemaV4;
 import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -215,7 +216,7 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
 
     @Override
     protected boolean doValidate(JsonElement el, StringBuilder sb) {
-        System.out.println("SchemaV4Validator start: " + this.getTitle());
+        //System.out.println("SchemaV4Validator start: " + this.getTitle());
         //check if empty schema
         if(allMatchers == null || allMatchers.isEmpty()) {
             System.out.println("SchemaV4Validator NO MATCHERS end: " + this.getTitle());
@@ -223,7 +224,10 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
         }
 
         Matcher<JsonElement> matcher = allOf(allMatchers);
-        System.out.println("SchemaV4Validator end: " + this.getTitle());
+        //System.out.println("SchemaV4Validator end: " + this.getTitle());
+       if(sb!=null) {
+           matcher.describeMismatch(el, new StringDescription(sb));
+       }
         return matcher.matches(el);
     }
 }

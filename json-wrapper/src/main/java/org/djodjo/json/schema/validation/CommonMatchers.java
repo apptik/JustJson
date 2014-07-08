@@ -227,14 +227,14 @@ public class CommonMatchers {
                 if(type.equals(item.getJsonType()))
                     return true;
                 else {
-                    mismatchDescription.appendText("expected type was '" + type + "' but found '" + item.getJsonType() +"'");
+                    mismatchDescription.appendText(", mismatch type '" + item.getJsonType() + "'");
                     return false;
                 }
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("is of Type: " + type);
+                description.appendText("\nMatch to type: " + type);
             }
         };
     }
@@ -246,14 +246,14 @@ public class CommonMatchers {
                 if(types.contains(item.getJsonType()) || (item.getJsonType().equals(Schema.TYPE_INTEGER) && types.contains(Schema.TYPE_NUMBER)))
                     return true;
                 else {
-                    mismatchDescription.appendText("expected type was any of '" + types.toString() + "' but found '" + item.getJsonType() +"'");
+                    mismatchDescription.appendText(", mismatch type '" + item.getJsonType() + "'");
                     return false;
                 }
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("is of Type: " + types.toString());
+                description.appendText("\nMatch to one of types: " + types.toString());
             }
         };
     }
@@ -267,13 +267,13 @@ public class CommonMatchers {
                     return true;
                 }
 
-                mismatchDescription.appendText("expected value '\" + item.toString() +\"' was not equal to any of the enums: '" + enums.toString());
+                mismatchDescription.appendText(", mismatch value '" + item.toString() + "'");
                 return false;
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("equal to one of enum values: " + enums.toString());
+                description.appendText("\nMatch to one of enum values: " + enums.toString());
             }
         };
     }
@@ -467,7 +467,7 @@ public class CommonMatchers {
                 if(!item.isJsonObject()) return true;
 
                 if(!item.asJsonObject().has(property)) {
-                    mismatchDescription.appendText("property: '" + property + "' is missing");
+                    mismatchDescription.appendText(", does not exist in : " + item );
                     return false;
                 }
                 return true;
@@ -475,7 +475,7 @@ public class CommonMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("object property is present");
+                description.appendText("\nCheck if property '"+property+"' exists" );
             }
         };
     }
@@ -490,13 +490,19 @@ public class CommonMatchers {
                 //we also dont care if the property is not actually there
                 //if it is needed it will be handled by the "required" constraint on another matcher
                 if(!item.asJsonObject().has(property)) return true;
-
-                return validator.isValid(item.asJsonObject().opt(property));
+                StringBuilder sb = new StringBuilder();
+                if(!validator.validate(item.asJsonObject().opt(property), sb)) {
+                    mismatchDescription.appendText(", mismatch value: " + item.asJsonObject().opt(property))
+                    .appendText("\nDetails: ")
+                            .appendText(sb.toString());
+                    return false;
+                }
+                return true;
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("is object property valid");
+                description.appendText("\nMatch object property '"+property+"' with schema: " + ((SchemaValidator)validator).getSchema() );
             }
         };
     }
@@ -514,8 +520,11 @@ public class CommonMatchers {
                 Pattern p = Pattern.compile(propertyPattern);
                 for(Map.Entry<String, JsonElement> entry : item.asJsonObject()) {
                     if(p.matcher(entry.getKey()).matches()) {
-                        if(!validator.isValid(entry.getValue())) {
-                            mismatchDescription.appendText("property: '" + entry.getKey() + "' is not valid by propertyPattern: " + propertyPattern);
+                        StringBuilder sb = new StringBuilder();
+                        if(!validator.validate(entry.getValue(), sb)) {
+                            mismatchDescription.appendText(", mismatch of property: '" + entry.getKey() + "' with value: " + entry.getValue())
+                                    .appendText("\nDetails: ")
+                                    .appendText(sb.toString());
                             return false;
                         }
                     }
@@ -525,7 +534,7 @@ public class CommonMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("is object property valid");
+                description.appendText("\nMatch object property pattern '"+propertyPattern+"' with schema: " + ((SchemaValidator)validator).getSchema() );
             }
         };
     }
