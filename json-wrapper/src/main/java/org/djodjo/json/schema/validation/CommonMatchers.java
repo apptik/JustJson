@@ -565,7 +565,7 @@ public class CommonMatchers {
 
                 if(objectProps.size()>0) {
                     for(String prop:objectProps) {
-                        mismatchDescription.appendText("property: '" + prop + "' is not defined in the schema. ");
+                        mismatchDescription.appendText("\nproperty: '" + prop + "' is not defined in the schema. ");
                     }
                     return false;
                 }

@@ -46,7 +46,7 @@ public class DynamoDb2Item extends TypedJsonObject<AttributeValue> {
     }
 
     @Override
-    protected AttributeValue get(JsonElement el) {
+    protected AttributeValue get(JsonElement el, String key) {
         AttributeValue atVal = new AttributeValue();
         if(el.isNumber()) {
             atVal.withN(el.toString());

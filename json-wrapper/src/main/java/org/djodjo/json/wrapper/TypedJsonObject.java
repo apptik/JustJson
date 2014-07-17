@@ -33,16 +33,16 @@ import java.util.Map;
 public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements Iterable<Map.Entry<String, T>> {
 
     public T getValue(String key) throws JsonException {
-        return get(getJson().get(key));
+        return get(getJson().get(key), key);
     }
 
 
     public T optValue(String key) {
-        return get(getJson().opt(key));
+        return get(getJson().opt(key), key);
     }
 
     public T getValue(int pos) {
-        return get(getJson().valuesSet().toArray(new JsonElement[0])[pos]);
+        return get(getJson().valuesSet().toArray(new JsonElement[0])[pos], getKey(pos));
     }
 
     public String getKey(int pos) {
@@ -70,7 +70,7 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
         return (O)this;
     }
 
-    protected abstract T get(JsonElement jsonElement);
+    protected abstract T get(JsonElement jsonElement, String key);
     protected abstract JsonElement to(T value);
 
     @Override
@@ -114,7 +114,7 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
 
         public TypedObjectEntry(Map.Entry<String, JsonElement> entry) {
             this.key = entry.getKey();
-            this.value = get(entry.getValue());
+            this.value = get(entry.getValue(), key);
         }
 
         public TypedObjectEntry(String key, T value) {

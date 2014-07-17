@@ -15,8 +15,8 @@ public class SchemaV5 extends Schema {
     }
 
     @Override
-    public Schema getEmptySchema() {
-        return new SchemaV5().setSchemaFetcher(schemaFetcher);
+    public Schema getEmptySchema(String path) {
+        return new SchemaV5().setSchemaFetcher(schemaFetcher).setOrigSrc(this.origSrc.resolve(path));
     }
 
     @Override

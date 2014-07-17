@@ -23,7 +23,6 @@ import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
-import org.djodjo.json.schema.SchemaV4;
 import org.hamcrest.Matcher;
 
 import java.lang.reflect.InvocationTargetException;
@@ -31,11 +30,11 @@ import java.util.Map;
 
 public class ObjectGenerator extends Generator {
 
-    public ObjectGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+    public ObjectGenerator(Schema schema, GeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public ObjectGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public ObjectGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 
@@ -49,7 +48,7 @@ public class ObjectGenerator extends Generator {
                 for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                     if (entry.getKey().matches(propertySchema)) {
                         try {
-                            Generator gen = (Generator)entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class, String.class).newInstance(propertySchema, configuration, propItem.getKey());
+                            Generator gen = (Generator)entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class, String.class).newInstance(propertySchema, configuration, propItem.getKey());
                             newEl = gen.generate();
                             if(newEl != null) {
                                 res.put(propItem.getKey(), newEl);

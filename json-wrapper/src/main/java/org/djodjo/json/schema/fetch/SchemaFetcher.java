@@ -21,5 +21,7 @@ import org.djodjo.json.schema.Schema;
 import java.net.URI;
 
 public interface SchemaFetcher {
-    Schema fetch(URI schemaUri);
+    Schema fetch(URI targetUri, URI srcOrigUri, URI srcId);
+    SchemaFetcher withConfig(SchemaFetcherConfig cfg);
+
 }

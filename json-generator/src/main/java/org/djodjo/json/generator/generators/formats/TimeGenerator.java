@@ -20,7 +20,7 @@ import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonString;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
-import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.schema.Schema;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,11 +28,11 @@ import java.util.Date;
 
 public class TimeGenerator extends Generator {
 
-    public TimeGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+    public TimeGenerator(Schema schema, GeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public TimeGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public TimeGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 

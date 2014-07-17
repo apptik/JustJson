@@ -20,14 +20,14 @@ import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonNumber;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
-import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.schema.Schema;
 
 public class LimitedNumberGenerator extends Generator {
-    public LimitedNumberGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+    public LimitedNumberGenerator(Schema schema, GeneratorConfig configuration) {
         super(schema,configuration);
     }
 
-    public LimitedNumberGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public LimitedNumberGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 

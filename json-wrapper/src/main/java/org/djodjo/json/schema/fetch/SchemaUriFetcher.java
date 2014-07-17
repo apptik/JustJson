@@ -23,27 +23,70 @@ import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
 import org.djodjo.json.schema.SchemaV5;
-import org.djodjo.json.util.LinkedTreeMap;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 
-//TODO
+
 public class SchemaUriFetcher implements SchemaFetcher {
 
-    private LinkedTreeMap<String, String> replacements = new LinkedTreeMap<String, String>();
+    private SchemaFetcherConfig cfg;
 
-    public URI resolveUri(URI schemaUri) {
-        URI res = schemaUri;
 
+    //TODO use config to set to use id instead of orig source
+    public URI resolveUri(URI targetUri, URI srcOrigUri, URI srcId) {
+        if(targetUri.isAbsolute()) {
+            return targetUri;
+        } else if(srcOrigUri==null || !srcOrigUri.isAbsolute()) {
+            return targetUri;
+        } else {
+            return srcOrigUri.resolve(targetUri);
+        }
+    }
+
+    public URI convertUri(URI schemaUri) {
+        if(cfg==null) return  schemaUri;
+        URI res = null;
+
+        String scheme = schemaUri.getScheme();
+        String authority = schemaUri.getAuthority();
+        String path = schemaUri.getPath();
+        String query = schemaUri.getQuery();
+
+        if(cfg.uriSchemeReplacements.containsKey(scheme)) {
+            scheme = cfg.uriSchemeReplacements.get(scheme);
+        }
+
+        if(cfg.uriAuthorityReplacements.containsKey(authority)) {
+            authority = cfg.uriAuthorityReplacements.get(authority);
+        }
+
+        if(cfg.uriPathReplacements.containsKey(path)) {
+            path = cfg.uriPathReplacements.get(path);
+        }
+
+        if(cfg.uriQueryReplacements.containsKey(query)) {
+            query = cfg.uriQueryReplacements.get(query);
+        }
+
+        try {
+            res =  new URI(scheme, authority, path, query, schemaUri.getFragment());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
         return res;
     }
 
+    //accepts only absolute URI or converted absolute URI
     @Override
-    public Schema fetch(URI schemaUri) {
+    public Schema fetch(URI targetUri, URI srcOrigUri, URI srcId) {
         Schema res = null;
+
+        URI schemaUri = convertUri(resolveUri(targetUri, srcOrigUri, srcId));
+        if(!schemaUri.isAbsolute()) throw new RuntimeException("Json Schema Fetcher works only with absolute URIs");
         try {
             String fragment = schemaUri.getFragment();
             JsonObject schemaJson = JsonElement.readFrom(new InputStreamReader(schemaUri.toURL().openStream())).asJsonObject();
@@ -52,17 +95,18 @@ public class SchemaUriFetcher implements SchemaFetcher {
                 for (String pointer : pointers) {
                     if (pointer != null && !pointer.trim().isEmpty()) {
                         schemaJson = schemaJson.getJsonObject(pointer);
+
                     }
                 }
             }
 
             String version = schemaJson.optString("$schema","");
             if(version.equals(Schema.VER_5)) {
-                res = new SchemaV5().setSchemaFetcher(this).wrap(schemaJson);
+                res = new SchemaV5().setSchemaFetcher(this).setOrigSrc(schemaUri).wrap(schemaJson);
             } else if(version.equals(Schema.VER_4)) {
-                res = new SchemaV4().setSchemaFetcher(this).wrap(schemaJson);
+                res = new SchemaV4().setSchemaFetcher(this).setOrigSrc(schemaUri).wrap(schemaJson);
             } else {
-                res = new SchemaV4().setSchemaFetcher(this).wrap(schemaJson);
+                res = new SchemaV4().setSchemaFetcher(this).setOrigSrc(schemaUri).wrap(schemaJson);
             }
 
         } catch (IOException e) {
@@ -71,5 +115,11 @@ public class SchemaUriFetcher implements SchemaFetcher {
             e.printStackTrace();
         }
         return res;
+    }
+
+    @Override
+    public SchemaFetcher withConfig(SchemaFetcherConfig cfg) {
+        this.cfg = cfg;
+        return this;
     }
 }

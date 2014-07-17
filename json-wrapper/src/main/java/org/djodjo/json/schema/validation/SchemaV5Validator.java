@@ -20,6 +20,7 @@ package org.djodjo.json.schema.validation;
 import org.djodjo.json.JsonArray;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.schema.Schema;
+import org.djodjo.json.schema.SchemaList;
 import org.djodjo.json.schema.SchemaMap;
 import org.djodjo.json.schema.SchemaV5;
 import org.hamcrest.Matcher;
@@ -115,7 +116,7 @@ public class SchemaV5Validator extends SchemaValidator<SchemaV5> {
     }
     private void putMatchers4Array() {
 
-        ArrayList<Schema>  items = schema.getItems();
+        SchemaList items = schema.getItems();
         if(items != null && !items.isEmpty()) {
             if(items.size() == 1) {
                 //single type for array items

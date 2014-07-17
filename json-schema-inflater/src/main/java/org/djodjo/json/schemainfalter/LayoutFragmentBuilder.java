@@ -23,6 +23,7 @@ import android.app.FragmentTransaction;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import org.djodjo.json.schema.SchemaList;
 import org.djodjo.json.schemainfalter.util.OneOfFragment;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaMap;
@@ -192,7 +193,7 @@ public class LayoutFragmentBuilder<T extends Schema> {
             // --> check for oneOf
             if (schema.getOneOf() != null && schema.getOneOf().getJson().length() > 0) {
                 Log.d("JustJsonLayoutBulder", "start generate onOf");
-                ArrayList<Schema> oneOfSchemas = schema.getOneOf().getJsonWrappersList();
+                SchemaList oneOfSchemas = schema.getOneOf();
                 ArrayList<String> stringSchemas = new ArrayList<String>();
                 for (Schema oneOfSchema : oneOfSchemas) {
                     //before sending schemas to the oneOf fragment check if they are not already defined in here. if so merge and remove from common Layout

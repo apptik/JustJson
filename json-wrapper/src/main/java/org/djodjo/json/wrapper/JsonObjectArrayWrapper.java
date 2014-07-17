@@ -19,7 +19,6 @@ package org.djodjo.json.wrapper;
 
 import org.djodjo.json.JsonArray;
 import org.djodjo.json.JsonElement;
-import org.djodjo.json.exception.JsonException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,9 +65,7 @@ public class JsonObjectArrayWrapper<T extends JsonObjectWrapper> extends JsonEle
     @Override
     public JsonArray getJson() {
         if(super.getJson() == null) try {
-            this.json  = JsonElement.readFrom("[ ]");
-        } catch (JsonException e) {
-            e.printStackTrace();
+            this.json  = JsonElement.readFrom("[]");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -20,14 +20,14 @@ import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonNumber;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
-import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.schema.Schema;
 
 public class IntegerGenerator extends Generator {
-    public IntegerGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+    public IntegerGenerator(Schema schema, GeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public IntegerGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public IntegerGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 

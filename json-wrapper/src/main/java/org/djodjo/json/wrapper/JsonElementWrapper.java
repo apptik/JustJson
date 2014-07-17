@@ -120,7 +120,7 @@ public abstract class JsonElementWrapper implements ElementWrapper {
         while (iterator.hasNext() && currSchema==null){
             Map.Entry<String,SchemaFetcher> entry = iterator.next();
             System.out.println("JsonElementWrapper try fetch using: " + entry.getKey());
-            currSchema = entry.getValue().fetch(jsonSchemaUri);
+            currSchema = entry.getValue().fetch(jsonSchemaUri, null, null);
             System.out.println("JsonElementWrapper fetch result: " + ((currSchema==null)?"FAIL":"OK"));
         }
         return currSchema;
@@ -149,6 +149,15 @@ public abstract class JsonElementWrapper implements ElementWrapper {
 
     public JsonElementWrapper addSchemaFetcher(String name, SchemaFetcher fetcher) {
         this.fetchers.put(name, fetcher);
+        return this;
+    }
+
+    public SchemaFetcher getDefaultSchemaFetcher() {
+        return this.fetchers.get("defaultUriFetcher");
+    }
+
+    public JsonElementWrapper setDefaultSchemaFetcher(SchemaFetcher fetcher) {
+        this.fetchers.put("defaultUriFetcher", fetcher);
         return this;
     }
 

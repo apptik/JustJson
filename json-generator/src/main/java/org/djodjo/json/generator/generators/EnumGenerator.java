@@ -19,14 +19,14 @@ package org.djodjo.json.generator.generators;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
-import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.schema.Schema;
 
 public class EnumGenerator extends Generator {
-    public EnumGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+    public EnumGenerator(Schema schema, GeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public EnumGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public EnumGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 
