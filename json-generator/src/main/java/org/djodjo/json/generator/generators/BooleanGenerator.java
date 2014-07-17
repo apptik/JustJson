@@ -20,15 +20,15 @@ import org.djodjo.json.JsonBoolean;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
-import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.schema.Schema;
 
 public class BooleanGenerator extends Generator {
 
-    public BooleanGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+    public BooleanGenerator(Schema schema, GeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public BooleanGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public BooleanGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 

@@ -30,3 +30,4 @@ public abstract class AbstractValidator implements Validator {
         return getClass().getCanonicalName();
     }
 }
+

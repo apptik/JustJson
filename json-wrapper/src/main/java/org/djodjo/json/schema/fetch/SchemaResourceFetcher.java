@@ -32,9 +32,9 @@ import java.net.URL;
 public class SchemaResourceFetcher implements SchemaFetcher {
 
     @Override
-    public Schema fetch(URI schemaUri) {
+    public Schema fetch(URI targetUri, URI srcOrigUri, URI srcId) {
         Schema res = new SchemaV4();
-        final String resource = schemaUri.getPath();
+        final String resource = targetUri.getPath();
 
         URL url = getClass().getClassLoader().getResource(resource);
         System.out.println("Fetching res (simpple):" + resource);
@@ -50,5 +50,10 @@ public class SchemaResourceFetcher implements SchemaFetcher {
         }
         return res;
 
+    }
+
+    @Override
+    public SchemaFetcher withConfig(SchemaFetcherConfig cfg) {
+        return null;
     }
 }

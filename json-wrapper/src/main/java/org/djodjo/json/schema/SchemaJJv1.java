@@ -61,12 +61,12 @@ public class SchemaJJv1 extends SchemaV5 {
     }
 
     @Override
-    public Schema getEmptySchema() {
-        return new SchemaJJv1().setSchemaFetcher(schemaFetcher);
+    public Schema getEmptySchema(String path) {
+        return new SchemaJJv1().setSchemaFetcher(schemaFetcher).setOrigSrc(this.origSrc.resolve(path));
     }
 
     public Schema setSuperSchema(URI superSchema) {
-        getJson().put("extends", getSchemaFetcher().fetch(superSchema));
+        getJson().put("extends", getSchemaFetcher().fetch(superSchema, null,null));
         return this;
     }
 
@@ -81,7 +81,7 @@ public class SchemaJJv1 extends SchemaV5 {
     }
 
     public Schema getExtends() {
-        return (Schema)getEmptySchema().wrap(getJson().optJsonObject("extends"));
+        return (Schema)getEmptySchema("extends").wrap(getJson().optJsonObject("extends"));
     }
 
 

@@ -8,12 +8,13 @@ import org.djodjo.json.Validator;
 import org.djodjo.json.schema.fetch.SchemaFetcher;
 import org.djodjo.json.schema.fetch.SchemaUriFetcher;
 import org.djodjo.json.wrapper.JsonElementWrapper;
-import org.djodjo.json.wrapper.JsonObjectArrayWrapper;
 import org.djodjo.json.wrapper.JsonObjectWrapper;
 import org.djodjo.json.wrapper.JsonStringArrayWrapper;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Map;
+
 //TODO BIG cleanup
 public abstract class Schema extends JsonObjectWrapper {
 
@@ -126,7 +127,7 @@ public abstract class Schema extends JsonObjectWrapper {
     public Schema(URI schemaRef) {
         this();
         origSrc = schemaRef;
-        this.wrap(new SchemaUriFetcher().fetch(origSrc).getJson());
+        this.wrap(new SchemaUriFetcher().fetch(origSrc, null, null).getJson());
     }
 
     public SchemaFetcher getSchemaFetcher() {
@@ -138,12 +139,21 @@ public abstract class Schema extends JsonObjectWrapper {
         return (O)this;
     }
 
+    public <O extends Schema> O setOrigSrc(URI origSrc) {
+        this.origSrc = origSrc;
+        return (O)this;
+    }
+
+    public URI getOrigSrc() {
+        return origSrc;
+    }
+
 
     /**
      *
      * @return empty schema from the same version as the current one
      */
-    public abstract Schema getEmptySchema();
+    public abstract Schema getEmptySchema(String path);
 
     @Override
     public JsonElementWrapper setJsonSchemaUri(URI uri) {
@@ -157,16 +167,63 @@ public abstract class Schema extends JsonObjectWrapper {
         return (T) schema;
     }
 
+    public Schema mergeAllRefs(){
+
+        if(getItems()!=null) {
+            for (Schema vals : getItems()) {
+                vals.mergeAllRefs();
+            }
+        }
+        if(getProperties()!=null) {
+            for (Map.Entry<String, Schema> vals : getProperties()) {
+                vals.getValue().mergeAllRefs();
+            }
+        }
+        if(getPatternProperties()!=null) {
+            for (Map.Entry<String, Schema> vals : getPatternProperties()) {
+                vals.getValue().mergeAllRefs();
+            }
+        }
+        if(getOneOf()!=null) {
+            for (Schema vals : getOneOf()) {
+                vals.mergeAllRefs();
+            }
+        }
+        if(getAllOf()!=null) {
+            for (Schema vals : getAllOf()) {
+                vals.mergeAllRefs();
+            }
+        }
+        if(getAnyOf()!=null) {
+            for (Schema vals : getAnyOf()) {
+                vals.mergeAllRefs();
+            }
+        }
+        if(getNot()!=null) {
+            getNot().mergeAllRefs();
+        }
+
+        return this;
+    }
+
     private void mergeWithRef() {
         if(this.getRef()!=null && !this.getRef().trim().isEmpty()) {
             //populate values
             //if there are title and description already do not change those.
             Schema refSchema;
             if(schemaFetcher==null) schemaFetcher = new SchemaUriFetcher();
-            refSchema = schemaFetcher.fetch(URI.create(this.getRef()));
+            refSchema = schemaFetcher.fetch(URI.create(this.getRef()), origSrc, URI.create(getId()));
 
+            //TODO not really according to the specs, however specs not really clear what "$ref should precede all other..." means
             if (refSchema!=null) {
-                getJson().merge(refSchema.getJson());
+                setOrigSrc(refSchema.origSrc);
+                setSchemaFetcher(refSchema.getSchemaFetcher());
+                //we want to keep title and description for the top schema (these does not affect validation in any way)
+                String oldTitle = getTitle();
+                String oldDesc = getDescription();
+                getJson().clear();
+                merge(refSchema);
+                getJson().put("title", oldTitle).put("description", oldDesc);
             }
         }
     }
@@ -262,17 +319,17 @@ public abstract class Schema extends JsonObjectWrapper {
         return getJson().optBoolean("additionalItems", true);
     }
 
-    public ArrayList<Schema> getItems() {
-        ArrayList<Schema> res;
+    public SchemaList getItems() {
+        SchemaList res;
         if(getJson().opt("items") == null) {
             return null;
         }
         else if(getJson().opt("items").isJsonArray()) {
-            return ((JsonObjectArrayWrapper<Schema>)new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("type"))).getJsonWrappersList();
+            return new SchemaList(getEmptySchema("items")).wrap(getJson().optJsonArray("items"));
         }
         else {
-            res = new ArrayList<Schema>();
-            res.add((Schema)getEmptySchema().wrap(getJson().optJsonObject("items")));
+            res = new SchemaList(getEmptySchema("items"));
+            res.add((Schema)getEmptySchema("items/0").wrap(getJson().optJsonObject("items")));
         }
         return res;
     }
@@ -312,11 +369,11 @@ public abstract class Schema extends JsonObjectWrapper {
 
     public SchemaMap getProperties() {
         if(!getJson().has("properties")) return null;
-        return new SchemaMap(this.getEmptySchema()).wrap(getJson().optJsonObject("properties"));
+        return new SchemaMap(this.getEmptySchema("properties")).wrap(getJson().optJsonObject("properties"));
     }
 
     public SchemaMap getPatternProperties() {
-        return new SchemaMap(this.getEmptySchema()).wrap(getJson().optJsonObject("patternProperties"));
+        return new SchemaMap(this.getEmptySchema("patternProperties")).wrap(getJson().optJsonObject("patternProperties"));
     }
 
     public JsonObject getDependencies() {
@@ -340,20 +397,26 @@ public abstract class Schema extends JsonObjectWrapper {
         return res;
     }
 
-    public JsonObjectArrayWrapper<Schema> getAllOf() {
-        return new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("allOf"), (Class)this.getClass());
+
+    //TODO will not pass memebers. use smth similar to SchemaMap
+    public SchemaList getAllOf() {
+        if(!getJson().has("allOf")) return null;
+        return new SchemaList(getEmptySchema("allOf")).wrap(getJson().optJsonArray("allOf"));
     }
 
-    public JsonObjectArrayWrapper<Schema> getAnyOf() {
-        return new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("anyOf"), (Class)this.getClass());
+    public SchemaList getAnyOf() {
+        if(!getJson().has("anyOf")) return null;
+        return new SchemaList(getEmptySchema("anyOf")).wrap(getJson().optJsonArray("anyOf"));
     }
 
-    public JsonObjectArrayWrapper<Schema> getOneOf() {
-        return new JsonObjectArrayWrapper<Schema>().wrap(getJson().optJsonArray("oneOf"), (Class)this.getClass() );
+    public SchemaList getOneOf() {
+        if(!getJson().has("oneOf")) return null;
+        return new SchemaList(getEmptySchema("oneOf")).wrap(getJson().optJsonArray("oneOf"));
     }
 
     public Schema getNot() {
-        return (Schema)getEmptySchema().wrap(getJson().optJsonObject("not"));
+        if(!getJson().has("not")) return null;
+        return (Schema)getEmptySchema("not").wrap(getJson().optJsonObject("not"));
     }
 
 }

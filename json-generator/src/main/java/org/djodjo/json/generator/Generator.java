@@ -27,12 +27,15 @@ import org.djodjo.json.generator.generators.ObjectGenerator;
 import org.djodjo.json.generator.generators.RangeGenerator;
 import org.djodjo.json.generator.generators.StringGenerator;
 import org.djodjo.json.schema.Schema;
-import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.schema.SchemaList;
 import org.djodjo.json.util.LinkedTreeMap;
 import org.hamcrest.Matcher;
 
 import java.util.Random;
 
+import static org.djodjo.json.generator.matcher.SchemaCompositeMatchers.hasAllOf;
+import static org.djodjo.json.generator.matcher.SchemaCompositeMatchers.hasAnyOf;
+import static org.djodjo.json.generator.matcher.SchemaCompositeMatchers.hasOneOf;
 import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isArrayType;
 import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isBooleanType;
 import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isEnum;
@@ -45,7 +48,7 @@ import static org.djodjo.json.generator.matcher.SchemaDefMatchers.isStringType;
 
 public class Generator {
 
-    protected SchemaV4 schema;
+    protected Schema schema;
     protected GeneratorConfig configuration ;
     //valid for elements which parent is of type Object
     protected String propertyName;
@@ -64,25 +67,72 @@ public class Generator {
         commonPropertyMatchers.put(isRangeObject(), RangeGenerator.class);
         commonPropertyMatchers.put(isObjectType(), ObjectGenerator.class);
         commonPropertyMatchers.put(isArrayType(), ArrayGenerator.class);
+
     }
 
-    public Generator(SchemaV4 schema, GeneratorConfig configuration) {
+    public Generator(Schema schema, GeneratorConfig configuration) {
         this.schema = schema;
         this.configuration = configuration;
+        schema.mergeAllRefs();
+        mergeComposites();
+
     }
 
-    public Generator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public Generator(Schema schema, GeneratorConfig configuration, String propertyName) {
         this(schema, configuration);
         this.propertyName = propertyName;
+        schema.mergeAllRefs();
+        mergeComposites();
     }
 
+
+    private void mergeComposites() {
+        mergeOneOf();
+        mergeAllOf();
+        mergeAnyOf();
+    }
+
+
+    //TODO dirty and incorrect for overlaps
+    private void mergeOneOf() {
+        if (hasOneOf().matches(schema)) {
+            SchemaList list = schema.getOneOf();
+            Schema choice = list.get(rnd.nextInt(list.size()));
+            schema.getJson().remove("oneOf");
+            schema.merge(choice);
+        }
+    }
+
+    private void mergeAnyOf() {
+        if(hasAnyOf().matches(schema)) {
+            SchemaList list =  schema.getAnyOf();
+            Schema choice = list.get(rnd.nextInt(list.size()));
+            schema.getJson().remove("anyOf");
+            schema.merge(choice);
+        }
+    }
+
+    private void mergeAllOf() {
+        if (hasAllOf().matches(schema)) {
+            SchemaList list = schema.getAllOf();
+            schema.getJson().remove("allOf");
+            for (Schema subSchema : list) {
+                schema.merge(subSchema);
+            }
+        }
+    }
+
+
+        //TODO make a choice for multi typed elements
     public JsonElement generate() {
-        if(schema.getType().get(0).equals(SchemaV4.TYPE_OBJECT)) {
+        if(schema.getType().get(0).equals(Schema.TYPE_OBJECT)) {
             return new ObjectGenerator(schema, configuration).generate();
         }
-        if(schema.getType().get(0).equals(SchemaV4.TYPE_ARRAY)) {
+        if(schema.getType().get(0).equals(Schema.TYPE_ARRAY)) {
             return new ArrayGenerator(schema, configuration).generate();
         }
+
+
 
         throw new UnsupportedOperationException("Use Main generator only for full valid JSON object or array.");
     }

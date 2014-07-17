@@ -19,14 +19,14 @@ package org.djodjo.json.generator.generators;
 
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
-import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.schema.Schema;
 
 public class RangeGenerator extends Generator {
-    public RangeGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+    public RangeGenerator(Schema schema, GeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public RangeGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public RangeGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 }

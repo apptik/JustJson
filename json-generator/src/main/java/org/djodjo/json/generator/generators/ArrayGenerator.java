@@ -21,28 +21,27 @@ import org.djodjo.json.JsonElement;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
 import org.djodjo.json.schema.Schema;
-import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.schema.SchemaList;
 import org.hamcrest.Matcher;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Map;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ArrayGenerator extends Generator {
 
-    public ArrayGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+    public ArrayGenerator(Schema schema, GeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public ArrayGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public ArrayGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 
     public JsonArray generate() {
         JsonArray res = new JsonArray();
-        ArrayList<Schema> items = schema.getItems();
+        SchemaList items = schema.getItems();
         JsonElement  newEl;
         int minItems = schema.getMinItems();
         int maxItems = schema.getMaxItems();
@@ -78,7 +77,7 @@ public class ArrayGenerator extends Generator {
                     for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                         if (entry.getKey().matches(items.get(0))) {
                             try {
-                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class, String.class).newInstance(items.get(0), configuration, propertyName);
+                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class, String.class).newInstance(items.get(0), configuration, propertyName);
                                 newEl = gen.generate();
                                 if (newEl != null) {
                                     res.put(newEl);
@@ -102,7 +101,7 @@ public class ArrayGenerator extends Generator {
                     for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                         if (entry.getKey().matches(itemSchema)) {
                             try {
-                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class).newInstance(itemSchema, configuration);
+                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class).newInstance(itemSchema, configuration);
                                 newEl = gen.generate();
                                 if (newEl != null) {
                                     res.put(newEl);

@@ -42,7 +42,7 @@ public class JsonSchemaReourceFetcherTest {
     public void testResFetch() throws Exception {
         Schema schemaSimple = new SchemaV4().wrap(JsonElement.readFrom("{\"key\": \"value\"}"));
         SchemaResourceFetcher srf = new SchemaResourceFetcher();
-        Schema schema = srf.fetch(URI.create("fetch/simple.json"));
+        Schema schema = srf.fetch(URI.create("fetch/simple.json"), null,null);
         assertEquals(schemaSimple.getJson(), schema.getJson());
     }
 

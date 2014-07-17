@@ -22,18 +22,18 @@ import org.djodjo.json.wrapper.TypedJsonObject;
 
 public class SchemaMap extends TypedJsonObject<Schema> {
 
-    //blank schema used to
+    //blank schema used to obtain sub-schemas
     public Schema schema;
 
     public SchemaMap(Schema schema) {
         this.schema = schema;
     }
 
-
     @Override
-    protected Schema get(JsonElement jsonElement) {
-        return (Schema) schema.getEmptySchema().wrap(jsonElement);
+    protected Schema get(JsonElement jsonElement, String key) {
+        return (Schema) schema.getEmptySchema(key).wrap(jsonElement);
     }
+
 
     @Override
     protected JsonElement to(Schema value) {

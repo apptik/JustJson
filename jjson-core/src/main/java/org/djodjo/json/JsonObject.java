@@ -83,7 +83,7 @@ import java.util.Set;
  * <i>Effective Java</i> Item 17, "Design and Document or inheritance or else
  * prohibit it" for further information.
  */
-public class JsonObject extends JsonElement implements Iterable<Map.Entry<String,JsonElement>> {
+public final class JsonObject extends JsonElement implements Iterable<Map.Entry<String,JsonElement>> {
 
     private final LinkedTreeMap<String, JsonElement> nameValuePairs = new LinkedTreeMap<String, JsonElement>();
 
@@ -327,7 +327,7 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
     public JsonElement get(String name) throws JsonException {
         JsonElement result = nameValuePairs.get(name);
         if (result == null) {
-            throw new JsonException("No value for " + name);
+            throw new JsonException("No value for " + name + ", in: " + this.toString());
         }
         return result;
     }
@@ -784,6 +784,11 @@ public class JsonObject extends JsonElement implements Iterable<Map.Entry<String
                 curr.asJsonObject().merge(anotherEntry.getValue().asJsonObject());
             }
         }
+        return this;
+    }
+
+    public JsonObject clear() {
+        nameValuePairs.clear();
         return this;
     }
 }

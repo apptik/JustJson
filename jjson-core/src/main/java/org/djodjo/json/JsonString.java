@@ -20,7 +20,7 @@ package org.djodjo.json;
 
 import java.io.IOException;
 
-public class JsonString extends JsonElement {
+public final class JsonString extends JsonElement {
 
     private final String value;
 

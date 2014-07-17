@@ -20,7 +20,7 @@ import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonString;
 import org.djodjo.json.generator.Generator;
 import org.djodjo.json.generator.GeneratorConfig;
-import org.djodjo.json.schema.SchemaV4;
+import org.djodjo.json.schema.Schema;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,11 +28,11 @@ import java.util.ArrayList;
 
 public class UriGenerator extends Generator {
 
-    public UriGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+    public UriGenerator(Schema schema, GeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public UriGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public UriGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 

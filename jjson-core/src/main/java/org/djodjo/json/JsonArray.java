@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 // Note: this class was written without inspecting the non-free org.json sourcecode.
 
@@ -45,13 +46,9 @@ import java.util.List;
  * JsonNull}. In particular, {@code get} fails if the requested index
  * holds the null reference, but succeeds if it holds {@code JsonNull}.
  *
- * <p>Instances of this class are not thread safe. Although this class is
- * nonfinal, it was not designed for inheritance and should not be subclassed.
- * In particular, self-use by overridable methods is not specified. See
- * <i>Effective Java</i> Item 17, "Design and Document or inheritance or else
- * prohibit it" for further information.
+ * <p>Instances of this class are not thread safe.
  */
-public class JsonArray extends JsonElement implements Iterable<JsonElement> {
+public final class JsonArray extends JsonElement implements List<JsonElement> {
 
     private final List<JsonElement> values;
 
@@ -256,6 +253,16 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
         }
     }
 
+    @Override
+    public JsonElement set(int i, JsonElement jsonElement) {
+        return values.set(i, jsonElement);
+    }
+
+    @Override
+    public void add(int i, JsonElement jsonElement) {
+        values.add(i, jsonElement);
+    }
+
     /**
      * Returns the value at {@code index}, or null if the array has no value
      * at {@code index}.
@@ -276,6 +283,31 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
             return null;
         }
         return values.remove(index);
+    }
+
+    @Override
+    public int indexOf(Object o) {
+        return values.indexOf(o);
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        return values.lastIndexOf(o);
+    }
+
+    @Override
+    public ListIterator<JsonElement> listIterator() {
+        return values.listIterator();
+    }
+
+    @Override
+    public ListIterator<JsonElement> listIterator(int i) {
+        return values.listIterator(i);
+    }
+
+    @Override
+    public List<JsonElement> subList(int i, int i2) {
+        return values.subList(i, i2);
     }
 
     /**
@@ -693,8 +725,73 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
     }
 
     @Override
+    public int size() {
+        return values.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return values.contains(o);
+    }
+
+    @Override
     public Iterator<JsonElement> iterator() {
         return values.iterator();
+    }
+
+    @Override
+    public Object[] toArray() {
+        return values.toArray();
+    }
+
+    @Override
+    public <T> T[] toArray(T[] ts) {
+        return values.toArray(ts);
+    }
+
+    @Override
+    public boolean add(JsonElement jsonElement) {
+        return values.add(jsonElement);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return values.remove(o);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> objects) {
+        return values.containsAll(objects);
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends JsonElement> jsonElements) {
+        return values.addAll(jsonElements);
+    }
+
+    @Override
+    public boolean addAll(int i, Collection<? extends JsonElement> jsonElements) {
+        return addAll(jsonElements);
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> objects) {
+        return values.removeAll(objects);
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> objects) {
+        return values.retainAll(objects);
+    }
+
+    @Override
+    public void clear() {
+        values.clear();
     }
 
     @Override
@@ -702,11 +799,5 @@ public class JsonArray extends JsonElement implements Iterable<JsonElement> {
         return "array";
     }
 
-    /**
-     * Returns true if this array contains {@code element}
-     */
-    public boolean contains(JsonElement element) {
-        return values.contains(element);
-    }
 
 }

@@ -25,7 +25,6 @@ import org.djodjo.json.generator.generators.formats.DateTimeGenerator;
 import org.djodjo.json.generator.generators.formats.TimeGenerator;
 import org.djodjo.json.generator.generators.formats.UriGenerator;
 import org.djodjo.json.schema.Schema;
-import org.djodjo.json.schema.SchemaV4;
 import org.djodjo.json.util.LinkedTreeMap;
 import org.hamcrest.Matcher;
 
@@ -49,11 +48,11 @@ public class StringGenerator extends Generator {
         stringFormatMatchers.put(isUriFormat(), UriGenerator.class);
     }
 
-    public StringGenerator(SchemaV4 schema, GeneratorConfig configuration) {
+    public StringGenerator(Schema schema, GeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public StringGenerator(SchemaV4 schema, GeneratorConfig configuration, String propertyName) {
+    public StringGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 
@@ -66,7 +65,7 @@ public class StringGenerator extends Generator {
                 if (entry.getKey().matches(schema)) {
                     Generator gen = null;
                     try {
-                        gen = (Generator)entry.getValue().getDeclaredConstructor(SchemaV4.class, GeneratorConfig.class, String.class).newInstance(schema, configuration, propertyName);
+                        gen = (Generator)entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class, String.class).newInstance(schema, configuration, propertyName);
                     } catch (InstantiationException e) {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
