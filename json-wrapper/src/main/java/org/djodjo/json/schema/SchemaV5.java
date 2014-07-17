@@ -7,6 +7,8 @@ import org.djodjo.json.Validator;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.validation.SchemaV5Validator;
 
+import java.util.Map;
+
 public class SchemaV5 extends Schema {
 
     public SchemaV5() {
@@ -78,57 +80,59 @@ public class SchemaV5 extends Schema {
     }
 
     //replaces title if not object
-    public SchemaV5 addTitle(String title, String locale) {
+    public <O extends SchemaV5> O addTitle(String title, String locale) {
         JsonElement tit = getJson().opt("title");
         if(tit!=null && !tit.isJsonObject()) {
             getJson().remove("title");
-            try {
-                getJson().put("title", new JsonObject());
-            } catch (JsonException e) {
-                e.printStackTrace();
-            }
+            getJson().put("title", new JsonObject());
+
         }  else if(tit==null) {
-            try {
-                getJson().put("title", new JsonObject());
-            } catch (JsonException e) {
-                e.printStackTrace();
-            }
+            getJson().put("title", new JsonObject());
         }
 
+        getJson().getJsonObject("title").put(locale, title);
 
-        try {
-            getJson().optJsonObject("title").put(locale, title);
-        } catch (JsonException e) {
-            e.printStackTrace();
-        }
-        return this;
+        return (O)this;
     }
 
-    //replaces title if not object
-    public SchemaV5 addDescription(String title, String locale) {
+    public <O extends SchemaV5> O addTitles(Map<String, String>  titles) {
+        JsonElement tit = getJson().opt("title");
+        if(tit!=null && !tit.isJsonObject()) {
+            getJson().remove("title");
+            getJson().put("title", titles);
+
+        }  else if(tit==null) {
+            getJson().put("title", titles);
+        }
+
+        return (O)this;
+    }
+
+    //replaces description if not object
+    public <O extends SchemaV5> O addDescription(String title, String locale) {
         JsonElement tit = getJson().opt("description");
         if(tit!=null && !tit.isJsonObject()) {
             getJson().remove("description");
-            try {
-                getJson().put("description", new JsonObject());
-            } catch (JsonException e) {
-                e.printStackTrace();
-            }
+            getJson().put("description", new JsonObject());
         }  else if(tit==null) {
-            try {
-                getJson().put("description", new JsonObject());
-            } catch (JsonException e) {
-                e.printStackTrace();
-            }
+            getJson().put("description", new JsonObject());
         }
+        getJson().getJsonObject("description").put(locale, title);
+        return (O)this;
+    }
 
+    public <O extends SchemaV5> O addDescriptions(Map<String, String> descriptions) {
+        JsonElement tit = getJson().opt("description");
+        if(tit!=null && !tit.isJsonObject()) {
+            getJson().remove("description");
+            getJson().put("description", descriptions);
 
-        try {
-            getJson().optJsonObject("description").put(locale, title);
-        } catch (JsonException e) {
-            e.printStackTrace();
+        }  else if(tit==null) {
+
+            getJson().put("description", descriptions);
+
         }
-        return this;
+        return (O)this;
     }
 
 
