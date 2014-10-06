@@ -317,7 +317,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
      * @throws JsonException if the value at {@code index} doesn't exist or
      *     cannot be coerced to a boolean.
      */
-    public boolean getBoolean(int index, boolean strict) throws JsonException {
+    public Boolean getBoolean(int index, boolean strict) throws JsonException {
         JsonElement el = get(index);
         Boolean res = null;
         if (strict && !el.isBoolean()) {
@@ -334,7 +334,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
         return res;
     }
 
-    public boolean getBoolean(int index) throws JsonException {
+    public Boolean getBoolean(int index) throws JsonException {
         return getBoolean(index, false);
     }
 
@@ -342,19 +342,19 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
      * Returns the value at {@code index} if it exists and is a boolean or can
      * be coerced to a boolean. Returns false otherwise.
      */
-    public boolean optBoolean(int index) {
-        return optBoolean(index, false);
+    public Boolean optBoolean(int index) {
+        return optBoolean(index, null);
     }
 
     /**
      * Returns the value at {@code index} if it exists and is a boolean or can
      * be coerced to a boolean. Returns {@code fallback} otherwise.
      */
-    public boolean optBoolean(int index, boolean fallback) {
+    public Boolean optBoolean(int index, Boolean fallback) {
         return optBoolean(index, fallback, false);
     }
 
-    public boolean optBoolean(int index, boolean fallback, boolean strict) {
+    public Boolean optBoolean(int index, Boolean fallback, boolean strict) {
         try {
             return getBoolean(index, strict);
         } catch (JsonException e) {
@@ -369,7 +369,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
      * @throws JsonException if the value at {@code index} doesn't exist or
      *     cannot be coerced to a double.
      */
-    public double getDouble(int index, boolean strict) throws JsonException {
+    public Double getDouble(int index, boolean strict) throws JsonException {
         JsonElement el = get(index);
         Double res = null;
         if (strict && !el.isNumber()) {
@@ -386,7 +386,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
         return res;
     }
 
-    public double getDouble(int index) throws JsonException {
+    public Double getDouble(int index) throws JsonException {
         return getDouble(index, false);
     }
 
@@ -394,19 +394,19 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
      * Returns the value at {@code index} if it exists and is a double or can
      * be coerced to a double. Returns {@code NaN} otherwise.
      */
-    public double optDouble(int index) {
-        return optDouble(index, Double.NaN);
+    public Double optDouble(int index) {
+        return optDouble(index, null);
     }
 
     /**
      * Returns the value at {@code index} if it exists and is a double or can
      * be coerced to a double. Returns {@code fallback} otherwise.
      */
-    public double optDouble(int index, double fallback) {
+    public Double optDouble(int index, Double fallback) {
         return optDouble(index, fallback, false);
     }
 
-    public double optDouble(int index, double fallback, boolean strict) {
+    public Double optDouble(int index, Double fallback, boolean strict) {
         try {
             return getDouble(index, strict);
         } catch (JsonException e) {
@@ -421,7 +421,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
      * @throws JsonException if the value at {@code index} doesn't exist or
      *     cannot be coerced to a int.
      */
-    public int getInt(int index) throws JsonException {
+    public Integer getInt(int index) throws JsonException {
         return getInt(index, false);
    }
 
@@ -429,7 +429,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
      * Returns the value at {@code index} if it exists and is an int or
      * can be coerced to an int. Returns 0 otherwise.
      */
-    public int getInt(int index, boolean strict) throws JsonException {
+    public Integer getInt(int index, boolean strict) throws JsonException {
         JsonElement el = get(index);
         Integer res = null;
         if (strict && !el.isNumber()) {
@@ -447,19 +447,19 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
     }
 
 
-    public int optInt(int index) {
-        return optInt(index, 0);
+    public Integer optInt(int index) {
+        return optInt(index, null);
     }
 
     /**
      * Returns the value at {@code index} if it exists and is an int or
      * can be coerced to an int. Returns {@code fallback} otherwise.
      */
-    public int optInt(int index, int fallback) {
+    public Integer optInt(int index, Integer fallback) {
         return optInt(index, fallback, false);
     }
 
-    public int optInt(int index, int fallback, boolean strict) {
+    public Integer optInt(int index, Integer fallback, boolean strict) {
         try {
             return getInt(index, strict);
         } catch (JsonException e) {
@@ -475,7 +475,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
      *     cannot be coerced to a long.
      */
 
-    public long getLong(int index, boolean strict) throws JsonException {
+    public Long getLong(int index, boolean strict) throws JsonException {
         JsonElement el = get(index);
         Long res = null;
         if (strict && !el.isNumber()) {
@@ -492,7 +492,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
         return res;
     }
 
-    public long getLong(int index) throws JsonException {
+    public Long getLong(int index) throws JsonException {
         return getLong(index, false);
     }
 
@@ -500,20 +500,20 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
      * Returns the value at {@code index} if it exists and is a long or
      * can be coerced to a long. Returns 0 otherwise.
      */
-    public long optLong(int index) {
-        return optLong(index, 0L);
+    public Long optLong(int index) {
+        return optLong(index, null);
     }
 
     /**
      * Returns the value at {@code index} if it exists and is a long or
      * can be coerced to a long. Returns {@code fallback} otherwise.
      */
-    public long optLong(int index, long fallback) {
+    public Long optLong(int index, Long fallback) {
         return optLong(index, fallback, false);
     }
 
 
-    public long optLong(int index, long fallback, boolean strict) {
+    public Long optLong(int index, Long fallback, boolean strict) {
         try {
             return getLong(index, strict);
         } catch (JsonException e) {
@@ -548,7 +548,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
      * necessary. Returns the empty string if no such value exists.
      */
     public String optString(int index) {
-        return optString(index, "");
+        return optString(index, null);
     }
 
     /**

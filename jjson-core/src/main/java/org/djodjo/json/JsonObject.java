@@ -347,7 +347,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
      *     to a boolean.
      */
-    public boolean getBoolean(String name, boolean strict) throws JsonException {
+    public Boolean getBoolean(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
         Boolean res = null;
         if (strict && !el.isBoolean()) {
@@ -379,19 +379,19 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * Returns the value mapped by {@code name} if it exists and is a boolean or
      * can be coerced to a boolean, or false otherwise.
      */
-    public boolean optBoolean(String name) {
-        return optBoolean(name, false);
+    public Boolean optBoolean(String name) {
+        return optBoolean(name, null);
     }
 
     /**
      * Returns the value mapped by {@code name} if it exists and is a boolean
      * or {@code fallback} otherwise.
      */
-    public boolean optBoolean(String name, boolean fallback) {
+    public Boolean optBoolean(String name, Boolean fallback) {
         return optBoolean(name, fallback, true);
     }
 
-    public boolean optBoolean(String name, boolean fallback, boolean strict) {
+    public Boolean optBoolean(String name, Boolean fallback, boolean strict) {
         try {
             return getBoolean(name, strict);
         } catch (JsonException e) {
@@ -406,7 +406,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
      *     to a double.
      */
-    public double getDouble(String name, boolean strict) throws JsonException {
+    public Double getDouble(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
         Double res = null;
         if (strict && !el.isNumber()) {
@@ -423,7 +423,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         return res;
     }
 
-    public double getDouble(String name) throws JsonException {
+    public Double getDouble(String name) throws JsonException {
         return getDouble(name, true);
     }
 
@@ -431,19 +431,19 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * Returns the value mapped by {@code name} if it exists and is a double or
      * can be coerced to a double, or {@code NaN} otherwise.
      */
-    public double optDouble(String name) {
-        return optDouble(name, Double.NaN);
+    public Double optDouble(String name) {
+        return optDouble(name, null);
     }
 
     /**
      * Returns the value mapped by {@code name} if it exists and is a double or
      * can be coerced to a double, or {@code fallback} otherwise.
      */
-    public double optDouble(String name, double fallback) {
+    public Double optDouble(String name, Double fallback) {
         return optDouble(name, fallback, true);
     }
 
-    public double optDouble(String name, double fallback, boolean strict) {
+    public Double optDouble(String name, Double fallback, boolean strict) {
         try {
             return getDouble(name, strict);
         } catch (JsonException e) {
@@ -457,7 +457,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
      *     to an int.
      */
-    public int getInt(String name, boolean strict) throws JsonException {
+    public Integer getInt(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
         Integer res = null;
         if (strict && !el.isNumber()) {
@@ -474,7 +474,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         return res;
     }
 
-    public int getInt(String name) throws JsonException {
+    public Integer getInt(String name) throws JsonException {
         return getInt(name, true);
     }
 
@@ -482,19 +482,19 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * Returns the value mapped by {@code name} if it exists and is an int or
      * can be coerced to an int, or 0 otherwise.
      */
-    public int optInt(String name) {
-        return optInt(name, 0);
+    public Integer optInt(String name) {
+        return optInt(name, null);
     }
 
     /**
      * Returns the value mapped by {@code name} if it exists and is an int or
      * can be coerced to an int, or {@code fallback} otherwise.
      */
-    public int optInt(String name, int fallback) {
+    public Integer optInt(String name, Integer fallback) {
         return optInt(name, fallback, true);
     }
 
-    public int optInt(String name, int fallback, boolean strict) {
+    public Integer optInt(String name, Integer fallback, boolean strict) {
         try {
             return getInt(name, strict);
         } catch (JsonException e) {
@@ -511,7 +511,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
      *     to a long.
      */
-    public long getLong(String name, boolean strict) throws JsonException {
+    public Long getLong(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
         Long res = null;
         if (strict && !el.isNumber()) {
@@ -528,7 +528,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         return res;
     }
 
-    public long getLong(String name) throws JsonException {
+    public Long getLong(String name) throws JsonException {
         return getLong(name, true);
     }
 
@@ -537,8 +537,8 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * can be coerced to a long, or 0 otherwise. Note that Util represents numbers as doubles,
      * so this is <a href="#lossy">lossy</a>; use strings to transfer numbers via Util.
      */
-    public long optLong(String name) {
-        return optLong(name, 0L);
+    public Long optLong(String name) {
+        return optLong(name, null);
     }
 
     /**
@@ -547,11 +547,11 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * numbers as doubles, so this is <a href="#lossy">lossy</a>; use strings to transfer
      * numbers via Util.
      */
-    public long optLong(String name, long fallback) {
+    public Long optLong(String name, Long fallback) {
         return optLong(name, fallback, true);
     }
 
-    public long optLong(String name, long fallback, boolean strict) {
+    public Long optLong(String name, Long fallback, boolean strict) {
         try {
             return getLong(name, strict);
         } catch (JsonException e) {
@@ -586,7 +586,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * necessary, or the empty string if no such mapping exists.
      */
     public String optString(String name) {
-        return optString(name, "");
+        return optString(name, null);
     }
 
     /**
