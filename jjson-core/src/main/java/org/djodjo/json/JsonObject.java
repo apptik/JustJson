@@ -371,7 +371,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
      *     to a boolean.
      */
-    public boolean getBoolean(String name) throws JsonException {
+    public Boolean getBoolean(String name) throws JsonException {
         return getBoolean(name, true);
     }
 

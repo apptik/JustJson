@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+
 import junit.framework.TestCase;
 
 import org.djodjo.json.JsonArray;
@@ -57,8 +59,8 @@ public class JsonArrayTest extends TestCase {
         // out of bounds is co-opted with defaulting
         assertTrue(array.isNull(0));
         assertNull(array.opt(0));
-        assertFalse(array.optBoolean(0));
-        assertTrue(array.optBoolean(0, true));
+        assertNull(array.optBoolean(0));
+        assertTrue(array.optBoolean(0, Boolean.TRUE));
 
         // bogus (but documented) behaviour: returns null rather than an empty object!
         assertNull(array.toJsonObject(new JsonArray()));
@@ -71,14 +73,14 @@ public class JsonArrayTest extends TestCase {
         assertTrue(a.equals(b));
         assertEquals("equals() not consistent with hashCode()", a.hashCode(), b.hashCode());
 
-        a.put(true);
-        a.put(false);
-        b.put(true);
-        b.put(false);
+        a.put(Boolean.TRUE);
+        a.put(Boolean.FALSE);
+        b.put(Boolean.TRUE);
+        b.put(Boolean.FALSE);
         assertTrue(a.equals(b));
         assertEquals(a.hashCode(), b.hashCode());
 
-        b.put(true);
+        b.put(Boolean.TRUE);
         assertFalse(a.equals(b));
         assertTrue(a.hashCode() != b.hashCode());
     }
@@ -86,11 +88,11 @@ public class JsonArrayTest extends TestCase {
     @Test
     public void testBooleans() throws JsonException {
         JsonArray array = new JsonArray();
-        array.put(true);
-        array.put(false);
-        array.put(2, false);
-        array.put(3, false);
-        array.put(2, true);
+        array.put(Boolean.TRUE);
+        array.put(Boolean.FALSE);
+        array.put(2, Boolean.FALSE);
+        array.put(3, Boolean.FALSE);
+        array.put(2, Boolean.TRUE);
         assertEquals("[true,false,true,false]", array.toString());
         assertEquals(4, array.length());
         assertTrue(array.getBoolean(0));
@@ -101,22 +103,22 @@ public class JsonArrayTest extends TestCase {
         assertFalse(array.isNull(1));
         assertFalse(array.isNull(2));
         assertFalse(array.isNull(3));
-        assertEquals(true, array.optBoolean(0));
-        assertEquals(false, array.optBoolean(1, true));
-        assertEquals(true, array.optBoolean(2, false));
-        assertEquals(false, array.optBoolean(3));
+        assertEquals(Boolean.TRUE, array.optBoolean(0));
+        assertEquals(Boolean.FALSE, array.optBoolean(1, Boolean.TRUE));
+        assertEquals(Boolean.TRUE, array.optBoolean(2, Boolean.FALSE));
+        assertEquals(Boolean.FALSE, array.optBoolean(3));
         assertEquals("true", array.getString(0));
         assertEquals("false", array.getString(1));
         assertEquals("true", array.optString(2));
         assertEquals("false", array.optString(3, "x"));
 
         JsonArray other = new JsonArray();
-        other.put(true);
-        other.put(false);
-        other.put(true);
-        other.put(false);
+        other.put(Boolean.TRUE);
+        other.put(Boolean.FALSE);
+        other.put(Boolean.TRUE);
+        other.put(Boolean.FALSE);
         assertTrue(array.equals(other));
-        other.put(true);
+        other.put(Boolean.TRUE);
         assertFalse(array.equals(other));
 
         other = new JsonArray();
@@ -126,10 +128,10 @@ public class JsonArrayTest extends TestCase {
         other.put("FALSE");
         assertFalse(array.equals(other));
         assertFalse(other.equals(array));
-        assertEquals(true, other.getBoolean(0));
-        assertEquals(false, other.optBoolean(1, true));
-        assertEquals(true, other.optBoolean(2));
-        assertEquals(false, other.getBoolean(3));
+        assertEquals(Boolean.TRUE, other.getBoolean(0));
+        assertEquals(Boolean.FALSE, other.optBoolean(1, Boolean.TRUE));
+        assertEquals(Boolean.TRUE, other.optBoolean(2));
+        assertEquals(Boolean.FALSE, other.getBoolean(3));
     }
 
     // http://code.google.com/p/android/issues/detail?id=16411
@@ -142,8 +144,8 @@ public class JsonArrayTest extends TestCase {
             fail();
         } catch (JsonException expected) {
         }
-        assertEquals(false, array.optBoolean(0));
-        assertEquals(true, array.optBoolean(0, true));
+        assertNull(array.optBoolean(0));
+        assertTrue(array.optBoolean(0, Boolean.TRUE));
     }
 
     @Test
@@ -208,18 +210,18 @@ public class JsonArrayTest extends TestCase {
         assertEquals(array.getDouble(1), 9.223372036854776E18);
         assertEquals(array.getDouble(2), Double.MAX_VALUE);
         assertEquals(array.getDouble(3), -0d);
-        assertEquals(0, array.getLong(0));
-        assertEquals(9223372036854775806L, array.getLong(1));
-        assertEquals(Long.MAX_VALUE, array.getLong(2));
-        assertEquals(0, array.getLong(3));
-        assertEquals(0, array.getInt(0));
-        assertEquals(-2, array.getInt(1));
-        assertEquals(Integer.MAX_VALUE, array.getInt(2));
-        assertEquals(0, array.getInt(3));
+        assertEquals(Long.valueOf(0), array.getLong(0));
+        assertEquals(Long.valueOf(9223372036854775806l), array.getLong(1));
+        assertEquals((Long)Long.MAX_VALUE, array.getLong(2));
+        assertEquals(Long.valueOf(0), array.getLong(3));
+        assertEquals((Integer)0, array.getInt(0));
+        assertEquals(Integer.valueOf(-2), array.getInt(1));
+        assertEquals((Integer)Integer.MAX_VALUE, array.getInt(2));
+        assertEquals(Integer.valueOf(0), array.getInt(3));
         assertEquals(array.opt(0), Double.MIN_VALUE);
         assertEquals(Double.MIN_VALUE, array.optDouble(0));
-        assertEquals(0, array.optLong(0, 1L));
-        assertEquals(0, array.optInt(0, 1));
+        assertEquals(Long.valueOf(0), array.optLong(0, 1L));
+        assertEquals(Integer.valueOf(0), array.optInt(0, 1));
         assertEquals("4.9E-324", array.getString(0));
         assertEquals("9223372036854775806", array.getString(1));
         assertEquals("1.7976931348623157E308", array.getString(2));
@@ -257,22 +259,22 @@ public class JsonArrayTest extends TestCase {
         assertFalse(array.isNull(0));
         assertFalse(array.isNull(3));
 
-        assertEquals(true, array.getBoolean(0));
-        assertEquals(true, array.optBoolean(0));
-        assertEquals(true, array.optBoolean(0, false));
-        assertEquals(0, array.optInt(0));
-        assertEquals(-2, array.optInt(0, -2));
+        assertEquals(Boolean.TRUE, array.getBoolean(0));
+        assertEquals(Boolean.TRUE, array.optBoolean(0));
+        assertEquals(Boolean.TRUE, array.optBoolean(0, Boolean.FALSE));
+        assertNull(array.optInt(0));
+        assertEquals(Integer.valueOf(-2), array.optInt(0, -2));
 
         assertEquals(5.5d, array.getDouble(1));
-        assertEquals(5L, array.getLong(1));
-        assertEquals(5, array.getInt(1));
-        assertEquals(5, array.optInt(1, 3));
+        assertEquals(Long.valueOf(5L), array.getLong(1));
+        assertEquals(Integer.valueOf(5), array.getInt(1));
+        assertEquals(Integer.valueOf(5), array.optInt(1, 3));
 
         // The last digit of the string is a 6 but getLong returns a 7. It's probably parsing as a
         // double and then converting that to a long. This is consistent with JavaScript.
-        assertEquals(9223372036854775807L, array.getLong(2));
+        assertEquals(Long.valueOf(9223372036854775807L), array.getLong(2));
         assertEquals(9.223372036854776E18, array.getDouble(2));
-        assertEquals(Integer.MAX_VALUE, array.getInt(2));
+        assertEquals((Integer)Integer.MAX_VALUE, array.getInt(2));
 
         assertFalse(array.isNull(3));
         try {
@@ -280,7 +282,7 @@ public class JsonArrayTest extends TestCase {
             fail();
         } catch (JsonException e) {
         }
-        assertEquals(Double.NaN, array.optDouble(3));
+        assertNull(array.optDouble(3));
         assertEquals(-1.0d, array.optDouble(3, -1.0d));
     }
 
@@ -292,11 +294,11 @@ public class JsonArrayTest extends TestCase {
 
         JsonArray values = new JsonArray();
         values.put(5.5d);
-        values.put(false);
+        values.put(Boolean.FALSE);
 
         JsonObject object = values.toJsonObject(keys);
         assertEquals(object.get("a"), 5.5d);
-        assertEquals(object.get("b"), false);
+        assertEquals(object.get("b"), Boolean.FALSE);
 
         keys.put(0, "a");
         values.put(0, 11.0d);
@@ -411,10 +413,10 @@ public class JsonArrayTest extends TestCase {
 
     @Test
     public void testCreate() throws JsonException {
-        JsonArray array = new JsonArray(Arrays.asList(5.5, true));
+        JsonArray array = new JsonArray(Arrays.asList(5.5, Boolean.TRUE));
         assertEquals(2, array.length());
         assertEquals(5.5, array.getDouble(0));
-        assertEquals(array.get(1), true);
+        assertEquals(array.get(1), Boolean.TRUE);
         assertEquals("[5.5,true]", array.toString());
     }
 
@@ -422,10 +424,10 @@ public class JsonArrayTest extends TestCase {
     public void testAccessOutOfBounds() throws JsonException {
         JsonArray array = new JsonArray();
         array.put("foo");
-        assertEquals(null, array.opt(3));
-        assertEquals(null, array.opt(-3));
-        assertEquals("", array.optString(3));
-        assertEquals("", array.optString(-3));
+        assertNull(array.opt(3));
+        assertNull(array.opt(-3));
+        assertNull(array.optString(3));
+        assertNull(array.optString(-3));
         try {
             array.get(3);
             fail();

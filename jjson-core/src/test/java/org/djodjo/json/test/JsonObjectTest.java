@@ -102,17 +102,17 @@ public class JsonObjectTest extends TestCase {
         }
         assertFalse(object.has("foo"));
         assertNull(object.opt("foo"));
-        assertEquals(false, object.optBoolean("foo"));
-        assertEquals(true, object.optBoolean("foo", true));
-        assertEquals(Double.NaN, object.optDouble("foo"));
+        assertNull(object.optBoolean("foo"));
+        assertEquals(Boolean.TRUE, object.optBoolean("foo", Boolean.TRUE));
+        assertNull(object.optDouble("foo"));
         assertEquals(5.0, object.optDouble("foo", 5.0));
-        assertEquals(0, object.optInt("foo"));
-        assertEquals(5, object.optInt("foo", 5));
+        assertNull(object.optInt("foo"));
+        assertEquals((Integer)5, object.optInt("foo", 5));
         assertEquals(null, object.optJsonArray("foo"));
         assertEquals(null, object.optJsonObject("foo"));
-        assertEquals(0, object.optLong("foo"));
-        assertEquals(Long.MAX_VALUE-1, object.optLong("foo", Long.MAX_VALUE-1));
-        assertEquals("", object.optString("foo")); // empty string is default!
+        assertNull(object.optLong("foo"));
+        assertEquals(Long.valueOf(Long.MAX_VALUE-1), object.optLong("foo", Long.MAX_VALUE-1));
+        assertNull(object.optString("foo")); // empty string is default!
         assertEquals("bar", object.optString("foo", "bar"));
         assertNull(object.remove("foo"));
     }
@@ -155,16 +155,16 @@ public class JsonObjectTest extends TestCase {
     @Test
     public void testPut() throws JsonException {
         JsonObject object = new JsonObject();
-        assertSame(object, object.put("foo", true));
-        object.put("foo", false);
-        assertEquals(false, object.getBoolean("foo"));
+        assertSame(object, object.put("foo", Boolean.TRUE));
+        object.put("foo", Boolean.FALSE);
+        assertEquals(Boolean.FALSE, object.getBoolean("foo"));
 
         object.put("foo", 5.0d);
         assertEquals(5.0d, object.getDouble("foo"));
         object.put("foo", 0);
-        assertEquals(0, object.getInt("foo"));
+        assertEquals((Integer)0, object.getInt("foo"));
         object.put("bar", Long.MAX_VALUE - 1);
-        assertEquals(Long.MAX_VALUE - 1, object.getLong("bar"));
+        assertEquals((Long)(Long.MAX_VALUE - 1), object.getLong("bar"));
         object.put("baz", "x");
         assertEquals("x", object.get("baz").toString());
         object.put("bar", null);
@@ -227,37 +227,37 @@ public class JsonObjectTest extends TestCase {
     @Test
     public void testBooleans() throws JsonException {
         JsonObject object = new JsonObject();
-        object.put("foo", true);
-        object.put("bar", false);
+        object.put("foo", Boolean.TRUE);
+        object.put("bar", Boolean.FALSE);
         object.put("baz", "true");
         object.put("quux", "false");
         assertEquals(4, object.length());
-        assertEquals(true, object.getBoolean("foo"));
-        assertEquals(false, object.getBoolean("bar"));
-        assertEquals(true, object.getBoolean("baz", false));
-        assertEquals(false, object.getBoolean("quux", false));
+        assertEquals(Boolean.TRUE, object.getBoolean("foo"));
+        assertEquals(Boolean.FALSE, object.getBoolean("bar"));
+        assertEquals(Boolean.TRUE, object.getBoolean("baz", Boolean.FALSE));
+        assertEquals(Boolean.FALSE, object.getBoolean("quux", Boolean.FALSE));
         assertFalse(object.isNull("foo"));
         assertFalse(object.isNull("quux"));
         assertTrue(object.has("foo"));
         assertTrue(object.has("quux"));
         assertFalse(object.has("missing"));
-        assertEquals(true, object.optBoolean("foo"));
-        assertEquals(false, object.optBoolean("bar"));
-        assertEquals(true, object.optBoolean("baz", false, false));
-        assertEquals(false, object.optBoolean("quux"));
-        assertEquals(false, object.optBoolean("missing"));
-        assertEquals(true, object.optBoolean("foo", true));
-        assertEquals(false, object.optBoolean("bar", true));
-        assertEquals(true, object.optBoolean("baz", true));
-        assertEquals(false, object.optBoolean("quux", true, false));
-        assertEquals(true, object.optBoolean("missing", true));
+        assertEquals(Boolean.TRUE, object.optBoolean("foo"));
+        assertEquals(Boolean.FALSE, object.optBoolean("bar"));
+        assertEquals(Boolean.TRUE, object.optBoolean("baz", Boolean.FALSE, Boolean.FALSE));
+        assertNull(object.optBoolean("quux"));
+        assertNull(object.optBoolean("missing"));
+        assertEquals(Boolean.TRUE, object.optBoolean("foo", Boolean.TRUE));
+        assertEquals(Boolean.FALSE, object.optBoolean("bar", Boolean.TRUE));
+        assertEquals(Boolean.TRUE, object.optBoolean("baz", Boolean.TRUE));
+        assertEquals(Boolean.FALSE, object.optBoolean("quux", Boolean.TRUE, Boolean.FALSE));
+        assertEquals(Boolean.TRUE, object.optBoolean("missing", Boolean.TRUE));
 
         object.put("foo", "truE");
         object.put("bar", "FALSE");
-        assertEquals(true, object.getBoolean("foo", false));
-        assertEquals(false, object.getBoolean("bar", false));
-        assertEquals(true, object.optBoolean("foo", false, false));
-        assertEquals(false, object.optBoolean("bar", true, false));
+        assertEquals(Boolean.TRUE, object.getBoolean("foo", Boolean.FALSE));
+        assertEquals(Boolean.FALSE, object.getBoolean("bar", Boolean.FALSE));
+        assertEquals(Boolean.TRUE, object.optBoolean("foo", Boolean.FALSE, Boolean.FALSE));
+        assertEquals(Boolean.FALSE, object.optBoolean("bar", Boolean.TRUE, Boolean.FALSE));
     }
 
     @Test
@@ -269,8 +269,8 @@ public class JsonObjectTest extends TestCase {
             fail();
         } catch (JsonException expected) {
         }
-        assertEquals(false, object.optBoolean("foo"));
-        assertEquals(true, object.optBoolean("foo", true));
+        assertNull(object.optBoolean("foo"));
+        assertEquals(Boolean.TRUE, object.optBoolean("foo", Boolean.TRUE));
     }
 
     @Test
@@ -298,30 +298,30 @@ public class JsonObjectTest extends TestCase {
         assertEquals(9.223372036854776E18, object.getDouble("bar"));
         assertEquals(Double.MAX_VALUE, object.getDouble("baz"));
         assertEquals(-0d, object.getDouble("quux"));
-        assertEquals(0, object.getLong("foo"));
-        assertEquals(9223372036854775806L, object.getLong("bar"));
-        assertEquals(Long.MAX_VALUE, object.getLong("baz"));
-        assertEquals(0, object.getLong("quux"));
-        assertEquals(0, object.getInt("foo"));
-        assertEquals(-2, object.getInt("bar"));
-        assertEquals(Integer.MAX_VALUE, object.getInt("baz"));
-        assertEquals(0, object.getInt("quux"));
+        assertEquals((Long)0l, object.getLong("foo"));
+        assertEquals((Long)9223372036854775806L, object.getLong("bar"));
+        assertEquals((Long)Long.MAX_VALUE, object.getLong("baz"));
+        assertEquals((Long)0l, object.getLong("quux"));
+        assertEquals((Integer)0, object.getInt("foo"));
+        assertEquals((Integer)(-2), object.getInt("bar"));
+        assertEquals((Integer)Integer.MAX_VALUE, object.getInt("baz"));
+        assertEquals((Integer)0, object.getInt("quux"));
         assertEquals(object.opt("foo"), Double.MIN_VALUE);
-        assertEquals(9223372036854775806L, object.optLong("bar"));
+        assertEquals((Long)9223372036854775806L, object.optLong("bar"));
         assertEquals(Double.MAX_VALUE, object.optDouble("baz"));
-        assertEquals(0, object.optInt("quux"));
+        assertEquals((Integer)0, object.optInt("quux"));
         assertEquals(object.opt("foo"),Double.MIN_VALUE);
-        assertEquals(9223372036854775806L, object.optLong("bar"));
+        assertEquals((Long)9223372036854775806L, object.optLong("bar"));
         assertEquals(Double.MAX_VALUE, object.optDouble("baz"));
-        assertEquals(0, object.optInt("quux"));
+        assertEquals((Integer)0, object.optInt("quux"));
         assertEquals(Double.MIN_VALUE, object.optDouble("foo", 5.0d));
-        assertEquals(9223372036854775806L, object.optLong("bar", 1L));
-        assertEquals(Long.MAX_VALUE, object.optLong("baz", 1L));
-        assertEquals(0, object.optInt("quux", -1));
-        assertEquals("4.9E-324", object.getString("foo", false));
-        assertEquals("9223372036854775806", object.getString("bar", false));
-        assertEquals("1.7976931348623157E308", object.getString("baz", false));
-        assertEquals("-0.0", object.getString("quux", false));
+        assertEquals((Long)9223372036854775806L, object.optLong("bar", 1L));
+        assertEquals((Long)Long.MAX_VALUE, object.optLong("baz", 1L));
+        assertEquals((Integer)0, object.optInt("quux", -1));
+        assertEquals("4.9E-324", object.getString("foo", Boolean.FALSE));
+        assertEquals("9223372036854775806", object.getString("bar", Boolean.FALSE));
+        assertEquals("1.7976931348623157E308", object.getString("baz", Boolean.FALSE));
+        assertEquals("-0.0", object.getString("quux", Boolean.FALSE));
     }
 
     @Test
@@ -389,7 +389,7 @@ public class JsonObjectTest extends TestCase {
     @Test
     public void testNullKeys() {
         try {
-            new JsonObject().put(null, false);
+            new JsonObject().put(null, Boolean.FALSE);
             fail();
         } catch (JsonException e) {
         }
@@ -438,20 +438,20 @@ public class JsonObjectTest extends TestCase {
         assertEquals("true", object.optString("foo", "x"));
         assertFalse(object.isNull("foo"));
 
-        assertEquals(true, object.optBoolean("foo", false, false));
-        assertEquals(0, object.optInt("foo"));
-        assertEquals(-2, object.optInt("foo", -2));
+        assertEquals(Boolean.TRUE, object.optBoolean("foo", Boolean.TRUE, Boolean.FALSE));
+        assertNull(object.optInt("foo"));
+        assertEquals((Integer)(-2), object.optInt("foo", -2));
 
-        assertEquals(5.5d, object.getDouble("bar", false));
-        assertEquals(5L, object.getLong("bar", false));
-        assertEquals(5, object.getInt("bar", false));
-        assertEquals(5, object.optInt("bar", 3, false));
+        assertEquals(5.5d, object.getDouble("bar", Boolean.FALSE));
+        assertEquals((Long)5L, object.getLong("bar", Boolean.FALSE));
+        assertEquals((Integer)5, object.getInt("bar", Boolean.FALSE));
+        assertEquals((Integer)5, object.optInt("bar", 3, Boolean.FALSE));
 
         // The last digit of the string is a 6 but getLong returns a 7. It's probably parsing as a
         // double and then converting that to a long. This is consistent with JavaScript.
-        assertEquals(9223372036854775807L, object.getLong("baz", false));
-        assertEquals(9.223372036854776E18, object.getDouble("baz", false));
-        assertEquals(Integer.MAX_VALUE, object.getInt("baz", false));
+        assertEquals((Long)9223372036854775807L, object.getLong("baz", Boolean.FALSE));
+        assertEquals(9.223372036854776E18, object.getDouble("baz", Boolean.FALSE));
+        assertEquals((Integer)Integer.MAX_VALUE, object.getInt("baz", Boolean.FALSE));
 
         assertFalse(object.isNull("quux"));
         try {
@@ -459,11 +459,11 @@ public class JsonObjectTest extends TestCase {
             fail();
         } catch (JsonException e) {
         }
-        assertEquals(Double.NaN, object.optDouble("quux"));
+        assertNull(object.optDouble("quux"));
         assertEquals(-1.0d, object.optDouble("quux", -1.0d));
 
         object.put("foo", "TRUE");
-        assertEquals(true, object.getBoolean("foo", false));
+        assertEquals(Boolean.TRUE, object.getBoolean("foo", Boolean.FALSE));
     }
 
     @Test
@@ -497,13 +497,13 @@ public class JsonObjectTest extends TestCase {
     public void testNullCoercionToString() throws JsonException {
         JsonObject object = new JsonObject();
         object.put("foo", new JsonNull());
-        assertEquals("null", object.getString("foo", false));
+        assertEquals("null", object.getString("foo", Boolean.FALSE));
     }
 
     @Test
     public void testArrayCoercion() throws JsonException {
         JsonObject object = new JsonObject();
-        object.put("foo", "[true]");
+        object.put("foo", "[Boolean.TRUE]");
         try {
             object.getJsonArray("foo");
             fail();
@@ -548,7 +548,7 @@ public class JsonObjectTest extends TestCase {
     public void testToJsonArray() throws JsonException {
         JsonObject object = new JsonObject();
         Object value = new Object();
-        object.put("foo", true);
+        object.put("foo", Boolean.TRUE);
         object.put("bar", 5.0d);
         object.put("baz", -0.0d);
         object.put("quux", value);
@@ -561,16 +561,16 @@ public class JsonObjectTest extends TestCase {
         JsonArray array = object.toJsonArray(names);
         assertEquals(array.get(0), -0.0d);
         assertEquals(array.get(1), value.toString());
-        assertEquals(array.get(2), true);
+        assertEquals(array.get(2), Boolean.TRUE);
 
-        object.put("foo", false);
-        assertEquals(array.get(2), true);
+        object.put("foo", Boolean.FALSE);
+        assertEquals(array.get(2), Boolean.TRUE);
     }
 
     @Test
     public void testToJsonArrayMissingNames() throws JsonException {
         JsonObject object = new JsonObject();
-        object.put("foo", true);
+        object.put("foo", Boolean.TRUE);
         object.put("bar", 5.0d);
         object.put("baz", new JsonNull());
 
@@ -584,7 +584,7 @@ public class JsonObjectTest extends TestCase {
         assertEquals(4, array.length());
 
         assertEquals(array.get(0), 5.0d);
-        assertEquals(array.get(1), true);
+        assertEquals(array.get(1), Boolean.TRUE);
         assertEquals(array.get(2), null);
         assertEquals(new JsonNull(), array.get(3));
     }
@@ -618,7 +618,7 @@ public class JsonObjectTest extends TestCase {
 
         JsonArray names = new JsonArray();
         names.put(new JsonNull());
-        names.put(false);
+        names.put(Boolean.FALSE);
         names.put("foo");
 
         // array elements are converted to strings to do name lookups on the map!
@@ -782,17 +782,17 @@ public class JsonObjectTest extends TestCase {
         JsonObject object = new JsonObject();
         object.put("foo", "bar");
         assertEquals(null, object.opt(null));
-        assertEquals(false, object.optBoolean(null));
-        assertEquals(Double.NaN, object.optDouble(null));
-        assertEquals(0, object.optInt(null));
-        assertEquals(0L, object.optLong(null));
+        assertNull(object.optBoolean(null));
+        assertNull(object.optDouble(null));
+        assertEquals(null, object.optInt(null));
+        assertEquals(null, object.optLong(null));
         assertEquals(null, object.optJsonArray(null));
         assertEquals(null, object.optJsonObject(null));
-        assertEquals("", object.optString(null));
-        assertEquals(true, object.optBoolean(null, true));
+        assertEquals(null, object.optString(null));
+        assertEquals(Boolean.TRUE, object.optBoolean(null, Boolean.TRUE));
         assertEquals(0.0d, object.optDouble(null, 0.0d));
-        assertEquals(1, object.optInt(null, 1));
-        assertEquals(1L, object.optLong(null, 1L));
+        assertEquals((Integer)1, object.optInt(null, 1));
+        assertEquals((Long)1L, object.optLong(null, 1L));
         assertEquals("baz", object.optString(null, "baz"));
     }
 
