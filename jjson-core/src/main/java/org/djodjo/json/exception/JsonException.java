@@ -36,4 +36,8 @@ public class JsonException extends RuntimeException {
     public JsonException(String s) {
         super(s);
     }
+
+    public JsonException(String s, Exception ex) {
+        super(s, ex);
+    }
 }

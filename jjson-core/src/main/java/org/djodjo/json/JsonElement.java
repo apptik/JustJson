@@ -1,8 +1,7 @@
 package org.djodjo.json;
 
-
-
 import org.djodjo.json.exception.JsonException;
+import org.djodjo.json.util.Freezable;
 import org.djodjo.json.util.TypeAdapters;
 
 import java.io.IOException;
@@ -15,8 +14,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
 
-public abstract class JsonElement {
-
+public abstract class JsonElement{
 
     public static JsonElement readFrom( Reader reader ) throws JsonException, IOException {
         return TypeAdapters.JSON_ELEMENT.fromJson(reader);
@@ -155,6 +153,7 @@ public abstract class JsonElement {
     public abstract void write( JsonWriter writer ) throws IOException;
 
     public abstract String getJsonType();
+
 
 
 }

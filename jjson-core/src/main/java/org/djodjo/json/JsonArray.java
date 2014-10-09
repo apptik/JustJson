@@ -18,6 +18,7 @@
 package org.djodjo.json;
 
 import org.djodjo.json.exception.JsonException;
+import org.djodjo.json.util.Freezable;
 import org.djodjo.json.util.Util;
 
 import java.io.IOException;
@@ -48,8 +49,9 @@ import java.util.ListIterator;
  *
  * <p>Instances of this class are not thread safe.
  */
-public final class JsonArray extends JsonElement implements List<JsonElement> {
+public final class JsonArray extends JsonElement implements List<JsonElement>, Freezable<JsonArray> {
 
+    private volatile boolean frozen = false;
     private final List<JsonElement> values;
 
     /**
@@ -799,5 +801,25 @@ public final class JsonArray extends JsonElement implements List<JsonElement> {
         return "array";
     }
 
+    @Override
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    @Override
+    public JsonArray freeze() {
+        frozen = true;
+        return this;
+    }
+
+    @Override
+    public JsonArray cloneAsThawed() {
+        try {
+            return JsonElement.readFrom(this.toString()).asJsonArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new JsonException("Cannot Recreate Json Array", e);
+        }
+    }
 
 }

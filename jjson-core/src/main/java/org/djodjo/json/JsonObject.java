@@ -19,6 +19,7 @@ package org.djodjo.json;
 
 
 import org.djodjo.json.exception.JsonException;
+import org.djodjo.json.util.Freezable;
 import org.djodjo.json.util.LinkedTreeMap;
 import org.djodjo.json.util.Util;
 
@@ -83,8 +84,9 @@ import java.util.Set;
  * <i>Effective Java</i> Item 17, "Design and Document or inheritance or else
  * prohibit it" for further information.
  */
-public final class JsonObject extends JsonElement implements Iterable<Map.Entry<String,JsonElement>> {
+public final class JsonObject extends JsonElement implements Iterable<Map.Entry<String,JsonElement>>, Freezable<JsonObject> {
 
+    private volatile boolean frozen = false;
     private final LinkedTreeMap<String, JsonElement> nameValuePairs = new LinkedTreeMap<String, JsonElement>();
 
     /**
@@ -790,5 +792,27 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
     public JsonObject clear() {
         nameValuePairs.clear();
         return this;
+    }
+
+
+    @Override
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    @Override
+    public JsonObject freeze() {
+        frozen = true;
+        return this;
+    }
+
+    @Override
+    public JsonObject cloneAsThawed() {
+        try {
+            return JsonElement.readFrom(this.toString()).asJsonObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new JsonException("Cannot Recreate Json Object", e);
+        }
     }
 }
