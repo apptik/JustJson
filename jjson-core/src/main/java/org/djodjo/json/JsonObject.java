@@ -24,11 +24,7 @@ import org.djodjo.json.util.LinkedTreeMap;
 import org.djodjo.json.util.Util;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 // Note: this class was written without inspecting the non-free org.json sourcecode.
 
@@ -200,6 +196,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * @return this object.
      */
     public JsonObject put(String name, JsonElement value) throws JsonException {
+        checkIfFrozen();
         if (value == null) {
             value = new JsonNull();
         }
@@ -240,6 +237,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
     // TODO: Change {@code append) to {@link #append} when append is
     // unhidden.
     public JsonObject accumulate(String name, Object value) throws JsonException {
+        checkIfFrozen();
         Object current = nameValuePairs.get(checkName(name));
         if (current == null) {
             return put(name, value);
@@ -269,6 +267,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * @hide
      */
     public JsonObject append(String name, Object value) throws JsonException {
+        checkIfFrozen();
         Object current = nameValuePairs.get(checkName(name));
 
         final JsonArray array;
@@ -301,6 +300,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      *     no such mapping.
      */
     public Object remove(String name) {
+        checkIfFrozen();
         return nameValuePairs.remove(name);
     }
 
@@ -719,6 +719,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
     }
 
     public Collection<JsonElement> valuesSet() {
+        if(isFrozen()) Collections.unmodifiableCollection(nameValuePairs.values());
         return nameValuePairs.values();
     }
     /**
@@ -813,6 +814,12 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         } catch (IOException e) {
             e.printStackTrace();
             throw new JsonException("Cannot Recreate Json Object", e);
+        }
+    }
+    public void checkIfFrozen() {
+        if (isFrozen()) {
+            throw new UnsupportedOperationException(
+                    "Attempt to modify a frozen JsonObject instance.");
         }
     }
 }

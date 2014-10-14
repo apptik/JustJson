@@ -257,11 +257,13 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
 
     @Override
     public JsonElement set(int i, JsonElement jsonElement) {
+        checkIfFrozen();
         return values.set(i, jsonElement);
     }
 
     @Override
     public void add(int i, JsonElement jsonElement) {
+        checkIfFrozen();
         values.add(i, jsonElement);
     }
 
@@ -281,6 +283,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * at {@code index}.
      */
     public JsonElement remove(int index) {
+        checkIfFrozen();
         if (index < 0 || index >= values.size()) {
             return null;
         }
@@ -822,4 +825,10 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         }
     }
 
+    public void checkIfFrozen() {
+        if (isFrozen()) {
+            throw new UnsupportedOperationException(
+                    "Attempt to modify a frozen JsonArray instance.");
+        }
+    }
 }

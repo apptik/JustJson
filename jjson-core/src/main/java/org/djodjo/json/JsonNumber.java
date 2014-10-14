@@ -61,8 +61,8 @@ public class JsonNumber extends JsonElement {
         return true;
     }
 
-    @Override
-    public Number asNumber(){
+
+    private Number asNumber(){
         if(numValue==null) {
             try {
                 numValue = NumberFormat.getNumberInstance().parse(value);

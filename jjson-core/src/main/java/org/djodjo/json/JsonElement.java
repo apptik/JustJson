@@ -53,9 +53,6 @@ public abstract class JsonElement{
         throw new UnsupportedOperationException(toString() + " is not a boolean");
     }
 
-    public Number asNumber() throws ParseException {
-        throw new UnsupportedOperationException(toString() + " is not a number");
-    }
     public double asDouble() {
         throw new UnsupportedOperationException(toString() + " is not a double number");
     }

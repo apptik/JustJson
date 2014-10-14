@@ -38,12 +38,12 @@ public final class JsonString extends JsonElement {
 
     @Override
     public String toString() {
-        return value;
+        return new String(value);
     }
 
     @Override
     public String asString() {
-        return value;
+        return new String(value);
     }
 
     @Override
