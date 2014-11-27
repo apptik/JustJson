@@ -353,7 +353,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         JsonElement el = get(name);
         Boolean res = null;
         if (strict && !el.isBoolean()) {
-            throw Util.typeMismatch(name, el, "boolean", strict);
+            throw Util.typeMismatch(name, el, "boolean", true);
         }
         if (el.isBoolean()) {
             res = el.asBoolean();
@@ -412,7 +412,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         JsonElement el = get(name);
         Double res = null;
         if (strict && !el.isNumber()) {
-            throw Util.typeMismatch(name, el, "double", strict);
+            throw Util.typeMismatch(name, el, "double", true);
         }
         if (el.isNumber()) {
             res = el.asDouble();
@@ -463,7 +463,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         JsonElement el = get(name);
         Integer res = null;
         if (strict && !el.isNumber()) {
-            throw Util.typeMismatch(name, el, "int", strict);
+            throw Util.typeMismatch(name, el, "int", true);
         }
         if (el.isNumber()) {
             res = el.asInt();
@@ -517,7 +517,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         JsonElement el = get(name);
         Long res = null;
         if (strict && !el.isNumber()) {
-            throw Util.typeMismatch(name, el, "long", strict);
+            throw Util.typeMismatch(name, el, "long", true);
         }
         if (el.isNumber()) {
             res = el.asLong();
@@ -571,7 +571,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         JsonElement el = get(name);
         String res = null;
         if (strict && !el.isString()) {
-            throw Util.typeMismatch(name, el, "string", strict);
+            throw Util.typeMismatch(name, el, "string", true);
         }
         res = el.toString();
         if(res == null)

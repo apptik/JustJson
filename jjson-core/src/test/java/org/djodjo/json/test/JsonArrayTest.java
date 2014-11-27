@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import junit.framework.TestCase;
 
@@ -151,7 +150,7 @@ public class JsonArrayTest extends TestCase {
     @Test
     public void testNulls() throws JsonException {
         JsonArray array = new JsonArray();
-        array.put(3, (Collection) null);
+        array.put(3, new JsonNull());
         array.put(0, new JsonNull());
         assertEquals(4, array.length());
         assertEquals("[null,null,null,null]", array.toString());
@@ -171,23 +170,21 @@ public class JsonArrayTest extends TestCase {
         assertTrue(array.isNull(2));
         assertTrue(array.isNull(3));
         assertEquals("null", array.optString(0));
-        assertEquals("null", array.optString(1));
-        assertEquals("null", array.optString(2));
-        assertEquals("null", array.optString(3));
     }
 
 
     @Test
-    public void testParseNullYieldsJsonObjectNull() throws JsonException, IOException {
+    public void testParseNullDoNotYieldJsonObjectNull() throws JsonException, IOException {
         JsonArray array = JsonArray.readFrom( "[\"null\",null]").asJsonArray();
-        array.put((Collection) null);
+        array.put(null);
         assertEquals(array.get(0),"null");
         assertEquals(array.get(1), null);
-        assertEquals(array.get(2), null);
+        assertEquals(array.get(1), new JsonNull());
+        assertEquals(2,array.length());
+
 
         assertEquals("null", array.get(0).toString());
         assertEquals("null", array.get(1).toString());
-        assertEquals("null", array.get(2).toString());
     }
 
         @Test
@@ -313,7 +310,7 @@ public class JsonArrayTest extends TestCase {
 
         JsonArray values = new JsonArray();
         values.put(5.5d);
-        values.put((Collection) null);
+        values.put(null);
 
         // null values are stripped!
         JsonObject object = values.toJsonObject(keys);
@@ -398,8 +395,9 @@ public class JsonArrayTest extends TestCase {
 
     @Test(expected=IllegalArgumentException.class)
     public void testToStringWithUnsupportedNumbers() throws JsonException {
-        // when the array contains an unsupported number, toString fails
+
         JsonArray array = new JsonArray(Arrays.asList(5.5, Double.NaN));
+        // when the array contains an unsupported number, toString fails
         array.toString();
     }
 
@@ -463,7 +461,7 @@ public class JsonArrayTest extends TestCase {
         assertEquals(a.remove(0), null);
     }
 
-    enum MyEnum { A, B, C; }
+    enum MyEnum { A, B, C }
 
     // https://code.google.com/p/android/issues/detail?id=62539
     @Test

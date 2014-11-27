@@ -38,11 +38,13 @@ public final class JsonString extends JsonElement {
 
     @Override
     public String toString() {
+        //we dont want to return the same object
         return new String(value);
     }
 
     @Override
     public String asString() {
+        //we dont want to return the same object
         return new String(value);
     }
 

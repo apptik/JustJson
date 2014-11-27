@@ -393,6 +393,7 @@ public class CommonMatchers {
                         mismatchDescription.appendText("items in Json array are not unique");
                         return false;
                     }
+                    prevEl = el;
                 }
 
                 return true;
@@ -616,10 +617,7 @@ public class CommonMatchers {
         return new TypeSafeDiagnosingMatcher<CharSequence>() {
             @Override
             protected boolean matchesSafely(CharSequence item, Description mismatchDescription) {
-                if (p.matcher(item).matches()) return true;
-                else {
-                    return false;
-                }
+                return p.matcher(item).matches();
             }
 
             @Override

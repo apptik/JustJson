@@ -103,7 +103,7 @@ public class JsonSchemaUriFetcherTest {
         final URI schemaUri2 = URI.create("ftp://some.addr/test123/geo");
 
         Schema schemaGeo = new SchemaV4().wrap(JsonElement.readFrom("{\"description\":\"A geographical coordinate\",\"type\":\"object\",\"properties\":{\"latitude\":{\"type\":\"number\"},\"longitude\":{\"type\":\"number\"}}}"));
-        job = (JsonObjectWrapper) new JsonObjectWrapper();
+        job = new JsonObjectWrapper();
         job.getDefaultSchemaFetcher().withConfig(
                 new SchemaFetcherConfig()
                         .withUriSchemeReplacement("ftp", schemaUri.getScheme())
@@ -124,9 +124,8 @@ public class JsonSchemaUriFetcherTest {
 
         SchemaUriFetcher suf =  new SchemaUriFetcher();
         Schema schema= suf.fetch(schemaUri2, null, null);
-
-
-        System.out.println(schema.mergeAllRefs().toString());
+        //TODO
+        //System.out.println(schema.mergeAllRefs().toString());
 
     }
 

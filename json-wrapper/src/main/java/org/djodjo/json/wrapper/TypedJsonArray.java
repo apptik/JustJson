@@ -122,7 +122,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
 
     @Override
     public void clear() {
-        getJson().wrap(null);
+        JsonElement.wrap(null);
     }
 
     @Override

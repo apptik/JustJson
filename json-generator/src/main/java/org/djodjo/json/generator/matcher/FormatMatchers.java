@@ -33,8 +33,7 @@ public class FormatMatchers {
             protected boolean matchesSafely(Schema item) {
                 if(!isStringType().matches(item)) return false;
                 if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_DATE)) return false;
-                return true;
+                return Schema.FORMAT_DATE.equals(item.getFormat());
             }
 
             @Override
@@ -50,8 +49,7 @@ public class FormatMatchers {
             protected boolean matchesSafely(Schema item) {
                 if(!isStringType().matches(item)) return false;
                 if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_DATE_TIME)) return false;
-                return true;
+                return Schema.FORMAT_DATE_TIME.equals(item.getFormat());
             }
 
             @Override
@@ -67,7 +65,7 @@ public class FormatMatchers {
             protected boolean matchesSafely(Schema item) {
                 if(!isStringType().matches(item)) return false;
                 if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_COLOR)) return false;
+                if(!Schema.FORMAT_COLOR.equals(item.getFormat())) return false;
                 return true;
             }
 

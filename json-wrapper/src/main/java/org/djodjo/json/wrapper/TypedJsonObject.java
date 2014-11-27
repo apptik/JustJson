@@ -42,7 +42,8 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
     }
 
     public T getValue(int pos) {
-        return get(getJson().valuesSet().toArray(new JsonElement[0])[pos], getKey(pos));
+        java.util.Collection<JsonElement> var = getJson().valuesSet();
+        return get(var.toArray(new JsonElement[var.size()])[pos], getKey(pos));
     }
 
     public String getKey(int pos) {
@@ -100,9 +101,7 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
 
     public Map<String, T> getEntries() {
         Map<String, T> res = new LinkedTreeMap<String, T>();
-        Iterator<Map.Entry<String, T>> it = this.iterator();
-        while(it.hasNext()) {
-            Map.Entry<String, T> el = it.next();
+        for (Map.Entry<String, T> el : this) {
             res.put(el.getKey(), el.getValue());
         }
         return res;

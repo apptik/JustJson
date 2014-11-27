@@ -38,10 +38,10 @@ public class UriGenerator extends Generator {
 
     @Override
     public JsonElement generate() {
-        URI uri = null;
-        String scheme = "";
-        String host = "";
-        String path = "";
+        URI uri;
+        String scheme;
+        String host;
+        String path;
 
         ArrayList<String> schemes;
         ArrayList<String> hosts;

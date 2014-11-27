@@ -64,8 +64,10 @@ public class StringGenerator extends Generator {
             for (Map.Entry<Matcher<Schema>, Class> entry : stringFormatMatchers.entrySet()) {
                 if (entry.getKey().matches(schema)) {
                     Generator gen = null;
+
                     try {
                         gen = (Generator)entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class, String.class).newInstance(schema, configuration, propertyName);
+                        return gen.generate();
                     } catch (InstantiationException e) {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
@@ -75,7 +77,8 @@ public class StringGenerator extends Generator {
                     } catch (NoSuchMethodException e) {
                         e.printStackTrace();
                     }
-                    return gen.generate();
+
+                    return null;
                 }
             }
         }

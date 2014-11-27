@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * New keyword is "extends" which is used as "merge" but with easier syntax. es:
+ * New keyword is "extends" which is used as "merge" (v5 proposal) but with easier syntax. es:
  * {
  "merge": {
  "source": {
@@ -53,7 +53,7 @@ import java.util.Collection;
  *
  * "equivalent keyword is used here to provide list of links to equivalent schemas/rdf classes"
  */
-public class SchemaJJv1 extends SchemaV5 {
+public class SchemaJJv1 extends SchemaV4 {
 
     public  SchemaJJv1() {
         super();

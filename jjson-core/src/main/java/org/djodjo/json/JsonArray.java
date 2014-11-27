@@ -73,8 +73,8 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
     public JsonArray(Collection copyFrom) throws JsonException {
         this();
         if (copyFrom != null) {
-            for (Iterator it = copyFrom.iterator(); it.hasNext();) {
-                put(JsonElement.wrap(it.next()));
+            for (Object aCopyFrom : copyFrom) {
+                put(JsonElement.wrap(aCopyFrom));
             }
         }
     }
@@ -154,10 +154,10 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
     }
 
     public JsonArray put(JsonElement value) {
-        if (value == null) {
-            value = new JsonNull();
+        if (value != null) {
+            values.add(value);
         }
-        values.add(value);
+
         return this;
     }
 
@@ -326,7 +326,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         JsonElement el = get(index);
         Boolean res = null;
         if (strict && !el.isBoolean()) {
-            throw Util.typeMismatch(index, el, "boolean", strict);
+            throw Util.typeMismatch(index, el, "boolean", true);
         }
         if (el.isBoolean()) {
             res = el.asBoolean();
@@ -378,7 +378,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         JsonElement el = get(index);
         Double res = null;
         if (strict && !el.isNumber()) {
-            throw Util.typeMismatch(index, el, "double", strict);
+            throw Util.typeMismatch(index, el, "double", true);
         }
         if (el.isNumber()) {
             res = el.asDouble();
@@ -438,7 +438,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         JsonElement el = get(index);
         Integer res = null;
         if (strict && !el.isNumber()) {
-            throw Util.typeMismatch(index, el, "int", strict);
+            throw Util.typeMismatch(index, el, "int", true);
         }
         if (el.isNumber()) {
             res = el.asInt();
@@ -484,7 +484,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         JsonElement el = get(index);
         Long res = null;
         if (strict && !el.isNumber()) {
-            throw Util.typeMismatch(index, el, "long", strict);
+            throw Util.typeMismatch(index, el, "long", true);
         }
         if (el.isNumber()) {
             res = el.asLong();
@@ -536,7 +536,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         JsonElement el = get(index);
         String res = null;
         if (strict && !el.isString()) {
-            throw Util.typeMismatch(index, el, "string", strict);
+            throw Util.typeMismatch(index, el, "string", true);
         }
         res = el.toString();
         if(res == null)
@@ -652,7 +652,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         }
         for (int i = 0; i < length; i++) {
             String name = names.opt(i).toString();
-            if(!opt(i).equals(null))
+            if(opt(i) != null)
                 result.put(name, opt(i));
         }
         return result;

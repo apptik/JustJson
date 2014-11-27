@@ -177,9 +177,8 @@ public abstract class JsonElementWrapper implements ElementWrapper {
     }
 
     public boolean isDataValid() {
-        Iterator<Validator> iterator = validators.iterator();
-        while (iterator.hasNext()){
-            if (!iterator.next().isValid(this.getJson()))
+        for (Validator validator : validators) {
+            if (!validator.isValid(this.getJson()))
                 return false;
         }
         return true;

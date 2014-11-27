@@ -581,12 +581,11 @@ public class JsonObjectTest extends TestCase {
         names.put("baz");
 
         JsonArray array = object.toJsonArray(names);
-        assertEquals(4, array.length());
+        assertEquals(3, array.length());
 
         assertEquals(array.get(0), 5.0d);
         assertEquals(array.get(1), Boolean.TRUE);
         assertEquals(array.get(2), null);
-        assertEquals(new JsonNull(), array.get(3));
     }
 
     @Test
@@ -606,7 +605,7 @@ public class JsonObjectTest extends TestCase {
         object.put("foo", 5);
         JsonArray array = new JsonArray();
         array.put("bar");
-        assertEquals(1, object.toJsonArray(array).length());
+        assertEquals(0, object.toJsonArray(array).length());
     }
 
     @Test
@@ -827,7 +826,7 @@ public class JsonObjectTest extends TestCase {
         object.put("foo", 7);
 
         @SuppressWarnings("unchecked")
-        Iterator<String> keys = (Iterator<String>) object.keys();
+        Iterator<String> keys = object.keys();
         Set<String> result = new HashSet<String>();
         assertTrue(keys.hasNext());
         result.add(keys.next());

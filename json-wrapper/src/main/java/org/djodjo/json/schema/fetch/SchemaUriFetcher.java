@@ -22,7 +22,6 @@ import org.djodjo.json.JsonObject;
 import org.djodjo.json.exception.JsonException;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.SchemaV4;
-import org.djodjo.json.schema.SchemaV5;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -101,9 +100,7 @@ public class SchemaUriFetcher implements SchemaFetcher {
             }
 
             String version = schemaJson.optString("$schema","");
-            if(version.equals(Schema.VER_5)) {
-                res = new SchemaV5().setSchemaFetcher(this).setOrigSrc(schemaUri).wrap(schemaJson);
-            } else if(version.equals(Schema.VER_4)) {
+            if(version.equals(Schema.VER_4)) {
                 res = new SchemaV4().setSchemaFetcher(this).setOrigSrc(schemaUri).wrap(schemaJson);
             } else {
                 res = new SchemaV4().setSchemaFetcher(this).setOrigSrc(schemaUri).wrap(schemaJson);

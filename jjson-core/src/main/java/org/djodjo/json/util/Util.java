@@ -86,7 +86,7 @@ public class Util {
         if (value instanceof String) {
             return (String) value;
         } else  if (value instanceof JsonElement) {
-            return ((JsonElement)value).toString();
+            return value.toString();
         } else if (value != null) {
             return String.valueOf(value);
         }

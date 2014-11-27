@@ -32,7 +32,7 @@ public class EnumGenerator extends Generator {
 
     @Override
     public JsonElement generate() {
-        if(schema.getEnum() == null && schema.getEnum().length()==0) return null;
+        if(schema == null && schema.getEnum() == null && schema.getEnum().length()==0) return null;
         return schema.getEnum().opt(rnd.nextInt(schema.getEnum().length()));
     }
 }

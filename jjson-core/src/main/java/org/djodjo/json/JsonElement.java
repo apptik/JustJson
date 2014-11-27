@@ -1,8 +1,6 @@
 package org.djodjo.json;
 
 import org.djodjo.json.exception.JsonException;
-import org.djodjo.json.util.Freezable;
-import org.djodjo.json.util.TypeAdapters;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -10,14 +8,13 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.ByteBuffer;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
 
 public abstract class JsonElement{
 
     public static JsonElement readFrom( Reader reader ) throws JsonException, IOException {
-        return TypeAdapters.JSON_ELEMENT.fromJson(reader);
+        return Adapter.fromJson(reader);
     }
 
     public static JsonElement readFrom( String text ) throws JsonException, IOException {
@@ -113,7 +110,9 @@ public abstract class JsonElement{
      */
     public static JsonElement wrap(Object o) throws JsonException{
         if (o == null) {
-            return new JsonNull();
+            //null value means not specified i.e.-> no valued will be mapped
+            //Json.null is specific value
+            return null;
         }
         if (o instanceof JsonElement) {
             return (JsonElement)o;
@@ -151,6 +150,72 @@ public abstract class JsonElement{
 
     public abstract String getJsonType();
 
+private static class Adapter {
+    static public void write(JsonWriter out, JsonElement value) throws IOException {
+        //TODO should this actually happen??
+        if (value == null) {
+            out.nullValue();
+        } else {
+            value.write(out);
+        }
+    }
 
+    static public void toJson(Writer out, JsonElement value) throws IOException {
+        JsonWriter writer = new JsonWriter(out);
+        write(writer, value);
+    }
+
+    static public String toJson(JsonElement value) throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        toJson(stringWriter, value);
+        return stringWriter.toString();
+    }
+
+    static public JsonElement read(JsonReader in) throws IOException, JsonException {
+        switch (in.peek()) {
+            case STRING:
+                return new JsonString(in.nextString());
+            case NUMBER:
+                return new JsonNumber(in.nextString());
+            case BOOLEAN:
+                return new JsonBoolean(in.nextBoolean());
+            case NULL:
+                in.nextNull();
+                return new JsonNull();
+            case BEGIN_ARRAY:
+                JsonArray array = new JsonArray();
+                in.beginArray();
+                while (in.hasNext()) {
+                    array.put(read(in));
+                }
+                in.endArray();
+                return array;
+            case BEGIN_OBJECT:
+                JsonObject object = new JsonObject();
+                in.beginObject();
+                while (in.hasNext()) {
+                    object.put(in.nextName(), read(in));
+                }
+                in.endObject();
+                return object;
+            case END_DOCUMENT:
+            case NAME:
+            case END_OBJECT:
+            case END_ARRAY:
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+
+    static public JsonElement fromJson(Reader in) throws IOException, JsonException {
+        JsonReader reader = new JsonReader(in);
+        return read(reader);
+    }
+
+    static public JsonElement fromJson(String json) throws IOException, JsonException {
+        return fromJson(new StringReader(json));
+    }
+}
 
 }

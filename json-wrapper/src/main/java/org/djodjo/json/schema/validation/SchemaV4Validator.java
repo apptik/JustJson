@@ -26,8 +26,7 @@ import org.djodjo.json.schema.SchemaV4;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 import static org.djodjo.json.schema.validation.CommonMatchers.areItemsUnique;
 import static org.djodjo.json.schema.validation.CommonMatchers.areItemsValid;
@@ -192,7 +191,20 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
 
         boolean additionalProperties = schema.getAdditionalProperties();
         if(!additionalProperties) {
-            allMatchers.add(isNoAdditionalProperties(propertiesSchemaMap.getEntries().keySet(), patternPropertiesSchemaMap.getEntries().keySet()));
+            Set proppertiesSet;
+            Set patternPropertiesSet;
+            if(propertiesSchemaMap == null || propertiesSchemaMap.getEntries() == null) {
+                proppertiesSet = Collections.EMPTY_SET;
+            } else {
+                proppertiesSet = propertiesSchemaMap.getEntries().keySet();
+            }
+
+            if(patternPropertiesSchemaMap ==null || patternPropertiesSchemaMap.getEntries() ==null) {
+                patternPropertiesSet = Collections.EMPTY_SET;
+            } else {
+                patternPropertiesSet = patternPropertiesSchemaMap.getEntries().keySet();
+            }
+            allMatchers.add(isNoAdditionalProperties(proppertiesSet, patternPropertiesSet));
         }
 
         //TODO as per : http://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.4.5

@@ -40,7 +40,7 @@ public final class JsonBoolean extends JsonElement {
 
     @Override
     public int hashCode() {
-        return new Boolean(value).hashCode();
+        return Boolean.valueOf(value).hashCode();
     }
 
     @Override

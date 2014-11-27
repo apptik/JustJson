@@ -53,10 +53,8 @@ public class DynamoDb2Item extends TypedJsonObject<AttributeValue> {
         } else if(el.isJsonArray()) {
             boolean isNumberArr = true;
             ArrayList<String> attrList =  new ArrayList<String>();
-            Iterator<JsonElement> it = el.asJsonArray().iterator();
-            while(it.hasNext()) {
-                JsonElement arrEl = it.next();
-                if(isNumberArr && !arrEl.isNumber()) isNumberArr = false;
+            for (JsonElement arrEl : el.asJsonArray()) {
+                if (isNumberArr && !arrEl.isNumber()) isNumberArr = false;
                 attrList.add(arrEl.toString());
             }
             if(isNumberArr) {
