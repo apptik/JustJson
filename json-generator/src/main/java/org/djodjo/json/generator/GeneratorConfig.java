@@ -81,4 +81,6 @@ public class GeneratorConfig {
     public Integer globalUriPathLengthMin = null;
     public Integer globalUriPathLengthMax = null;
 
+    public ArrayList<String> skipObjectProperties = new ArrayList();
+
 }

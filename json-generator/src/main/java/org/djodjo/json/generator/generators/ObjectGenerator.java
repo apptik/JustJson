@@ -44,26 +44,28 @@ public class ObjectGenerator extends Generator {
         JsonElement  newEl;
         if(props!=null) {
             for(Map.Entry<String,Schema> propItem : props) {
-                Schema propertySchema = propItem.getValue();
-                for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
-                    if (entry.getKey().matches(propertySchema)) {
-                        try {
-                            Generator gen = (Generator)entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class, String.class).newInstance(propertySchema, configuration, propItem.getKey());
-                            newEl = gen.generate();
-                            if(newEl != null) {
-                                res.put(propItem.getKey(), newEl);
-                                break;
+                if (!this.configuration.skipObjectProperties.contains(propItem.getKey())) {
+                    Schema propertySchema = propItem.getValue();
+                    for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
+                        if (entry.getKey().matches(propertySchema)) {
+                            try {
+                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class, String.class).newInstance(propertySchema, configuration, propItem.getKey());
+                                newEl = gen.generate();
+                                if (newEl != null) {
+                                    res.put(propItem.getKey(), newEl);
+                                    break;
+                                }
+                            } catch (InstantiationException e) {
+                                e.printStackTrace();
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            } catch (NoSuchMethodException e) {
+                                e.printStackTrace();
+                            } catch (InvocationTargetException e) {
+                                e.printStackTrace();
+                            } catch (JsonException e) {
+                                e.printStackTrace();
                             }
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        } catch (JsonException e) {
-                            e.printStackTrace();
                         }
                     }
                 }
