@@ -33,6 +33,6 @@ test {
         events 'started', 'passed'
     }
 }
-apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'
+apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/mvn-publish.gradle'
 
 
