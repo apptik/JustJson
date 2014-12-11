@@ -1,1 +1,1 @@
-include  ':json-wrapper', ':json-generator', 'jjson-core', 'json-aws'
+include  'json-core', ':json-wrapper', ':json-generator', 'json-aws'

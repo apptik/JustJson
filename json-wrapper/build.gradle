@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     testCompile 'junit:junit:[4,)'
-    compile project (':jjson-core')
+    compile project (':json-core')
     compile 'org.hamcrest:hamcrest-core:1.3'
     compile 'org.hamcrest:hamcrest-library:1.3'
     compile 'org.hamcrest:hamcrest-integration:1.3'
@@ -36,76 +36,5 @@ test {
     }
 }
 
-/////////////
-
-def isReleaseBuild() {
-    return VERSION_NAME.contains("SNAPSHOT") == false
-}
-def getReleaseRepositoryUrl() {
-    return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
-            : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-}
-def getSnapshotRepositoryUrl() {
-    return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
-            : "https://oss.sonatype.org/content/repositories/snapshots/"
-}
-def getRepositoryUsername() {
-    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
-}
-def getRepositoryPassword() {
-    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
-}
-
-//task sourceJar(type: Jar) {
-//    from sourceSets.main.allJava
-//}
-
-//publishing {
-//    publications {
-//        maven(MavenPublication) {
-//            from components.java
-//            artifact sourceJar {
-//                classifier "source"
-//            }
-//            groupId GROUP
-//            artifactId = POM_ARTIFACT_ID
-//            version VERSION_NAME
-//
-//            pom.packaging POM_PACKAGING
-//            pom.withXml {
-//                asNode().appendNode('name', POM_NAME)
-//                asNode().appendNode('description', POM_DESCRIPTION)
-//                asNode().appendNode('url', POM_URL)
-//
-//                def scmNode = asNode().appendNode('scm')
-//                scmNode.appendNode('url', POM_SCM_URL)
-//                scmNode.appendNode('connection', POM_SCM_CONNECTION)
-//                scmNode.appendNode('developerConnection', POM_SCM_DEV_CONNECTION)
-//
-//                def licenseNode = asNode().appendNode('licenses').appendNode('license')
-//                licenseNode.appendNode('name', POM_LICENCE_NAME)
-//                licenseNode.appendNode('url', POM_LICENCE_URL)
-//                licenseNode.appendNode('distribution', POM_LICENCE_DIST)
-//
-//                def developerNode = asNode().appendNode('developers').appendNode('developer')
-//                developerNode.appendNode('id', POM_DEVELOPER_ID)
-//                developerNode.appendNode('name', POM_DEVELOPER_NAME)
-//
-//
-//
-//            }
-//        }
-//    }
-//
-//    repositories {
-//        maven {
-//                if(isReleaseBuild()) {
-//                    url getReleaseRepositoryUrl()
-//                } else {
-//                    url getSnapshotRepositoryUrl()
-//                }
-//        }
-//    }
-//}
-
-apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/mvn-publish.gradle'
+apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'
+//apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/mvn-publish.gradle'

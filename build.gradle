@@ -13,4 +13,6 @@ allprojects {
     repositories {
         mavenCentral()
     }
+    project.group = GROUP
+    project.version = VERSION_NAME
 }

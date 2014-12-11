@@ -2,5 +2,5 @@ apply plugin: 'java'
 
 dependencies {
     compile project (':json-wrapper')
-    compile project (':jjson-core')
+    compile project (':json-core')
 }

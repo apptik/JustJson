@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project (':jjson-core')
+    compile project (':json-core')
     compile project (':json-wrapper')
     testCompile 'junit:junit:[4,)'
 }
@@ -33,6 +33,8 @@ test {
         events 'started', 'passed'
     }
 }
-apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/mvn-publish.gradle'
+
+apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'
+//apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/mvn-publish.gradle'
 
 
