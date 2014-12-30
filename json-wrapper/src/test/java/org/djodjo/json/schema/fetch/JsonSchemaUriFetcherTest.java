@@ -97,7 +97,7 @@ public class JsonSchemaUriFetcherTest {
 
     }
 
-    //@Test
+
     public void testFetchFromObjectWrapperWithConfig() throws Exception {
         JsonObjectWrapper job;
         final URI schemaUri2 = URI.create("ftp://some.addr/test123/geo");

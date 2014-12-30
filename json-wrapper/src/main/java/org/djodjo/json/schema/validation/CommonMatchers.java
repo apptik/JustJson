@@ -290,18 +290,30 @@ public class CommonMatchers {
                 if(!item.isJsonArray()) return true;
 
                 for(int i=0;i<item.asJsonArray().length();i++) {
-                    if(!isItemValid(validator,i).matches(item)) return false;
+                    StringBuilder sb = new StringBuilder();
+                    if(!validator.validate(item.asJsonArray().opt(i), sb)) {
+                        mismatchDescription.appendText("item at pos: " + i + ", does not validate by validator " + validator.getTitle())
+                                .appendText("\nDetails: ")
+                                .appendText(sb.toString());
+                        return false;
+                    }
                 }
-
                 return true;
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("is array item valid");
+                description.appendText("are array items valid");
             }
         };
     }
+
+//    if(!validator.validate(item.asJsonObject().opt(property), sb)) {
+//        mismatchDescription.appendText(", mismatch value: " + item.asJsonObject().opt(property))
+//                .appendText("\nDetails: ")
+//                .appendText(sb.toString());
+//        return false;
+//    }
 
     public static Matcher<JsonElement> isItemValid(final Validator validator, final int itemPos) {
         return new TypeSafeDiagnosingMatcher<JsonElement>() {
@@ -313,9 +325,11 @@ public class CommonMatchers {
                 //we also dont care if the item at position is not actually there
                 //if it is needed it will be handled by another matcher
                 if(item.asJsonArray().opt(itemPos) == null) return true;
-
-                if(!validator.isValid(item.asJsonArray().opt(itemPos))) {
-                    mismatchDescription.appendText("item at pos: " + itemPos + ", does not validate by validator " + validator.getTitle());
+                StringBuilder sb = new StringBuilder();
+                if(!validator.validate(item.asJsonArray().opt(itemPos), sb)) {
+                    mismatchDescription.appendText("item at pos: " + itemPos + ", does not validate by validator " + validator.getTitle())
+                            .appendText("\nDetails: ")
+                            .appendText(sb.toString());
                     return false;
                 }
 
@@ -494,7 +508,7 @@ public class CommonMatchers {
                 StringBuilder sb = new StringBuilder();
                 if(!validator.validate(item.asJsonObject().opt(property), sb)) {
                     mismatchDescription.appendText(", mismatch value: " + item.asJsonObject().opt(property))
-                    .appendText("\nDetails: ")
+                            .appendText("\nDetails: ")
                             .appendText(sb.toString());
                     return false;
                 }
