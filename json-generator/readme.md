@@ -31,28 +31,20 @@ examples are available at: https://github.com/djodjoni/JustJson/tree/master/exam
 
 create basic schema object:
 
-    '''java
      Schema schema = new SchemaV4().wrap(JsonElement.readFrom("{the schema}"));
-    '''
 
 ### Simple/Default
 
-    '''java
     new Generator(schema, null).generate();
-    '''
 
 ### Customized
 
-    '''java
     GeneratorConfig gConf = new GeneratorConfig();
     ArrayList<String> images =  new ArrayList<String>();
     images.add("/photos/image.jpg");
     images.add("/photos/image.jpg");
-
     gConf.uriPaths.put("seven", images);
-
     gConf.globalArrayItemsMax = 7;
-
     gConf.globalIntegerMin = 0;
     gConf.globalIntegerMax = 100;
     //can still limit numbers as long as its still valid according to the schema
@@ -60,4 +52,4 @@ create basic schema object:
     gConf.integerMax.put("five1", 400);
     gConf.skipObjectProperties.add("two");
     return  new Generator(schema, gConf).generate();
-    '''
+    
