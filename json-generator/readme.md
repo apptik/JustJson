@@ -16,7 +16,7 @@ Maven:
 
 Gradle:
 
-    'org.djodjo.json:json-generator:1.0.0-RC3'
+    'org.djodjo.json:json-generator:1.0.0-RC4'
 
 ##Customizable option
 * set custom propeties on all values(globals) or specific to the element key
