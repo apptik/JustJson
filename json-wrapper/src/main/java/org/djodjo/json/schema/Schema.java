@@ -282,32 +282,32 @@ public abstract class Schema extends JsonObjectWrapper {
         return getJson().optString("default","");
     }
 
-    public double getMultipleOf() {
-        return getJson().optDouble("multipleOf", Double.MIN_VALUE);
+    public Double getMultipleOf() {
+        return getJson().optDouble("multipleOf");
     }
 
-    public double getMaximum() {
-        return getJson().optDouble("maximum", Double.NaN);
+    public Double getMaximum() {
+        return getJson().optDouble("maximum");
     }
 
     public boolean getExclusiveMaximum() {
         return getJson().optBoolean("exclusiveMaximum", false);
     }
 
-    public double getMinimum() {
-        return getJson().optDouble("minimum", Double.NaN);
+    public Double getMinimum() {
+        return getJson().optDouble("minimum");
     }
 
     public boolean getExclusiveMinimum() {
         return getJson().optBoolean("exclusiveMinimum", false);
     }
 
-    public int getMaxLength() {
-        return getJson().optInt("maxLength", Integer.MAX_VALUE);
+    public Integer getMaxLength() {
+        return getJson().optInt("maxLength");
     }
 
-    public int getMinLength() {
-        return getJson().optInt("minLength", 0);
+    public Integer getMinLength() {
+        return getJson().optInt("minLength");
     }
 
     public String getPattern() {
@@ -334,24 +334,24 @@ public abstract class Schema extends JsonObjectWrapper {
         return res;
     }
 
-    public int getMaxItems() {
-        return getJson().optInt("maxItems", Integer.MAX_VALUE);
+    public Integer getMaxItems() {
+        return getJson().optInt("maxItems");
     }
 
-    public int getMinItems() {
-        return getJson().optInt("minItems", 0);
+    public Integer getMinItems() {
+        return getJson().optInt("minItems");
     }
 
     public boolean getUniqueItems() {
         return getJson().optBoolean("uniqueItems",false);
     }
 
-    public int getMaxProperties() {
-        return getJson().optInt("maxProperties", Integer.MAX_VALUE);
+    public Integer getMaxProperties() {
+        return getJson().optInt("maxProperties");
     }
 
-    public int getMinProperties() {
-        return getJson().optInt("minProperties", 0);
+    public Integer getMinProperties() {
+        return getJson().optInt("minProperties");
     }
 
     public ArrayList<String> getRequired() {

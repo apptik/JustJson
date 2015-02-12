@@ -110,8 +110,7 @@ public class SchemaDefMatchers {
             @Override
             protected boolean matchesSafely(Schema item) {
                 if(!isNumberType().matches(item)) return false;
-                if(Double.compare(item.getMinimum(), Double.NaN)==0) return false;
-                if(Double.compare(item.getMaximum(), Double.NaN)==0) return false;
+                if(item.getMinimum()==null && item.getMaximum()==null) return false;
                 return true;
             }
 

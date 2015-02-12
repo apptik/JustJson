@@ -80,7 +80,6 @@ public class JsonOneOfGenerationTest {
         System.out.println(job.toString());
 
         assertEquals(7,job.length());
-
     }
 
 

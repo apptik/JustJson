@@ -73,6 +73,9 @@ public class Generator {
     public Generator(Schema schema, GeneratorConfig configuration) {
         this.schema = schema;
         this.configuration = configuration;
+        if(configuration==null) {
+            this.configuration=new GeneratorConfig();
+        }
         schema.mergeAllRefs();
         mergeComposites();
 

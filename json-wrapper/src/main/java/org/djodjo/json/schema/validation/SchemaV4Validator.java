@@ -70,13 +70,13 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
 
 
     private void putMatchers4Numeric() {
-        double multipleOf = schema.getMultipleOf();
-        if(multipleOf != Double.MIN_VALUE && multipleOf>0) {
+        Double multipleOf = schema.getMultipleOf();
+        if(multipleOf != null && multipleOf>0) {
             allMatchers.add(isMultipleOf(multipleOf));
         }
 
-        double maximum = schema.getMaximum();
-        if(Double.compare(maximum, Double.NaN)!=0) {
+        Double maximum = schema.getMaximum();
+        if(maximum!=null) {
             if(schema.getExclusiveMaximum()) {
                 allMatchers.add(isLessThan(maximum));
             } else {
@@ -84,8 +84,8 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
             }
         }
 
-        double minimum = schema.getMinimum();
-        if(Double.compare(minimum, Double.NaN)!=0) {
+        Double minimum = schema.getMinimum();
+        if(minimum!=null) {
             if(schema.getExclusiveMinimum()) {
                 allMatchers.add(isMoreThan(minimum));
             } else {
@@ -97,13 +97,13 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
 
     private void putMatchers4String() {
 
-        int maxLength = schema.getMaxLength();
-        if(maxLength != Integer.MAX_VALUE) {
+        Integer maxLength = schema.getMaxLength();
+        if(maxLength != null) {
             allMatchers.add(withCharsLessOrEqualTo(maxLength));
         }
 
-        int minLength = schema.getMinLength();
-        if(minLength > 0) {
+        Integer minLength = schema.getMinLength();
+        if(minLength!=null && minLength > 0) {
             allMatchers.add(withCharsMoreOrEqualTo(minLength));
         }
 
@@ -137,13 +137,13 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
             }
         }
 
-        int maxItems = schema.getMaxItems();
-        if(maxItems < Integer.MAX_VALUE) {
+        Integer maxItems = schema.getMaxItems();
+        if(maxItems !=null) {
             allMatchers.add(maxItems(maxItems));
         }
 
-        int minItems = schema.getMinItems();
-        if(minItems > 0) {
+        Integer minItems = schema.getMinItems();
+        if(minItems != null) {
             allMatchers.add(minItems(minItems));
         }
 
@@ -156,13 +156,13 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
 
     private void putMatcher4Object() {
 
-        int maxProperties = schema.getMaxProperties();
-        if(maxProperties != Double.NaN && maxProperties < Integer.MAX_VALUE) {
+        Integer maxProperties = schema.getMaxProperties();
+        if(maxProperties !=null) {
             allMatchers.add(maxProperties(maxProperties));
         }
 
-        int minProperties = schema.getMinProperties();
-        if(minProperties != Double.NaN && minProperties > 0) {
+        Integer minProperties = schema.getMinProperties();
+        if(minProperties != null && minProperties > 0) {
             allMatchers.add(minProperties(minProperties));
         }
 

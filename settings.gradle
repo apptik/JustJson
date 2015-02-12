@@ -1,1 +1,3 @@
 include  'json-core', ':json-wrapper', ':json-generator', 'json-aws'
+include 'examples'
+

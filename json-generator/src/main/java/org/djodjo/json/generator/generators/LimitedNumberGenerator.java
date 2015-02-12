@@ -33,6 +33,32 @@ public class LimitedNumberGenerator extends Generator {
 
     @Override
     public JsonElement generate() {
-        return new JsonNumber((int)schema.getMinimum() + rnd.nextInt((int) (schema.getMaximum()-schema.getMinimum())));
+
+        double mustMin;
+        double mustMax;
+        double minValue = mustMin = (schema.getMinimum()!=null)?schema.getMinimum():0;
+        double maxValue = mustMax = (schema.getMaximum()!=null)?schema.getMaximum():Integer.MAX_VALUE;
+
+
+        if(configuration!=null) {
+            if (configuration.globalIntegerMin!=null && mustMin<configuration.globalIntegerMin) {
+                minValue = configuration.globalIntegerMin;
+            }
+            if (configuration.globalIntegerMax!=null && mustMax > configuration.globalIntegerMax){
+                maxValue = configuration.globalIntegerMax;
+            }
+            if (propertyName != null ) {
+                if (configuration.integerMin.get(propertyName)!=null && mustMin< configuration.integerMin.get(propertyName)){
+                    minValue = configuration.integerMin.get(propertyName);
+                }
+                if (configuration.integerMax.get(propertyName)!=null && mustMax>configuration.integerMax.get(propertyName)){
+                    maxValue = configuration.integerMax.get(propertyName);
+                }
+            }
+
+        }
+
+
+        return new JsonNumber((int)minValue + rnd.nextInt((int) (maxValue-minValue)));
     }
 }

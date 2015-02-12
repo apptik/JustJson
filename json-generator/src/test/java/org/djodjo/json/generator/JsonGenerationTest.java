@@ -28,6 +28,7 @@ import org.junit.runners.JUnit4;
 import java.util.ArrayList;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 @RunWith(JUnit4.class)
 public class JsonGenerationTest {
@@ -73,6 +74,18 @@ public class JsonGenerationTest {
 
         assertEquals(7,job.length());
 
+    }
+
+    @Test
+    public void testLimitedNumber() throws Exception {
+        GeneratorConfig gConf = new GeneratorConfig();
+        gConf.globalIntegerMin = 300;
+        gConf.globalIntegerMax = 400;
+
+        JsonObject job = new Generator(schema, gConf).generate().asJsonObject();
+        System.out.println(job.toString());
+        assertTrue(job.getInt("five")>=300);
+        assertTrue(job.getInt("five")<=400);
     }
 
 

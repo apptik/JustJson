@@ -83,4 +83,6 @@ public class GeneratorConfig {
 
     public ArrayList<String> skipObjectProperties = new ArrayList();
 
+
+
 }
