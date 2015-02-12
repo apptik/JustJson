@@ -95,7 +95,7 @@ public class JsonGenerator {
         //can still limit numbers as long as its still valid according to the schema
         gConf.integerMin.put("five1", 300);
         gConf.integerMax.put("five1", 400);
-        gConf.skipObjectProperties.add("location");
+        gConf.skipObjectProperties.add("two");
 
         return  new Generator(schema, gConf).generate();
     }
