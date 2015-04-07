@@ -18,6 +18,8 @@ package org.djodjo.json.jsonld.api;
 
 
 import org.djodjo.json.JsonObject;
+import org.djodjo.json.JsonString;
+import org.djodjo.json.jsonld.JsonLdWrap;
 
 import java.net.URI;
 import java.util.Map;
@@ -25,7 +27,9 @@ import java.util.Map;
 public class JsonLdContext {
 
     private JsonLdOptions options;
-    private JsonObject ctx;
+    //context json object containing json-ld known terms
+    private JsonLdWrap ctx;
+    //only term definitions
     private JsonObject termDefinitions;
     public JsonObject inverse = null;
 
@@ -39,7 +43,7 @@ public class JsonLdContext {
     }
 
     public JsonLdContext(Map<String, Object> map, JsonLdOptions opts) {
-        ctx = new JsonObject(map);
+        ctx = new JsonLdWrap(new JsonObject(map));
         init(opts);
     }
 
@@ -54,13 +58,17 @@ public class JsonLdContext {
 
     private void init(JsonLdOptions options) {
         if(ctx==null) {
-            ctx = new JsonObject();
+            ctx =  new JsonLdWrap();
         }
         this.options = options;
         if (options.getBase() != null) {
-            ctx.put("@base", options.getBase());
+            ctx.setBase(new JsonString(options.getBase()));
         }
-        this.termDefinitions = new JsonObject();
+       
     }
 
+    @Override
+    public String toString() {
+        return ctx.getJson().merge(termDefinitions).toString();
+    }
 }
