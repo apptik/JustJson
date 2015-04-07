@@ -74,8 +74,8 @@ import java.util.*;
  * named entry from the object but {@code put(name, JsonObject.NULL)} stores an
  * entry whose value is {@code JsonObject.NULL}.
  *
- * <p>Instances of this class are not thread safe. Although this class is
- * nonfinal, it was not designed for inheritance and should not be subclassed.
+ * <p>Instances of this class are not thread safe. This class is
+ * not designed for inheritance and should not be subclassed.
  * In particular, self-use by overrideable methods is not specified. See
  * <i>Effective Java</i> Item 17, "Design and Document or inheritance or else
  * prohibit it" for further information.
