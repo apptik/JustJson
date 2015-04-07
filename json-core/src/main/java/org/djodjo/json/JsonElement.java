@@ -13,6 +13,10 @@ import java.util.Map;
 
 public abstract class JsonElement{
 
+    public static JsonElement readFrom( JsonReader reader ) throws JsonException, IOException {
+        return Adapter.fromJson(reader);
+    }
+
     public static JsonElement readFrom( Reader reader ) throws JsonException, IOException {
         return Adapter.fromJson(reader);
     }
@@ -211,6 +215,10 @@ private static class Adapter {
     static public JsonElement fromJson(Reader in) throws IOException, JsonException {
         JsonReader reader = new JsonReader(in);
         return read(reader);
+    }
+
+    static public JsonElement fromJson(JsonReader in) throws IOException, JsonException {
+        return read(in);
     }
 
     static public JsonElement fromJson(String json) throws IOException, JsonException {

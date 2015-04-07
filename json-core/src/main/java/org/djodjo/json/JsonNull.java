@@ -19,7 +19,7 @@ package org.djodjo.json;
 import java.io.IOException;
 
 public final class JsonNull extends JsonElement {
-
+    
     @Override
     public boolean isNull() {
         return true;
