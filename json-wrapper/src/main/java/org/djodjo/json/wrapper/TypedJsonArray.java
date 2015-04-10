@@ -73,12 +73,12 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return getJson().asJsonArray().toArray();
     }
 
     @Override
     public <T1> T1[] toArray(T1[] t1s) {
-        return null;
+        return getJson().asJsonArray().toArray(t1s);
     }
 
     @Override
