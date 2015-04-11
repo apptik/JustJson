@@ -5,14 +5,15 @@ import org.djodjo.json.JsonArray;
 import org.djodjo.json.JsonElement;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * Helper class that can be used for Json Array containing always the same type of object;
+ * This is useful in the general case when elements are read from or written to Json once.
+ * however not efficient on many reads nor writes on same object.
+ * In the case of many reads and/or writes back use
+ * {@link CachedTypedJsonArray}
+ *
  *
  * @param <T> The type
  */
@@ -22,9 +23,14 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
     }
 
     @Override
+    public <T extends JsonElementWrapper> T wrap(JsonElement jsonElement) {
+        return super.wrap(jsonElement);
+    }
+
+    @Override
     public JsonArray getJson() {
-        if(super.getJson() == null) try {
-            this.json  = JsonElement.readFrom("[]");
+        if (super.getJson() == null) try {
+            this.json = JsonElement.readFrom("[]");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -32,6 +38,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
     }
 
     protected abstract T get(JsonElement jsonElement, int pos);
+
     protected abstract JsonElement to(T value);
 
     @Override
@@ -41,7 +48,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
 
     @Override
     public boolean isEmpty() {
-        return getJson().length()<1;
+        return getJson().length() < 1;
     }
 
     @Override
@@ -73,12 +80,24 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
 
     @Override
     public Object[] toArray() {
-        return getJson().asJsonArray().toArray();
+        Object[] arr = new Object[getJson().size()];
+        for(int i=0;i<arr.length;i++) {
+            arr[i] = get(getJson().get(i), i);
+        }
+        return arr;
     }
 
     @Override
     public <T1> T1[] toArray(T1[] t1s) {
-        return getJson().asJsonArray().toArray(t1s);
+        Object[] elementArr = toArray();
+        int size = getJson().size();
+        if (t1s.length < size)
+            // Make a new array of a's runtime type, but my contents:
+            return (T1[]) Arrays.copyOf(elementArr, size, t1s.getClass());
+        System.arraycopy(elementArr, 0, t1s, 0, size);
+        if (t1s.length > size)
+            t1s[size] = null;
+        return t1s;
     }
 
     @Override
@@ -89,8 +108,8 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
 
     @Override
     public boolean remove(Object o) {
-        if(!contains(o))
-        return false;
+        if (!contains(o))
+            return false;
         getJson().remove(indexOf(o));
         return true;
     }
@@ -264,9 +283,9 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
 
     @Override
     public List<T> subList(int i, int i2) {
-        List<JsonElement> subList =  getJson().subList(i, i2);
-        ArrayList<T> resList =  new ArrayList<T>();
-        for(JsonElement el:subList) {
+        List<JsonElement> subList = getJson().subList(i, i2);
+        ArrayList<T> resList = new ArrayList<T>();
+        for (JsonElement el : subList) {
             resList.add(get(el, indexOf(el)));
         }
         return resList;
