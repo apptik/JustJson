@@ -5,6 +5,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.djodjo.json.modelgen.util.UriUtils;
+import org.djodjo.json.modelgen.util.WordUtils;
 import org.djodjo.json.schema.Schema;
 import org.djodjo.json.schema.fetch.SchemaUriFetcher;
 
@@ -29,9 +30,9 @@ public class Main {
             Map<String, Object> data = new HashMap<String, Object>();
             String schemaId = UriUtils.getSchemaId(schema.getOrigSrc());
             //TODO stop for now...
-            //data.put("schemaName", WordUtils;
-         //   data.put("schemaName", schema.getOrigSrc());
+            data.put("schemaName", WordUtils.capitalize(WordUtils.underscore(schemaId)));
 
+            data.put("properties", schema.getProperties().getEntries());
             // Console output
             Writer out = new OutputStreamWriter(System.out);
             template.process(data, out);
