@@ -10,13 +10,13 @@ Maven:
     <dependency>
         <groupId>org.djodjo.json</groupId>
         <artifactId>json-generator</artifactId>
-        <version>1.0.0-RC4</version>
+        <version>1.0.0</version>
     </dependency>
 
 
 Gradle:
 
-    'org.djodjo.json:json-generator:1.0.0-RC4'
+    'org.djodjo.json:json-generator:1.0.0'
 
 ##Customizable option
 * set custom propeties on all values(globals) or specific to the element key
