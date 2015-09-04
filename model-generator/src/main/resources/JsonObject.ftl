@@ -1,6 +1,6 @@
 package com.produpress.immoweb.model;
 
-import org.djodjo.json.wrapper.JsonObjectWrapper;
+import JsonObjectWrapper;
 
 public class ${schemaName} extends JsonObjectWrapper {
 <#list properties?keys as prop>

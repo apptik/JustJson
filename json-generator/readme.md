@@ -27,7 +27,7 @@ Gradle:
 
 ##Usage
 
-examples are available at: https://github.com/djodjoni/JustJson/tree/master/examples/src/main/java/org.djodjo.json.examples/jsongenerator
+examples are available at: https://github.com/apptik/JustJson/tree/master/examples/src/main/java/org.djodjo.json.examples/jsongenerator
 
 create basic schema object:
 
