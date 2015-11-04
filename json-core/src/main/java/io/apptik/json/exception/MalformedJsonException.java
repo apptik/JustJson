@@ -19,11 +19,13 @@ package io.apptik.json.exception;
 
 import io.apptik.json.JsonReader;
 
+import java.io.IOException;
+
 /**
  * Thrown when a reader encounters malformed Util. Some syntax errors can be
  * ignored by calling {@link JsonReader#setLenient(boolean)}.
  */
-public class MalformedJsonException extends RuntimeException {
+public class MalformedJsonException extends IOException {
     private static final long serialVersionUID = 1L;
 
     public MalformedJsonException(String message) {
