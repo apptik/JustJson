@@ -20,6 +20,11 @@ repositories {
     mavenCentral()
 }
 
+compileJava {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project (':json-core')

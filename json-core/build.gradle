@@ -20,6 +20,11 @@ repositories {
     mavenCentral()
 }
 
+compileJava {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
 dependencies {
     testCompile 'junit:junit:[4,)'
 }

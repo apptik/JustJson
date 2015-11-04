@@ -16,7 +16,11 @@
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.7
+compileJava {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
 version = '1.0'
 
 repositories {
