@@ -18,10 +18,11 @@ package io.apptik.json.schema.fetch;
 
 import io.apptik.json.schema.Schema;
 
+import java.io.IOException;
 import java.net.URI;
 
 public interface SchemaFetcher {
-    Schema fetch(URI targetUri, URI srcOrigUri, URI srcId);
+    Schema fetch(URI targetUri, URI srcOrigUri, URI srcId) throws IOException;
     SchemaFetcher withConfig(SchemaFetcherConfig cfg);
 
 }

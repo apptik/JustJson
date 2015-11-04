@@ -1,25 +1,27 @@
 package io.apptik.json.schema;
 
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Map;
+
 import io.apptik.json.JsonArray;
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonObject;
 import io.apptik.json.Validator;
-import io.apptik.json.wrapper.JsonStringArrayWrapper;
 import io.apptik.json.schema.fetch.SchemaFetcher;
 import io.apptik.json.schema.fetch.SchemaUriFetcher;
 import io.apptik.json.wrapper.JsonElementWrapper;
 import io.apptik.json.wrapper.JsonObjectWrapper;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Map;
+import io.apptik.json.wrapper.JsonStringArrayWrapper;
 
 //TODO BIG cleanup
 public abstract class Schema extends JsonObjectWrapper {
 
     public static final String VER_4 = "http://json-schema.org/draft-04/schema#";
-    public static final String VER_5 = "http://json-schema.org/draft-05/schema#";
+    //not likely to make it..
+    //public static final String VER_5 = "http://json-schema.org/draft-05/schema#";
 
 
     public static final String TYPE_OBJECT = "object";
@@ -127,7 +129,11 @@ public abstract class Schema extends JsonObjectWrapper {
     public Schema(URI schemaRef) {
         this();
         origSrc = schemaRef;
-        this.wrap(new SchemaUriFetcher().fetch(origSrc, null, null).getJson());
+        try {
+            this.wrap(new SchemaUriFetcher().fetch(origSrc, null, null).getJson());
+        } catch (IOException e) {
+            throw new RuntimeException("Error merging schema: " + schemaRef, e);
+        }
     }
 
     public SchemaFetcher getSchemaFetcher() {
@@ -205,14 +211,23 @@ public abstract class Schema extends JsonObjectWrapper {
 
         return this;
     }
-
-    private void mergeWithRef() {
+    private <O extends Schema> O mergeWithRef() {
+        return mergeWithRef(false);
+    }
+    private <O extends Schema> O mergeWithRef(boolean ignoreErros) {
         if(this.getRef()!=null && !this.getRef().trim().isEmpty()) {
             //populate values
             //if there are title and description already do not change those.
-            Schema refSchema;
+            Schema refSchema = null;
             if(schemaFetcher==null) schemaFetcher = new SchemaUriFetcher();
-            refSchema = schemaFetcher.fetch(URI.create(this.getRef()), origSrc, URI.create(getId()));
+            try {
+                refSchema = schemaFetcher.fetch(URI.create(this.getRef()), origSrc, URI.create(getId()));
+            } catch (IOException e) {
+                e.printStackTrace();
+                if(!ignoreErros) {
+                    throw new RuntimeException("Error merging: " + this.getRef(), e);
+                }
+            }
 
             //TODO not really according to the specs, however specs not really clear what "$ref should precede all other..." means
             if (refSchema!=null) {
@@ -226,6 +241,7 @@ public abstract class Schema extends JsonObjectWrapper {
                 getJson().put("title", oldTitle).put("description", oldDesc);
             }
         }
+        return (O) this;
     }
 
     @Override

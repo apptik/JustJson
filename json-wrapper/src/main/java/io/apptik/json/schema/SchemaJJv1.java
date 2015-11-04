@@ -16,12 +16,13 @@
 
 package io.apptik.json.schema;
 
-import io.apptik.json.JsonArray;
-import io.apptik.json.JsonObject;
-
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import io.apptik.json.JsonArray;
+import io.apptik.json.JsonObject;
 
 /**
  * New keyword is "extends" which is used as "merge" (v5 proposal) but with easier syntax. es:
@@ -53,6 +54,7 @@ import java.util.Collection;
  *
  * "equivalent keyword is used here to provide list of links to equivalent schemas/rdf classes"
  */
+//quite experimental
 public class SchemaJJv1 extends SchemaV4 {
 
     public  SchemaJJv1() {
@@ -66,7 +68,11 @@ public class SchemaJJv1 extends SchemaV4 {
     }
 
     public Schema setSuperSchema(URI superSchema) {
-        getJson().put("extends", getSchemaFetcher().fetch(superSchema, null,null));
+        try {
+            getJson().put("extends", getSchemaFetcher().fetch(superSchema, null,null));
+        } catch (IOException e) {
+            throw new RuntimeException("Error setting superSchema: " + superSchema, e);
+        }
         return this;
     }
 

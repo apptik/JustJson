@@ -18,6 +18,14 @@
 package io.apptik.json.wrapper;
 
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.URI;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+
 import io.apptik.json.ElementWrapper;
 import io.apptik.json.JsonElement;
 import io.apptik.json.Validator;
@@ -26,14 +34,6 @@ import io.apptik.json.schema.Schema;
 import io.apptik.json.schema.fetch.SchemaFetcher;
 import io.apptik.json.schema.fetch.SchemaUriFetcher;
 import io.apptik.json.util.LinkedTreeMap;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.URI;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
 
 
 /**
@@ -120,7 +120,11 @@ public abstract class JsonElementWrapper implements ElementWrapper {
         while (iterator.hasNext() && currSchema==null){
             Map.Entry<String,SchemaFetcher> entry = iterator.next();
             System.out.println("JsonElementWrapper try fetch using: " + entry.getKey());
-            currSchema = entry.getValue().fetch(jsonSchemaUri, null, null);
+            try {
+                currSchema = entry.getValue().fetch(jsonSchemaUri, null, null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             System.out.println("JsonElementWrapper fetch result: " + ((currSchema==null)?"FAIL":"OK"));
         }
         return currSchema;

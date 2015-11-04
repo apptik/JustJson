@@ -17,16 +17,16 @@
 package io.apptik.json.schema.fetch;
 
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonObject;
 import io.apptik.json.exception.JsonException;
 import io.apptik.json.schema.Schema;
 import io.apptik.json.schema.SchemaV4;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 
 
@@ -81,7 +81,7 @@ public class SchemaUriFetcher implements SchemaFetcher {
 
     //accepts only absolute URI or converted absolute URI
     @Override
-    public Schema fetch(URI targetUri, URI srcOrigUri, URI srcId) {
+    public Schema fetch(URI targetUri, URI srcOrigUri, URI srcId) throws IOException {
         Schema res = null;
 
         URI schemaUri = convertUri(resolveUri(targetUri, srcOrigUri, srcId));
@@ -106,10 +106,9 @@ public class SchemaUriFetcher implements SchemaFetcher {
                 res = new SchemaV4().setSchemaFetcher(this).setOrigSrc(schemaUri).wrap(schemaJson);
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (JsonException e) {
             e.printStackTrace();
+            throw new RuntimeException("Schema fetch failed: " + targetUri.toString(), e);
         }
         return res;
     }
