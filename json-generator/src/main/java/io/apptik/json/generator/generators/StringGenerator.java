@@ -18,12 +18,9 @@ package io.apptik.json.generator.generators;
 
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonString;
-import io.apptik.json.generator.GeneratorConfig;
-import io.apptik.json.generator.generators.formats.DateTimeGenerator;
-import io.apptik.json.generator.generators.formats.TimeGenerator;
-import io.apptik.json.generator.generators.formats.UriGenerator;
 import io.apptik.json.generator.Generator;
-import io.apptik.json.generator.generators.formats.DateGenerator;
+import io.apptik.json.generator.GeneratorConfig;
+import io.apptik.json.generator.generators.formats.*;
 import io.apptik.json.schema.Schema;
 import io.apptik.json.util.LinkedTreeMap;
 import org.hamcrest.Matcher;
@@ -31,10 +28,7 @@ import org.hamcrest.Matcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-import static io.apptik.json.generator.matcher.FormatMatchers.isDateFormat;
-import static io.apptik.json.generator.matcher.FormatMatchers.isDateTimeFormat;
-import static io.apptik.json.generator.matcher.FormatMatchers.isTimeFormat;
-import static io.apptik.json.generator.matcher.FormatMatchers.isUriFormat;
+import static io.apptik.json.generator.matcher.FormatMatchers.*;
 
 public class StringGenerator extends Generator {
 
@@ -46,6 +40,7 @@ public class StringGenerator extends Generator {
         stringFormatMatchers.put(isDateFormat(), DateGenerator.class);
         stringFormatMatchers.put(isTimeFormat(), TimeGenerator.class);
         stringFormatMatchers.put(isUriFormat(), UriGenerator.class);
+        stringFormatMatchers.put(isEmailFormat(), EmailGenerator.class);
     }
 
     public StringGenerator(Schema schema, GeneratorConfig configuration) {
