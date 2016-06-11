@@ -26,6 +26,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -37,26 +39,27 @@ public class JsonGenerationTest {
     @Before
     public void setUp() throws Exception {
         schema =  new SchemaV4().wrap(JsonElement.readFrom(
-"{\n" +
+                "{\n" +
 
 
-                "\"type\" : \"object\"," +
-                "\"properties\" : {" +
-                "\"one\" : {\"type\" : \"number\"  } ," +
-                "\"two\" : {\"type\" : \"string\" }," +
-                "\"three\" : " + "{" +
-                    "\"type\" : \"object\"," +
-                    "\"properties\" : {" +
-                    "\"one\" : {\"type\" : \"number\"  } ," +
-                    "\"two\" : {\"type\" : \"string\" }" +
-                    "}" +
-                    "},"+
-                "\"four\" : {\"type\" : \"boolean\"  }," +
-                "\"five\" : {\"type\" : \"integer\", \"minimum\": 200, \"maximum\":5000 }," +
-                "\"six\" : {\"enum\" : [\"one\", 2, 3.5, true, [\"almost empty aray\"], {\"one-item\":\"object\"}, null]  }, " +
-                "\"seven\" : {\"type\" : \"string\", \"format\": \"uri\" }" +
-                "}" +
-                "}"));
+                        "\"type\" : \"object\"," +
+                        "\"properties\" : {" +
+                        "\"one\" : {\"type\" : \"number\"  } ," +
+                        "\"two\" : {\"type\" : \"string\" }," +
+                        "\"three\" : " + "{" +
+                        "\"type\" : \"object\"," +
+                        "\"properties\" : {" +
+                        "\"one\" : {\"type\" : \"number\"  } ," +
+                        "\"two\" : {\"type\" : \"string\" }" +
+                        "}" +
+                        "},"+
+                        "\"four\" : {\"type\" : \"boolean\"  }," +
+                        "\"five\" : {\"type\" : \"integer\", \"minimum\": 200, \"maximum\":5000 }," +
+                        "\"six\" : {\"enum\" : [\"one\", 2, 3.5, true, [\"almost empty aray\"], {\"one-item\":\"object\"}, null]  }, " +
+                        "\"seven\" : {\"type\" : \"string\", \"format\": \"uri\" }," +
+                        "\"eight\" : {\"type\" : \"string\", \"format\": \"email\" }" +
+                        "}" +
+                        "}"));
     }
 
     @Test
@@ -72,7 +75,7 @@ public class JsonGenerationTest {
 
         System.out.println(job.toString());
 
-        assertEquals(7,job.length());
+        assertEquals(8,job.length());
 
     }
 
@@ -84,9 +87,17 @@ public class JsonGenerationTest {
 
         JsonObject job = new Generator(schema, gConf).generate().asJsonObject();
         System.out.println(job.toString());
-        assertTrue(job.getInt("five")>=300);
-        assertTrue(job.getInt("five")<=400);
+        assertTrue(job.getInt("five") >= 300);
+        assertTrue(job.getInt("five") <= 400);
     }
 
-
+    @Test
+    public void testEmailTypeString(){
+        JsonObject job = new Generator(schema, null).generate().asJsonObject();
+        System.out.println(job.toString());
+        String emailString = job.get("eight").toString();
+        Pattern emailRegex = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = emailRegex.matcher(emailString);
+        assertTrue(matcher.find());
+    }
 }
