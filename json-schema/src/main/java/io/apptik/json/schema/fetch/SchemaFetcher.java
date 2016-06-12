@@ -21,7 +21,7 @@ import io.apptik.json.wrapper.MetaInfoFetcher;
 
 import java.net.URI;
 
-public interface SchemaFetcher extends MetaInfoFetcher {
+public interface SchemaFetcher extends MetaInfoFetcher<Schema> {
     Schema fetch(URI targetUri, URI srcOrigUri, URI srcId);
 
     SchemaFetcher withConfig(SchemaFetcherConfig cfg);

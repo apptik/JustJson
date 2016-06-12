@@ -56,4 +56,9 @@ public class SchemaResourceFetcher implements SchemaFetcher {
     public SchemaFetcher withConfig(SchemaFetcherConfig cfg) {
         return null;
     }
+
+    @Override
+    public Schema fetch(URI targetUri) {
+        return fetch(targetUri, null, null);
+    }
 }

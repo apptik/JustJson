@@ -30,9 +30,6 @@ import io.apptik.json.ElementWrapper;
 import io.apptik.json.JsonElement;
 import io.apptik.json.Validator;
 import io.apptik.json.exception.JsonException;
-import io.apptik.json.schema.Schema;
-import io.apptik.json.schema.fetch.SchemaFetcher;
-import io.apptik.json.schema.fetch.SchemaUriFetcher;
 import io.apptik.json.util.LinkedTreeMap;
 
 
@@ -49,10 +46,10 @@ public abstract class JsonElementWrapper implements ElementWrapper {
     protected transient JsonElement json;
     private String contentType;
     private URI jsonSchemaUri;
-    private Schema jsonSchema;
+    private MetaInfo metaInfo;
 
     private transient LinkedHashSet<Validator> validators = new LinkedHashSet<Validator>();
-    private transient LinkedTreeMap<String, SchemaFetcher> fetchers = new LinkedTreeMap<String, SchemaFetcher>();
+    private transient LinkedTreeMap<String, MetaInfoFetcher> fetchers = new LinkedTreeMap<String, MetaInfoFetcher>();
 
 
     @Override
@@ -68,12 +65,13 @@ public abstract class JsonElementWrapper implements ElementWrapper {
         return jsonSchemaUri;
     }
 
-    public Schema getJsonSchema() {
-        return jsonSchema;
+    public MetaInfo getMetaInfo() {
+        return metaInfo;
     }
 
     public JsonElementWrapper() {
-        fetchers.put("defaultUriFetcher", new SchemaUriFetcher());
+       //todo do we need default fetcher ?
+        // fetchers.put("defaultUriFetcher", new SchemaUriFetcher());
     }
 
     public JsonElementWrapper(JsonElement jsonElement) {
@@ -86,10 +84,10 @@ public abstract class JsonElementWrapper implements ElementWrapper {
 
     }
 
-    public JsonElementWrapper(JsonElement jsonElement, String contentType, URI jsonSchema) {
+    public JsonElementWrapper(JsonElement jsonElement, String contentType, URI metaInfo) {
         this(jsonElement, contentType);
-        this.jsonSchemaUri = jsonSchema;
-        tryFetchSchema(this.jsonSchemaUri);
+        this.jsonSchemaUri = metaInfo;
+        tryFetchMetaInfo(this.jsonSchemaUri);
     }
 
 
@@ -100,28 +98,28 @@ public abstract class JsonElementWrapper implements ElementWrapper {
      * @param jsonSchemaUri
      * @return
      */
-    private Schema tryFetchSchema(URI jsonSchemaUri) {
+    private MetaInfo tryFetchMetaInfo(URI jsonSchemaUri) {
         if(jsonSchemaUri==null) return null;
         try {
-            jsonSchema = doFetchSchema(jsonSchemaUri);
-            Validator validator = jsonSchema.getDefaultValidator();
+            metaInfo = doFetchMetaInfo(jsonSchemaUri);
+            Validator validator = metaInfo.getDefaultValidator();
             if(validator !=null) validators.add(validator);
         } catch (Exception ex) {
             return null;
         }
 
-        return jsonSchema;
+        return metaInfo;
     }
 
-    private Schema doFetchSchema(URI jsonSchemaUri) {
-        Schema currSchema = null;
+    private MetaInfo doFetchMetaInfo(URI jsonSchemaUri) {
+        MetaInfo currSchema = null;
 
-        Iterator<Map.Entry<String,SchemaFetcher>> iterator =  fetchers.entrySet().iterator();
+        Iterator<Map.Entry<String,MetaInfoFetcher>> iterator =  fetchers.entrySet().iterator();
         while (iterator.hasNext() && currSchema==null){
-            Map.Entry<String,SchemaFetcher> entry = iterator.next();
+            Map.Entry<String,MetaInfoFetcher> entry = iterator.next();
             System.out.println("JsonElementWrapper try fetch using: " + entry.getKey());
             try {
-                currSchema = entry.getValue().fetch(jsonSchemaUri, null, null);
+                currSchema = entry.getValue().fetch(jsonSchemaUri);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -140,32 +138,32 @@ public abstract class JsonElementWrapper implements ElementWrapper {
         return this;
     }
 
-    public JsonElementWrapper setJsonSchemaUri(URI uri) {
+    public JsonElementWrapper setMetaInfoUri(URI uri) {
         this.jsonSchemaUri = uri;
-        tryFetchSchema(this.jsonSchemaUri);
+        tryFetchMetaInfo(this.jsonSchemaUri);
         return this;
     }
 
-    public JsonElementWrapper setJsonSchema(Schema jsonSchema) {
-        this.jsonSchema = jsonSchema;
+    public JsonElementWrapper setMetaInfo(MetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
         return this;
     }
 
-    public JsonElementWrapper addSchemaFetcher(String name, SchemaFetcher fetcher) {
+    public JsonElementWrapper addSchemaFetcher(String name, MetaInfoFetcher fetcher) {
         this.fetchers.put(name, fetcher);
         return this;
     }
 
-    public SchemaFetcher getDefaultSchemaFetcher() {
+    public MetaInfoFetcher getDefaultSchemaFetcher() {
         return this.fetchers.get("defaultUriFetcher");
     }
 
-    public JsonElementWrapper setDefaultSchemaFetcher(SchemaFetcher fetcher) {
+    public JsonElementWrapper setDefaultSchemaFetcher(MetaInfoFetcher fetcher) {
         this.fetchers.put("defaultUriFetcher", fetcher);
         return this;
     }
 
-    public JsonElementWrapper setSchemaFetchers(Map<String, SchemaFetcher> newFetchers) {
+    public JsonElementWrapper setSchemaFetchers(Map<String, MetaInfoFetcher> newFetchers) {
         this.fetchers.clear();
         this.fetchers.putAll(newFetchers);
         return this;
@@ -204,10 +202,10 @@ public abstract class JsonElementWrapper implements ElementWrapper {
         return res;
     }
 
-    public Schema fetchJsonSchema() {
-        if(jsonSchema==null)
-            tryFetchSchema(this.jsonSchemaUri);
-        return jsonSchema;
+    public MetaInfo fetchMetaInfo() {
+        if(metaInfo ==null)
+            tryFetchMetaInfo(this.jsonSchemaUri);
+        return metaInfo;
     }
 
     private void writeObject(ObjectOutputStream oos) throws IOException {

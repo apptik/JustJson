@@ -65,10 +65,10 @@ public class JsonSchemaUriFetcherTest {
 
 
         Schema schemaGeo = new SchemaV4().wrap(JsonElement.readFrom("{\"description\":\"A geographical coordinate\",\"type\":\"object\",\"properties\":{\"latitude\":{\"type\":\"number\"},\"longitude\":{\"type\":\"number\"}}}"));
-        job = (JsonObjectWrapper) new JsonObjectWrapper().setJsonSchemaUri(schemaUri);
+        job = (JsonObjectWrapper) new JsonObjectWrapper().setMetaInfoUri(schemaUri);
 
 
-        assertEquals(schemaGeo.getJson(), job.getJsonSchema().getJson());
+        assertEquals(schemaGeo.getJson(), ((Schema)job.getMetaInfo()).getJson());
 
     }
 
@@ -104,15 +104,15 @@ public class JsonSchemaUriFetcherTest {
 
         Schema schemaGeo = new SchemaV4().wrap(JsonElement.readFrom("{\"description\":\"A geographical coordinate\",\"type\":\"object\",\"properties\":{\"latitude\":{\"type\":\"number\"},\"longitude\":{\"type\":\"number\"}}}"));
         job = new JsonObjectWrapper();
-        job.getDefaultSchemaFetcher().withConfig(
+        job.setDefaultSchemaFetcher(new SchemaUriFetcher().withConfig(
                 new SchemaFetcherConfig()
                         .withUriSchemeReplacement("ftp", schemaUri.getScheme())
                         .withUriAuthorityReplacement("some.addr", schemaUri.getAuthority())
                         .withUriPathReplacement("/test123/geo", schemaUri.getPath())
-        );
-        job.setJsonSchemaUri(schemaUri2);
+        ));
+        job.setMetaInfoUri(schemaUri2);
 
-        assertEquals(schemaGeo.getJson(), job.getJsonSchema().getJson());
+        assertEquals(schemaGeo.getJson(), ((Schema)job.getMetaInfo()).getJson());
 
     }
 
@@ -120,7 +120,7 @@ public class JsonSchemaUriFetcherTest {
     public void testFetchWithResolving() throws Exception {
         JsonObjectWrapper job;
         final URI schemaUri2 = URI.create("http://openthings.cc/rest/schema/xyz");
-        //job = (JsonObjectWrapper) new JsonObjectWrapper().setJsonSchemaUri(schemaUri2);
+        //job = (JsonObjectWrapper) new JsonObjectWrapper().setMetaInfoUri(schemaUri2);
 
         SchemaUriFetcher suf =  new SchemaUriFetcher();
         Schema schema= suf.fetch(schemaUri2, null, null);

@@ -32,6 +32,7 @@ dependencies {
     compile 'org.freemarker:freemarker:2.3.22'
     compile project (':json-core')
     compile project (':json-wrapper')
+    compile project (':json-schema')
 }
 
 test {

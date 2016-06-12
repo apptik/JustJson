@@ -1,5 +1,9 @@
 package io.apptik.json.wrapper;
 
-public class MetaInfo extends JsonElementWrapper {
+import io.apptik.json.Validator;
+
+public interface MetaInfo {
+
+    Validator getDefaultValidator();
 
 }

@@ -93,7 +93,8 @@ public class JsonGenerationTest {
 
     @Test
     public void testEmailTypeString(){
-        JsonObject job = new Generator(schema, null).generate().asJsonObject();
+        GeneratorConfig gConf = new GeneratorConfig();
+        JsonObject job = new Generator(schema, gConf).generate().asJsonObject();
         System.out.println(job.toString());
         String emailString = job.get("eight").toString();
         Pattern emailRegex = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);

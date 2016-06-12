@@ -16,9 +16,9 @@
 
 package io.apptik.json.wrapper;
 
+import java.io.IOException;
 import java.net.URI;
 
-public interface MetaInfoFetcher {
-    <O extends MetaInfo> O fetch(URI targetUri);
-
+public interface MetaInfoFetcher<O extends MetaInfo> {
+    O fetch(URI targetUri) throws IOException;
 }

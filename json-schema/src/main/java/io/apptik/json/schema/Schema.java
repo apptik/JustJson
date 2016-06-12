@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 //TODO cleanup
-public abstract class Schema extends MetaInfo {
+public abstract class Schema extends JsonObjectWrapper implements MetaInfo{
 
     public static final String VER_4 = "http://json-schema.org/draft-04/schema#";
     //not yet ..  probably not gonna happen ..
@@ -157,7 +157,7 @@ public abstract class Schema extends MetaInfo {
     public abstract Schema getEmptySchema(String path);
 
     @Override
-    public JsonElementWrapper setJsonSchemaUri(URI uri) {
+    public JsonElementWrapper setMetaInfoUri(URI uri) {
         throw new RuntimeException("Cannot set Schema on a Schema like this. Use setSchema method.");
     }
 

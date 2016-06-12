@@ -22,7 +22,6 @@ import io.apptik.json.JsonObject;
 import io.apptik.json.exception.JsonException;
 import io.apptik.json.schema.Schema;
 import io.apptik.json.schema.SchemaV4;
-import io.apptik.json.wrapper.MetaInfo;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -79,8 +78,9 @@ public class SchemaUriFetcher implements SchemaFetcher {
         return res;
     }
 
+
     @Override
-    public <O extends MetaInfo> fetch(URI targetUri) {
+    public Schema fetch(URI targetUri) {
         return fetch(targetUri, null, null);
     }
 

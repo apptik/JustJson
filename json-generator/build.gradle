@@ -22,9 +22,9 @@ compileJava {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project (':json-core')
     compile project (':json-wrapper')
+    compile project (':json-schema')
     testCompile 'junit:junit:[4,)'
 }
 
