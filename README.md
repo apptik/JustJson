@@ -55,18 +55,23 @@ TODO
 ## Modules
 
 * [Json Core][json-core] - the json core module responsible for mapping json string/stream to basic Java Objects
+
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.json/json-core.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.json/json-core)
 [![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.3/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.3)
 * [Json Warpper][json-wrapper] - json wrapper classes that are used to wrap generic json representation around some defined interface
+
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.json/json-wrapper.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.json/json-wrapper)
 [![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-wrapper/1.0.3/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-wrapper/1.0.3)
 * [Json Schema][json-schema] - helper to provide some json wrapper MetaInfo based on [json-schema][json-schema.org]
+
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.json/json-schema.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.json/json-schema)
 [![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-schema/1.0.3/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-schema/1.0.3)
 * [Json Generator][json-generator] - Random customizable json generator what uses [json-schema][json-schema.org] metainfo
+
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.json/json-core.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.json/json-generator)
 [![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.3/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-generator/1.0.3)
 * [Json AWS][json-aws] - helper for working with AWS json libraries
+
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.json/json-core.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.json/json-aws)
 [![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.3/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-aws/1.0.3)
 
