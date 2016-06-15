@@ -47,9 +47,10 @@ public class UriGenerator extends Generator {
         ArrayList<String> hosts;
         ArrayList<String> paths;
 
-        if(configuration!=null && propertyName!=null && configuration.uriSchemes.get(propertyName)!=null && configuration.uriSchemes.get(propertyName).size()>0) {
-            schemes =  configuration.uriSchemes.get(propertyName);
-        } else if(configuration!=null && configuration.globalUriSchemes!=null && configuration.globalUriSchemes.size()>0) {
+        if (configuration != null && propertyName != null && configuration.uriSchemes.get(propertyName) != null
+                && configuration.uriSchemes.get(propertyName).size() > 0) {
+            schemes = configuration.uriSchemes.get(propertyName);
+        } else if (configuration != null && configuration.globalUriSchemes != null && configuration.globalUriSchemes.size() > 0) {
             schemes = configuration.globalUriSchemes;
         } else {
             schemes = new ArrayList<String>();
@@ -61,9 +62,10 @@ public class UriGenerator extends Generator {
             schemes.add(null);
         }
 
-        if(configuration!=null && propertyName!=null && configuration.uriHosts.get(propertyName)!=null && configuration.uriHosts.get(propertyName).size()>0) {
-            hosts =  configuration.uriHosts.get(propertyName);
-        } else if(configuration!=null && configuration.globalUriHosts!=null & configuration.globalUriHosts.size()>0) {
+        if (configuration != null && propertyName != null && configuration.uriHosts.get(propertyName) != null
+                && configuration.uriHosts.get(propertyName).size() > 0) {
+            hosts = configuration.uriHosts.get(propertyName);
+        } else if (configuration != null && configuration.globalUriHosts != null & configuration.globalUriHosts.size() > 0) {
             hosts = configuration.globalUriHosts;
         } else {
             hosts = new ArrayList<String>();
@@ -75,43 +77,44 @@ public class UriGenerator extends Generator {
         }
 
 
-        if(configuration!=null && propertyName!=null && configuration.uriPaths.get(propertyName)!=null && configuration.uriPaths.get(propertyName).size() >0) {
-            paths =  configuration.uriPaths.get(propertyName);
-        } else if(configuration!=null && configuration.globalUriPaths!=null && configuration.globalUriPaths.size() > 0) {
+        if (configuration != null && propertyName != null && configuration.uriPaths.get(propertyName) != null
+                && configuration.uriPaths.get(propertyName).size() > 0) {
+            paths = configuration.uriPaths.get(propertyName);
+        } else if (configuration != null && configuration.globalUriPaths != null && configuration.globalUriPaths.size() > 0) {
             paths = configuration.globalUriPaths;
         } else {
             paths = new ArrayList<String>();
             //TODO check for config vars
             int pathMinLen = 3;
             int pathMaxLen = rnd.nextInt(33);
-            if(configuration!=null) {
-                if(configuration.globalUriPathLengthMin!=null) {
+            if (configuration != null) {
+                if (configuration.globalUriPathLengthMin != null) {
                     pathMinLen = configuration.globalUriPathLengthMin;
                 }
-                if(configuration.globalUriPathLengthMax!=null) {
+                if (configuration.globalUriPathLengthMax != null) {
                     pathMaxLen = configuration.globalUriPathLengthMax;
                 }
-                if(propertyName != null) {
-                    if(configuration.uriPathLengthMin.get(propertyName)!=null) {
+                if (propertyName != null) {
+                    if (configuration.uriPathLengthMin.get(propertyName) != null) {
                         pathMinLen = configuration.uriPathLengthMin.get(propertyName);
                     }
-                    if(configuration.uriPathLengthMax.get(propertyName)!=null) {
+                    if (configuration.uriPathLengthMax.get(propertyName) != null) {
                         pathMaxLen = configuration.uriPathLengthMax.get(propertyName);
                     }
                 }
             }
             String res = "";
             int cnt;
-            if(pathMaxLen>0) {
+            if (pathMaxLen > 0) {
                 res = "/";
                 cnt = pathMinLen;
                 for (int i = 0; i < cnt; i++)
                     res += (rnd.nextBoolean()) ? (char) (65 + rnd.nextInt(25)) : (char) (97 + rnd.nextInt(25));
             }
-            while(res.length()<pathMaxLen) {
+            while (res.length() < pathMaxLen) {
                 res += "/";
                 cnt = rnd.nextInt(7);
-                for (int i = 0; i < cnt && res.length()<pathMaxLen; i++)
+                for (int i = 0; i < cnt && res.length() < pathMaxLen; i++)
                     res += (rnd.nextBoolean()) ? (char) (65 + rnd.nextInt(25)) : (char) (97 + rnd.nextInt(25));
             }
             paths.add(res);
@@ -133,12 +136,11 @@ public class UriGenerator extends Generator {
 //        }
 
 
-
         scheme = schemes.get(rnd.nextInt(schemes.size()));
         host = hosts.get(rnd.nextInt(hosts.size()));
-        if(paths.size()==1) path = paths.get(0);
+        if (paths.size() == 1) path = paths.get(0);
         else
-        path = paths.get(rnd.nextInt(paths.size()));
+            path = paths.get(rnd.nextInt(paths.size()));
 
         try {
             uri = new URI(scheme, host, path, null);

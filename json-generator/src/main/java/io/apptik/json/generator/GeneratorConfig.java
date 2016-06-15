@@ -75,11 +75,28 @@ public class GeneratorConfig {
     public HashMap<String, ArrayList<String>> uriHosts =  new HashMap<String, ArrayList<String>>();
     public HashMap<String, ArrayList<String>> uriPaths =  new HashMap<String, ArrayList<String>>();
 
-
     public HashMap<String, Integer> uriPathLengthMin =  new HashMap<String, Integer>();
     public HashMap<String, Integer> uriPathLengthMax =  new HashMap<String, Integer>();
     public Integer globalUriPathLengthMin = null;
     public Integer globalUriPathLengthMax = null;
+
+
+    public ArrayList<String> globalEmailHosts = new ArrayList<String>();
+    public ArrayList<String> globalEmailLocalParts = new ArrayList<String>();
+
+    public HashMap<String, ArrayList<String>> emailHosts =  new HashMap<String, ArrayList<String>>();
+    public HashMap<String, ArrayList<String>> emailLocalParts =  new HashMap<String, ArrayList<String>>();
+
+    public HashMap<String, Integer> emailLocalPartLengthMin =  new HashMap<String, Integer>();
+    public HashMap<String, Integer> emailLocalPartLengthMax =  new HashMap<String, Integer>();
+    public Integer globalEmailLocalPartLengthMin = null;
+    public Integer globalEmailLocalPartLengthMax = null;
+
+
+    public HashMap<String, Integer> emailHostLengthMin =  new HashMap<String, Integer>();
+    public HashMap<String, Integer> emailHostLengthMax =  new HashMap<String, Integer>();
+    public Integer globalEmailHostLengthMin = null;
+    public Integer globalEmailHostLengthMax = null;
 
     public ArrayList<String> skipObjectProperties = new ArrayList();
 

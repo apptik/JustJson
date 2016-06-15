@@ -20,6 +20,7 @@ package io.apptik.json.generator;
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonObject;
 import io.apptik.json.schema.SchemaV4;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -93,12 +94,27 @@ public class JsonGenerationTest {
 
     @Test
     public void testEmailTypeString(){
+        JsonObject job = new Generator(schema, null).generate().asJsonObject();
+        System.out.println(job.toString());
+        String emailString = job.get("eight").toString();
+        Pattern emailRegex = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{1,10}$", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = emailRegex.matcher(emailString);
+        assertTrue(matcher.find());
+    }
+
+    @Test
+    public void testEmailTypeStringLimitedLocal(){
         GeneratorConfig gConf = new GeneratorConfig();
+        gConf.globalEmailLocalPartLengthMin = 5;
+        gConf.globalEmailLocalPartLengthMax = 5;
         JsonObject job = new Generator(schema, gConf).generate().asJsonObject();
         System.out.println(job.toString());
         String emailString = job.get("eight").toString();
-        Pattern emailRegex = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+        Pattern emailRegex = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{1,10}$", Pattern.CASE_INSENSITIVE);
         Matcher matcher = emailRegex.matcher(emailString);
         assertTrue(matcher.find());
+        assertTrue(emailString.split("@")[0].length()>=5);
+        assertTrue(emailString.split("@")[0].length()<=5);
+
     }
 }
