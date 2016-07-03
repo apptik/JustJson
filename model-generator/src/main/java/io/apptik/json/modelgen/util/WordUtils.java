@@ -1,19 +1,19 @@
 package io.apptik.json.modelgen.util;
 /**
  * Copyright © 2007 Chu Yeow Cheah
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * <p/>
  * Copied verbatim from http://dzone.com/snippets/java-inflections, used
  * and licensed with express permission from the author Chu Yeow Cheah.
  */
@@ -99,7 +99,6 @@ public class WordUtils {
     }
 
 
-
     public static String underscore(String camelCasedWord) {
 // Regexes in Java are fucking stupid...
         String underscoredWord = UNDERSCORE_PATTERN_1.matcher(camelCasedWord).replaceAll("$1_$2");
@@ -165,7 +164,17 @@ public class WordUtils {
     }
 
     public static String capitalize(String word) {
-       return word.substring(0, 1).toUpperCase() + word.substring(1);
+        String[] words = word.split(" ");
+        StringBuilder res = new StringBuilder();
+        for(String w:words) {
+            res.append(capitalizeSingle(w));
+        }
+
+        return res.toString();
+    }
+
+    public static String capitalizeSingle(String word) {
+        return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
 }
 

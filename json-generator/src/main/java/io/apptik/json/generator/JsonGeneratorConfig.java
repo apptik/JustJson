@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class GeneratorConfig {
+public class JsonGeneratorConfig {
 
     //for object type
     public HashMap<String, Integer> objectPropertiesMin =  new HashMap<String, Integer>();

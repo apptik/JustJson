@@ -18,8 +18,8 @@ package io.apptik.json.generator.generators;
 
 import io.apptik.json.JsonArray;
 import io.apptik.json.JsonElement;
-import io.apptik.json.generator.GeneratorConfig;
-import io.apptik.json.generator.Generator;
+import io.apptik.json.generator.JsonGeneratorConfig;
+import io.apptik.json.generator.JsonGenerator;
 import io.apptik.json.schema.Schema;
 import io.apptik.json.schema.SchemaList;
 import org.hamcrest.Matcher;
@@ -29,13 +29,13 @@ import java.util.Map;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class ArrayGenerator extends Generator {
+public class ArrayGenerator extends JsonGenerator {
 
-    public ArrayGenerator(Schema schema, GeneratorConfig configuration) {
+    public ArrayGenerator(Schema schema, JsonGeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public ArrayGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
+    public ArrayGenerator(Schema schema, JsonGeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 
@@ -77,7 +77,7 @@ public class ArrayGenerator extends Generator {
                     for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                         if (entry.getKey().matches(items.get(0))) {
                             try {
-                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class, String.class).newInstance(items.get(0), configuration, propertyName);
+                                JsonGenerator gen = (JsonGenerator) entry.getValue().getDeclaredConstructor(Schema.class, JsonGeneratorConfig.class, String.class).newInstance(items.get(0), configuration, propertyName);
                                 newEl = gen.generate();
                                 if (newEl != null) {
                                     res.put(newEl);
@@ -101,7 +101,7 @@ public class ArrayGenerator extends Generator {
                     for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                         if (entry.getKey().matches(itemSchema)) {
                             try {
-                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class).newInstance(itemSchema, configuration);
+                                JsonGenerator gen = (JsonGenerator) entry.getValue().getDeclaredConstructor(Schema.class, JsonGeneratorConfig.class).newInstance(itemSchema, configuration);
                                 newEl = gen.generate();
                                 if (newEl != null) {
                                     res.put(newEl);

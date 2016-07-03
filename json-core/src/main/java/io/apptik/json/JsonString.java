@@ -67,7 +67,7 @@ public final class JsonString extends JsonElement {
 
     @Override
     public String getJsonType() {
-        return "string";
+        return TYPE_STRING;
     }
 
 

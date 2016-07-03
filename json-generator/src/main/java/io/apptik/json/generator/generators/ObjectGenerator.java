@@ -19,8 +19,8 @@ package io.apptik.json.generator.generators;
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonObject;
 import io.apptik.json.exception.JsonException;
-import io.apptik.json.generator.GeneratorConfig;
-import io.apptik.json.generator.Generator;
+import io.apptik.json.generator.JsonGeneratorConfig;
+import io.apptik.json.generator.JsonGenerator;
 import io.apptik.json.schema.Schema;
 import io.apptik.json.schema.SchemaMap;
 import org.hamcrest.Matcher;
@@ -28,13 +28,13 @@ import org.hamcrest.Matcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-public class ObjectGenerator extends Generator {
+public class ObjectGenerator extends JsonGenerator {
 
-    public ObjectGenerator(Schema schema, GeneratorConfig configuration) {
+    public ObjectGenerator(Schema schema, JsonGeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public ObjectGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
+    public ObjectGenerator(Schema schema, JsonGeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 
@@ -49,7 +49,7 @@ public class ObjectGenerator extends Generator {
                     for (Map.Entry<Matcher<Schema>, Class> entry : commonPropertyMatchers.entrySet()) {
                         if (entry.getKey().matches(propertySchema)) {
                             try {
-                                Generator gen = (Generator) entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class, String.class).newInstance(propertySchema, configuration, propItem.getKey());
+                                JsonGenerator gen = (JsonGenerator) entry.getValue().getDeclaredConstructor(Schema.class, JsonGeneratorConfig.class, String.class).newInstance(propertySchema, configuration, propItem.getKey());
                                 newEl = gen.generate();
                                 if (newEl != null) {
                                     res.put(propItem.getKey(), newEl);

@@ -17,20 +17,20 @@
 package io.apptik.json.examples.jsongenerator;
 
 
-import org.djodjo.json.JsonElement;
-import org.djodjo.json.generator.Generator;
-import org.djodjo.json.generator.GeneratorConfig;
-import org.djodjo.json.schema.Schema;
-import org.djodjo.json.schema.SchemaV4;
+import io.apptik.json.JsonElement;
+import io.apptik.json.generator.JsonGenerator;
+import io.apptik.json.generator.JsonGeneratorConfig;
+import io.apptik.json.schema.Schema;
+import io.apptik.json.schema.SchemaV4;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class JsonGenerator {
+public class JsonGeneratorExample {
     Schema schema1;
 
     public static void main(String[] args) {
-        JsonGenerator generator = new JsonGenerator();
+        JsonGeneratorExample generator = new JsonGeneratorExample();
         System.out.println("generation without settings");
         System.out.println(generator.generateNoSettings(generator.schema1).toString());
         System.out.println("generation with settings");
@@ -38,7 +38,7 @@ public class JsonGenerator {
 
     }
 
-    public JsonGenerator() {
+    public JsonGeneratorExample() {
         try {
             schema1 =  new SchemaV4().wrap(JsonElement.readFrom(
                     "{" +
@@ -77,11 +77,11 @@ public class JsonGenerator {
     }
 
     private JsonElement generateNoSettings(Schema schema) {
-        return  new Generator(schema, new GeneratorConfig()).generate();
+        return new JsonGenerator(schema, new JsonGeneratorConfig()).generate();
     }
 
     private JsonElement generateWithSettings(Schema schema) {
-        GeneratorConfig gConf = new GeneratorConfig();
+        JsonGeneratorConfig gConf = new JsonGeneratorConfig();
         ArrayList<String> images =  new ArrayList<String>();
         images.add("/photos/image.jpg");
         images.add("/photos/image.jpg");
@@ -97,6 +97,6 @@ public class JsonGenerator {
         gConf.integerMax.put("five1", 400);
         gConf.skipObjectProperties.add("two");
 
-        return  new Generator(schema, gConf).generate();
+        return new JsonGenerator(schema, gConf).generate();
     }
 }

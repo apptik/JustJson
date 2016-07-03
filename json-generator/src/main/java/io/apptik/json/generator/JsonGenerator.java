@@ -35,10 +35,12 @@ import org.hamcrest.Matcher;
 
 import java.util.Random;
 
-public class Generator {
+import static io.apptik.json.JsonElement.*;
+
+public class JsonGenerator {
 
     protected Schema schema;
-    protected GeneratorConfig configuration ;
+    protected JsonGeneratorConfig configuration ;
     //valid for elements which parent is of type Object
     protected String propertyName;
     protected static Random rnd = new Random();
@@ -59,18 +61,18 @@ public class Generator {
 
     }
 
-    public Generator(Schema schema, GeneratorConfig configuration) {
+    public JsonGenerator(Schema schema, JsonGeneratorConfig configuration) {
         this.schema = schema;
         this.configuration = configuration;
         if(this.configuration==null) {
-            this.configuration=new GeneratorConfig();
+            this.configuration=new JsonGeneratorConfig();
         }
         schema.mergeAllRefs();
         mergeComposites();
 
     }
 
-    public Generator(Schema schema, GeneratorConfig configuration, String propertyName) {
+    public JsonGenerator(Schema schema, JsonGeneratorConfig configuration, String propertyName) {
         this(schema, configuration);
         this.propertyName = propertyName;
         schema.mergeAllRefs();
@@ -117,10 +119,10 @@ public class Generator {
 
         //TODO make a choice for multi typed elements
     public JsonElement generate() {
-        if(schema.getType().get(0).equals(Schema.TYPE_OBJECT)) {
+        if(schema.getType().get(0).equals(TYPE_OBJECT)) {
             return new ObjectGenerator(schema, configuration).generate();
         }
-        if(schema.getType().get(0).equals(Schema.TYPE_ARRAY)) {
+        if(schema.getType().get(0).equals(TYPE_ARRAY)) {
             return new ArrayGenerator(schema, configuration).generate();
         }
 

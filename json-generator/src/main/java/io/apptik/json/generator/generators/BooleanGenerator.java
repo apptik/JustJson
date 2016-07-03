@@ -18,17 +18,17 @@ package io.apptik.json.generator.generators;
 
 import io.apptik.json.JsonBoolean;
 import io.apptik.json.JsonElement;
-import io.apptik.json.generator.GeneratorConfig;
-import io.apptik.json.generator.Generator;
+import io.apptik.json.generator.JsonGeneratorConfig;
+import io.apptik.json.generator.JsonGenerator;
 import io.apptik.json.schema.Schema;
 
-public class BooleanGenerator extends Generator {
+public class BooleanGenerator extends JsonGenerator {
 
-    public BooleanGenerator(Schema schema, GeneratorConfig configuration) {
+    public BooleanGenerator(Schema schema, JsonGeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public BooleanGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
+    public BooleanGenerator(Schema schema, JsonGeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 

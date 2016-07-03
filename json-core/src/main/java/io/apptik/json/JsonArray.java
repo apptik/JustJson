@@ -801,7 +801,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
 
     @Override
     public String getJsonType() {
-        return "array";
+        return TYPE_ARRAY;
     }
 
     @Override

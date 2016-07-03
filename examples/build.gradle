@@ -9,7 +9,10 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile 'org.djodjo.json:json-generator:1.0.+'
-    compile 'org.djodjo.json:json-core:1.0.+'
-    compile 'org.djodjo.json:json-wrapper:1.0.+'
+    compile project(':json-generator')
+    compile project(':json-core')
+    compile project(':json-wrapper')
+    compile project(':json-schema')
+    compile project(':model-generator')
+
 }

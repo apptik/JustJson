@@ -17,16 +17,16 @@
 package io.apptik.json.generator.generators;
 
 import io.apptik.json.JsonElement;
-import io.apptik.json.generator.Generator;
-import io.apptik.json.generator.GeneratorConfig;
+import io.apptik.json.generator.JsonGenerator;
+import io.apptik.json.generator.JsonGeneratorConfig;
 import io.apptik.json.schema.Schema;
 
-public class EnumGenerator extends Generator {
-    public EnumGenerator(Schema schema, GeneratorConfig configuration) {
+public class EnumGenerator extends JsonGenerator {
+    public EnumGenerator(Schema schema, JsonGeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public EnumGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
+    public EnumGenerator(Schema schema, JsonGeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 

@@ -11,17 +11,25 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Map;
 
-public abstract class JsonElement{
+public abstract class JsonElement {
 
-    public static JsonElement readFrom( JsonReader reader ) throws JsonException, IOException {
+    public static final String TYPE_OBJECT = "object";
+    public static final String TYPE_ARRAY = "array";
+    public static final String TYPE_STRING = "string";
+    public static final String TYPE_NUMBER = "number";
+    public static final String TYPE_INTEGER = "integer";
+    public static final String TYPE_BOOLEAN = "boolean";
+    public static final String TYPE_NULL = "null";
+
+    public static JsonElement readFrom(JsonReader reader) throws JsonException, IOException {
         return Adapter.fromJson(reader);
     }
 
-    public static JsonElement readFrom( Reader reader ) throws JsonException, IOException {
+    public static JsonElement readFrom(Reader reader) throws JsonException, IOException {
         return Adapter.fromJson(reader);
     }
 
-    public static JsonElement readFrom( String text ) throws JsonException, IOException {
+    public static JsonElement readFrom(String text) throws JsonException, IOException {
         return JsonElement.readFrom(new StringReader(text));
 
     }
@@ -57,15 +65,19 @@ public abstract class JsonElement{
     public double asDouble() {
         throw new UnsupportedOperationException(toString() + " is not a double number");
     }
+
     public float asFloat() {
         throw new UnsupportedOperationException(toString() + " is not a float number");
     }
+
     public int asInt() {
         throw new UnsupportedOperationException(toString() + " is not an integer number");
     }
+
     public long asLong() {
         throw new UnsupportedOperationException(toString() + " is not a long integer number");
     }
+
     public byte asByte() {
         throw new UnsupportedOperationException(toString() + " is not a byte number");
     }
@@ -82,26 +94,26 @@ public abstract class JsonElement{
         throw new UnsupportedOperationException(toString() + " is not an json array");
     }
 
-    public void writeTo( Writer writer ) throws IOException {
-        write( new JsonWriter( writer ) );
+    public void writeTo(Writer writer) throws IOException {
+        write(new JsonWriter(writer));
     }
 
     @Override
     public String toString() {
         StringWriter stringWriter = new StringWriter();
-        JsonWriter jsonWriter = new JsonWriter( stringWriter );
+        JsonWriter jsonWriter = new JsonWriter(stringWriter);
         try {
-            write( jsonWriter );
-        } catch( IOException exception ) {
+            write(jsonWriter);
+        } catch (IOException exception) {
             // StringWriter does not throw IOExceptions
-            throw new RuntimeException( exception );
+            throw new RuntimeException(exception);
         }
         return stringWriter.toString();
     }
 
     @Override
-    public boolean equals( Object object ) {
-        return super.equals( object );
+    public boolean equals(Object object) {
+        return super.equals(object);
     }
 
     @Override
@@ -112,15 +124,16 @@ public abstract class JsonElement{
     /**
      * Wraps the given object if to JsonXXX object.
      */
-    public static JsonElement wrap(Object o) throws JsonException{
+    public static JsonElement wrap(Object o) throws JsonException {
         if (o == null) {
             //null value means not specified i.e.-> no valued will be mapped
             //Json.null is specific value
             return null;
         }
         if (o instanceof JsonElement) {
-            return (JsonElement)o;
-        }if (o instanceof ElementWrapper) {
+            return (JsonElement) o;
+        }
+        if (o instanceof ElementWrapper) {
             return ((ElementWrapper) o).getJson();
         }
         if (o instanceof Collection) {
@@ -132,16 +145,16 @@ public abstract class JsonElement{
             return new JsonObject((Map) o);
         }
         if (o instanceof Boolean) {
-            return new JsonBoolean((Boolean)o);
+            return new JsonBoolean((Boolean) o);
         }
         if (o instanceof Number) {
             return new JsonNumber((Number) o);
         }
         if (o instanceof String) {
-            return new JsonString((String)o);
+            return new JsonString((String) o);
         }
         if (o instanceof Character) {
-            return new JsonString(Character.toString((Character)o));
+            return new JsonString(Character.toString((Character) o));
         }
         if (o instanceof ByteBuffer) {
             return new JsonString(((ByteBuffer) o).asCharBuffer().toString());
@@ -150,80 +163,80 @@ public abstract class JsonElement{
         return new JsonString(o.toString());
     }
 
-    public abstract void write( JsonWriter writer ) throws IOException;
+    public abstract void write(JsonWriter writer) throws IOException;
 
     public abstract String getJsonType();
 
-private static class Adapter {
-    static public void write(JsonWriter out, JsonElement value) throws IOException {
-        //TODO should this actually happen??
-        if (value == null) {
-            out.nullValue();
-        } else {
-            value.write(out);
+    private static class Adapter {
+        static public void write(JsonWriter out, JsonElement value) throws IOException {
+            //TODO should this actually happen??
+            if (value == null) {
+                out.nullValue();
+            } else {
+                value.write(out);
+            }
+        }
+
+        static public void toJson(Writer out, JsonElement value) throws IOException {
+            JsonWriter writer = new JsonWriter(out);
+            write(writer, value);
+        }
+
+        static public String toJson(JsonElement value) throws IOException {
+            StringWriter stringWriter = new StringWriter();
+            toJson(stringWriter, value);
+            return stringWriter.toString();
+        }
+
+        static public JsonElement read(JsonReader in) throws IOException, JsonException {
+            switch (in.peek()) {
+                case STRING:
+                    return new JsonString(in.nextString());
+                case NUMBER:
+                    return new JsonNumber(in.nextString());
+                case BOOLEAN:
+                    return new JsonBoolean(in.nextBoolean());
+                case NULL:
+                    in.nextNull();
+                    return new JsonNull();
+                case BEGIN_ARRAY:
+                    JsonArray array = new JsonArray();
+                    in.beginArray();
+                    while (in.hasNext()) {
+                        array.put(read(in));
+                    }
+                    in.endArray();
+                    return array;
+                case BEGIN_OBJECT:
+                    JsonObject object = new JsonObject();
+                    in.beginObject();
+                    while (in.hasNext()) {
+                        object.put(in.nextName(), read(in));
+                    }
+                    in.endObject();
+                    return object;
+                case END_DOCUMENT:
+                case NAME:
+                case END_OBJECT:
+                case END_ARRAY:
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
+
+        static public JsonElement fromJson(Reader in) throws IOException, JsonException {
+            JsonReader reader = new JsonReader(in);
+            return read(reader);
+        }
+
+        static public JsonElement fromJson(JsonReader in) throws IOException, JsonException {
+            return read(in);
+        }
+
+        static public JsonElement fromJson(String json) throws IOException, JsonException {
+            return fromJson(new StringReader(json));
         }
     }
-
-    static public void toJson(Writer out, JsonElement value) throws IOException {
-        JsonWriter writer = new JsonWriter(out);
-        write(writer, value);
-    }
-
-    static public String toJson(JsonElement value) throws IOException {
-        StringWriter stringWriter = new StringWriter();
-        toJson(stringWriter, value);
-        return stringWriter.toString();
-    }
-
-    static public JsonElement read(JsonReader in) throws IOException, JsonException {
-        switch (in.peek()) {
-            case STRING:
-                return new JsonString(in.nextString());
-            case NUMBER:
-                return new JsonNumber(in.nextString());
-            case BOOLEAN:
-                return new JsonBoolean(in.nextBoolean());
-            case NULL:
-                in.nextNull();
-                return new JsonNull();
-            case BEGIN_ARRAY:
-                JsonArray array = new JsonArray();
-                in.beginArray();
-                while (in.hasNext()) {
-                    array.put(read(in));
-                }
-                in.endArray();
-                return array;
-            case BEGIN_OBJECT:
-                JsonObject object = new JsonObject();
-                in.beginObject();
-                while (in.hasNext()) {
-                    object.put(in.nextName(), read(in));
-                }
-                in.endObject();
-                return object;
-            case END_DOCUMENT:
-            case NAME:
-            case END_OBJECT:
-            case END_ARRAY:
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
-
-    static public JsonElement fromJson(Reader in) throws IOException, JsonException {
-        JsonReader reader = new JsonReader(in);
-        return read(reader);
-    }
-
-    static public JsonElement fromJson(JsonReader in) throws IOException, JsonException {
-        return read(in);
-    }
-
-    static public JsonElement fromJson(String json) throws IOException, JsonException {
-        return fromJson(new StringReader(json));
-    }
-}
 
 }

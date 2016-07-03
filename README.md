@@ -8,13 +8,23 @@
 JSON helper library for Android and Java
 ----------------------------------------
 
-JustJson is not a json to pojo library, is simply converts json string/stream to java Objects(Map, List, String, Boolean, Number ...),
+JustJson is NOT a standard json2pojo library with multiple adapters.
+
+It simply converts json string/stream to java Objects
+* JsonObject - Iterable handy Map wrapper 
+* JsonArray - List implementation
+* JsonString - String wrapper
+* JsonBoolean - boolean wrapper
+* JsonNumber - number wrapper
+
 which are then flexible & easy to read/modify/iterate/search/wrap.
 
-It came of the need for simple and lightweight Json parser for Android(unlike Jackson), however fast and flexible(unlike smart/simple json).
+It came out of the need for a dynamic, simple and lightweight Json parser for Android(unlike Jackson).
 The code started as a mixture of https://android.googlesource.com/platform/libcore/+/master/json/ and the Json utils from https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/util .
 
-JustJson is quite fast when generating a Json Map Objects form String or Reader.
+JustJson is super simple, super small and fast json lib.
+
+
 
 It can be used on Android and Java in general.
 
@@ -93,8 +103,8 @@ TODO
     limitations under the License.
 
  [mvn]: http://search.maven.org/#search|ga|1|io.apptik.json
- [release]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/
- [snap]: https://oss.sonatype.org/content/repositories/snapshots/io/apptik/comm/
+ [release]: https://oss.sonatype.org/content/repositories/releases/io/apptik/json/
+ [snap]: https://oss.sonatype.org/content/repositories/snapshots/io/apptik/json/
  
  [json-core]: https://github.com/apptik/justjson/tree/master/json-core
  [json-wrapper]: https://github.com/apptik/justjson/tree/master/json-wrapper

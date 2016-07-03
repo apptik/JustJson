@@ -68,14 +68,14 @@ public class JsonOneOfGenerationTest {
 
     @Test
     public void testGenerateOneOf() throws Exception {
-        GeneratorConfig gConf = new GeneratorConfig();
+        JsonGeneratorConfig gConf = new JsonGeneratorConfig();
         ArrayList<String> images =  new ArrayList<String>();
         images.add("/photos/image.jpg");
         images.add("/photos/image.jpg");
 
         gConf.uriPaths.put("seven", images);
         // gConf.globalUriPaths = images;
-        JsonObject job = new Generator(schema, gConf).generate().asJsonObject();
+        JsonObject job = new JsonGenerator(schema, gConf).generate().asJsonObject();
 
         System.out.println(job.toString());
 

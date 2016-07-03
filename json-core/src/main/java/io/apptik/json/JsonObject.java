@@ -759,7 +759,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
 
     @Override
     public String getJsonType() {
-        return "object";
+        return TYPE_OBJECT;
     }
 
     @Override

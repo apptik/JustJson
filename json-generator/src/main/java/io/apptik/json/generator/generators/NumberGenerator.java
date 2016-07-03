@@ -18,16 +18,16 @@ package io.apptik.json.generator.generators;
 
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonNumber;
-import io.apptik.json.generator.Generator;
-import io.apptik.json.generator.GeneratorConfig;
+import io.apptik.json.generator.JsonGenerator;
+import io.apptik.json.generator.JsonGeneratorConfig;
 import io.apptik.json.schema.Schema;
 
-public class NumberGenerator extends Generator {
-    public NumberGenerator(Schema schema, GeneratorConfig configuration) {
+public class NumberGenerator extends JsonGenerator {
+    public NumberGenerator(Schema schema, JsonGeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public NumberGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
+    public NumberGenerator(Schema schema, JsonGeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 

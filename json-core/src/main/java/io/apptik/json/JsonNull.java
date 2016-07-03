@@ -47,7 +47,7 @@ public final class JsonNull extends JsonElement {
 
     @Override
     public String getJsonType() {
-        return "null";
+        return TYPE_NULL;
     }
 
 

@@ -2,8 +2,8 @@ package io.apptik.json.generator.generators.formats;
 
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonString;
-import io.apptik.json.generator.Generator;
-import io.apptik.json.generator.GeneratorConfig;
+import io.apptik.json.generator.JsonGenerator;
+import io.apptik.json.generator.JsonGeneratorConfig;
 import io.apptik.json.schema.Schema;
 
 import java.util.ArrayList;
@@ -11,12 +11,12 @@ import java.util.ArrayList;
 /**
  * Created by sandy on 6/11/2016.
  */
-public class EmailGenerator extends Generator {
-    public EmailGenerator(Schema schema, GeneratorConfig configuration) {
+public class EmailGenerator extends JsonGenerator {
+    public EmailGenerator(Schema schema, JsonGeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public EmailGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
+    public EmailGenerator(Schema schema, JsonGeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 

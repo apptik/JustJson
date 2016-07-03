@@ -7,8 +7,16 @@ repositories {
     mavenCentral()
 }
 
+compileJava {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile project(':json-core')
     compile project(':json-wrapper')
 }
+
+'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'

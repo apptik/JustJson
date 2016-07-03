@@ -18,8 +18,8 @@ package io.apptik.json.generator.generators;
 
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonString;
-import io.apptik.json.generator.Generator;
-import io.apptik.json.generator.GeneratorConfig;
+import io.apptik.json.generator.JsonGenerator;
+import io.apptik.json.generator.JsonGeneratorConfig;
 import io.apptik.json.generator.generators.formats.*;
 import io.apptik.json.schema.Schema;
 import io.apptik.json.util.LinkedTreeMap;
@@ -30,7 +30,7 @@ import java.util.Map;
 
 import static io.apptik.json.generator.matcher.FormatMatchers.*;
 
-public class StringGenerator extends Generator {
+public class StringGenerator extends JsonGenerator {
 
     protected static LinkedTreeMap<Matcher<Schema>, Class> stringFormatMatchers;
 
@@ -43,11 +43,11 @@ public class StringGenerator extends Generator {
         stringFormatMatchers.put(isEmailFormat(), EmailGenerator.class);
     }
 
-    public StringGenerator(Schema schema, GeneratorConfig configuration) {
+    public StringGenerator(Schema schema, JsonGeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public StringGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
+    public StringGenerator(Schema schema, JsonGeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 
@@ -58,10 +58,10 @@ public class StringGenerator extends Generator {
         if(schema.getFormat()!=null) {
             for (Map.Entry<Matcher<Schema>, Class> entry : stringFormatMatchers.entrySet()) {
                 if (entry.getKey().matches(schema)) {
-                    Generator gen = null;
+                    JsonGenerator gen = null;
 
                     try {
-                        gen = (Generator)entry.getValue().getDeclaredConstructor(Schema.class, GeneratorConfig.class, String.class).newInstance(schema, configuration, propertyName);
+                        gen = (JsonGenerator)entry.getValue().getDeclaredConstructor(Schema.class, JsonGeneratorConfig.class, String.class).newInstance(schema, configuration, propertyName);
                         return gen.generate();
                     } catch (InstantiationException e) {
                         e.printStackTrace();

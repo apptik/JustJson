@@ -24,13 +24,6 @@ public abstract class Schema extends JsonObjectWrapper implements MetaInfo{
     public static final String VER_5 = "http://json-schema.org/draft-05/schema#";
 
 
-    public static final String TYPE_OBJECT = "object";
-    public static final String TYPE_ARRAY = "array";
-    public static final String TYPE_STRING = "string";
-    public static final String TYPE_NUMBER = "number";
-    public static final String TYPE_INTEGER = "integer";
-    public static final String TYPE_BOOLEAN = "boolean";
-
     //formats as defined in http://tools.ietf.org/html/draft-zyp-json-schema-03#section-5.23
     //note that there is no definition for the formats in draft-v4 except in http://json-schema.org/latest/json-schema-validation.html#anchor104
 

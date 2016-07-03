@@ -122,9 +122,9 @@ public class JsonNumber extends JsonElement {
     @Override
     public String getJsonType() {
         if(this.asNumber().intValue() == this.asNumber().doubleValue()) {
-            return "integer";
+            return TYPE_INTEGER;
         } else {
-            return "number";
+            return TYPE_NUMBER;
         }
     }
 

@@ -17,16 +17,16 @@
 package io.apptik.json.generator.generators;
 
 
-import io.apptik.json.generator.GeneratorConfig;
-import io.apptik.json.generator.Generator;
+import io.apptik.json.generator.JsonGeneratorConfig;
+import io.apptik.json.generator.JsonGenerator;
 import io.apptik.json.schema.Schema;
 
-public class RangeGenerator extends Generator {
-    public RangeGenerator(Schema schema, GeneratorConfig configuration) {
+public class RangeGenerator extends JsonGenerator {
+    public RangeGenerator(Schema schema, JsonGeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public RangeGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
+    public RangeGenerator(Schema schema, JsonGeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 }

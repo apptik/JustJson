@@ -61,7 +61,7 @@ public final class JsonBoolean extends JsonElement {
 
     @Override
     public String getJsonType() {
-        return "boolean";
+        return TYPE_BOOLEAN;
     }
 
 

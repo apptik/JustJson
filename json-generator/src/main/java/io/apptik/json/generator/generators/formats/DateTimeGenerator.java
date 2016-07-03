@@ -18,21 +18,21 @@ package io.apptik.json.generator.generators.formats;
 
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonString;
-import io.apptik.json.generator.Generator;
-import io.apptik.json.generator.GeneratorConfig;
+import io.apptik.json.generator.JsonGenerator;
+import io.apptik.json.generator.JsonGeneratorConfig;
 import io.apptik.json.schema.Schema;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class DateTimeGenerator extends Generator {
+public class DateTimeGenerator extends JsonGenerator {
 
-    public DateTimeGenerator(Schema schema, GeneratorConfig configuration) {
+    public DateTimeGenerator(Schema schema, JsonGeneratorConfig configuration) {
         super(schema, configuration);
     }
 
-    public DateTimeGenerator(Schema schema, GeneratorConfig configuration, String propertyName) {
+    public DateTimeGenerator(Schema schema, JsonGeneratorConfig configuration, String propertyName) {
         super(schema, configuration, propertyName);
     }
 

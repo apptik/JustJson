@@ -21,6 +21,8 @@ import io.apptik.json.schema.Schema;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+import static io.apptik.json.JsonElement.*;
+
 public class SchemaDefMatchers {
 
     private SchemaDefMatchers() {}
@@ -30,7 +32,7 @@ public class SchemaDefMatchers {
             @Override
             protected boolean matchesSafely(Schema item) {
                 if(item.getType() == null) return false;
-                if(!item.getType().contains(Schema.TYPE_OBJECT)) return false;
+                if(!item.getType().contains(TYPE_OBJECT)) return false;
                 return true;
             }
 
@@ -46,7 +48,7 @@ public class SchemaDefMatchers {
             @Override
             protected boolean matchesSafely(Schema item) {
                 if(item.getType() == null) return false;
-                if(!item.getType().contains(Schema.TYPE_ARRAY)) return false;
+                if(!item.getType().contains(TYPE_ARRAY)) return false;
                 return true;
             }
 
@@ -62,7 +64,7 @@ public class SchemaDefMatchers {
             @Override
             protected boolean matchesSafely(Schema item) {
                 if(item.getType() == null) return false;
-                if(!item.getType().contains(Schema.TYPE_STRING)) return false;
+                if(!item.getType().contains(TYPE_STRING)) return false;
                 return true;
             }
 
@@ -78,7 +80,7 @@ public class SchemaDefMatchers {
             @Override
             protected boolean matchesSafely(Schema item) {
                 if(item.getType() == null) return false;
-                if(!item.getType().contains(Schema.TYPE_NUMBER) && !isIntegerType().matches(item)) return false;
+                if(!item.getType().contains(TYPE_NUMBER) && !isIntegerType().matches(item)) return false;
                 return true;
             }
 
@@ -94,7 +96,7 @@ public class SchemaDefMatchers {
             @Override
             protected boolean matchesSafely(Schema item) {
                 if(item.getType() == null) return false;
-                if(!item.getType().contains(Schema.TYPE_INTEGER)) return false;
+                if(!item.getType().contains(TYPE_INTEGER)) return false;
                 return true;
             }
 
@@ -126,7 +128,7 @@ public class SchemaDefMatchers {
             @Override
             protected boolean matchesSafely(Schema item) {
                 if(item.getType() == null) return false;
-                if(!item.getType().contains(Schema.TYPE_BOOLEAN)) return false;
+                if(!item.getType().contains(TYPE_BOOLEAN)) return false;
                 return true;
             }
 
