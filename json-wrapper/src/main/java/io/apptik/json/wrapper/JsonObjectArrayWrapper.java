@@ -21,61 +21,54 @@ import io.apptik.json.JsonArray;
 import io.apptik.json.JsonElement;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Json Array that contains Json Objects of a specific type
  * @param <T>
  */
-public class JsonObjectArrayWrapper<T extends JsonObjectWrapper> extends JsonElementWrapper {
+public class JsonObjectArrayWrapper<T extends JsonObjectWrapper> extends TypedJsonArray<T> {
 
-    public ArrayList<T> getJsonWrappersList() {
-        return jsonWrappersList;
-    }
-
-    private final ArrayList<T> jsonWrappersList = new ArrayList<T>() ;
+    Class<T> cls;
 
     public JsonObjectArrayWrapper() {
         super();
+    }
 
+    @Override
+    public <O extends JsonElementWrapper> O wrap(JsonElement jsonElement) {
+        throw new IllegalStateException("cannot wrap Typed Element with empty type");
     }
 
     public <O extends JsonObjectArrayWrapper> O wrap(JsonArray jsonArray, Class<T> cls) {
         super.wrap(jsonArray);
-        jsonWrappersList.clear();
-
-        for(JsonElement e : getJson()) {
-            if(e.isJsonObject()) {
-                try {
-                    T el = cls.newInstance();
-                    el.wrap(e);
-                    jsonWrappersList.add(el);
-                } catch (InstantiationException e1) {
-                    e1.printStackTrace();
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-
-
+        this.cls = cls;
         return (O) this;
     }
 
     @Override
-    public JsonArray getJson() {
-        if(super.getJson() == null) try {
-            this.json  = JsonElement.readFrom("[]");
-        } catch (IOException e) {
-            e.printStackTrace();
+    protected T get(JsonElement jsonElement, int pos) {
+        try {
+            return cls.newInstance().wrap(jsonElement);
+        } catch (InstantiationException e) {
+            throw new RuntimeException("Error wrapping json", e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Error wrapping json", e);
         }
-        return super.getJson().asJsonArray();
     }
 
-    public <O extends JsonObjectArrayWrapper> O addJsonObjectWrapperItem(T jsonObjectWrapperItem) {
-        jsonWrappersList.add(jsonObjectWrapperItem);
-        getJson().asJsonArray().put(jsonObjectWrapperItem.getJson());
-        return (O)this;
+    @Override
+    protected JsonElement to(T value) {
+        return value.getJson();
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        if(o == null) return false;
+        if(JsonObjectWrapper.class.isAssignableFrom(o.getClass())) {
+            return getJson().contains(((JsonObjectWrapper)o).getJson());
+        }
+        return super.contains(o);
     }
 
 }

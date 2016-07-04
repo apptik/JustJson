@@ -36,9 +36,19 @@ import io.apptik.json.util.LinkedTreeMap;
 /**
  * Json element Wrapper to be used to wrap JSON data with its schema content type used to describe the data.
  *
- * It can be extended to define a data model implementing getters for required members.
+ * It can be extended to define a data model implementing getters and setters for required members.
  *
- * Compared to full POJO mapping it performs much faster.
+ * The idea is that there is no need to instantiate different POJO for different purpose on the same JSON data,
+ * but just wrap that data.
+ *
+ * Compared to pure POJO mapping it is particularly useful when single JSON representation can be mapped to 2 or more
+ * POJOs. For example if we get data about https://schema.org/LocalBusiness which is https://schema.org/Organization
+ * and https://schema.org/Place at the same time we need to reference Place and Organization POJOs in the LocalBusiness
+ * POJO as in java we cannot extend from 2 classes. This means that for any possible combination of DataTypes available
+ * for the Resources we get we need to create POJOs to delegate to others.
+ *
+ * Using Json wrappers is fairly simple as we can just create wrappers implementing interfaces specific to the type we
+ * need to work with, while full json data itself is still available to be wrapped again for other needs.
  *
  */
 public abstract class JsonElementWrapper implements ElementWrapper {

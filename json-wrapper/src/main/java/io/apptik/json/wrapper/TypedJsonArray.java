@@ -48,7 +48,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
 
     @Override
     public boolean isEmpty() {
-        return getJson().length() < 1;
+        return getJson().isEmpty();
     }
 
     @Override

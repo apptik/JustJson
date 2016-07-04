@@ -19,43 +19,31 @@ package io.apptik.json.wrapper;
 
 import io.apptik.json.JsonArray;
 import io.apptik.json.JsonElement;
+import io.apptik.json.JsonString;
 import io.apptik.json.exception.JsonException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class JsonStringArrayWrapper extends JsonElementWrapper {
-
-    public ArrayList<String> getStringList() {
-        return jsonWrappersList;
-    }
-
-    private final ArrayList<String> jsonWrappersList = new ArrayList<String>() ;
+public class JsonStringArrayWrapper extends TypedJsonArray<String> {
 
     public JsonStringArrayWrapper() {
         super();
-
     }
 
     public JsonStringArrayWrapper wrap(JsonArray jsonArray) {
         super.wrap(jsonArray);
-        jsonWrappersList.clear();
-        for(JsonElement e : getJson()) {
-            jsonWrappersList.add(e.toString());
-        }
         return this;
     }
 
     @Override
-    public JsonArray getJson() {
-        if(super.getJson() == null) try {
-            this.json  = JsonElement.readFrom("[ ]");
-        } catch (JsonException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return super.getJson().asJsonArray();
+    protected String get(JsonElement jsonElement, int pos) {
+        return jsonElement.asString();
+    }
+
+    @Override
+    protected JsonElement to(String value) {
+        return new JsonString(value);
     }
 
 
