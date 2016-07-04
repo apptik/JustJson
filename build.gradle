@@ -16,3 +16,7 @@ allprojects {
     project.group = GROUP
     project.version = VERSION_NAME
 }
+
+ext {
+    assertjCore2 = 'org.assertj:assertj-core:2.4.1'
+}

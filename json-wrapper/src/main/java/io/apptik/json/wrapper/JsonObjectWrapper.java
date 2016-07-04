@@ -38,14 +38,6 @@ public class JsonObjectWrapper extends JsonElementWrapper {
         return super.getJson().asJsonObject();
     }
 
-    public JsonObjectWrapper() {
-        super();
-    }
-
-    public JsonObjectWrapper(JsonObject jsonObject) {
-        super(jsonObject);
-    }
-
     /**
      * Merges JsonObjectWrapper with another.
      * If values are already present they are not changed.

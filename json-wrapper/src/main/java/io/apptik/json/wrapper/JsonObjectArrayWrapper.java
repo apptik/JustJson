@@ -46,6 +46,11 @@ public class JsonObjectArrayWrapper<T extends JsonObjectWrapper> extends TypedJs
         return (O) this;
     }
 
+    public JsonObjectArrayWrapper<T> withWrapperType(Class<T> cls) {
+        this.cls = cls;
+        return this;
+    }
+
     @Override
     protected T get(JsonElement jsonElement, int pos) {
         try {

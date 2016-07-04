@@ -20,6 +20,7 @@ import java.util.*;
 public abstract class TypedJsonArray<T> extends JsonElementWrapper implements List<T> {
 
     public TypedJsonArray() {
+        super();
     }
 
     @Override
