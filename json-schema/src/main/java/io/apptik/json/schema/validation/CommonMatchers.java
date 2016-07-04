@@ -236,7 +236,7 @@ public class CommonMatchers {
         };
     }
 
-    public static Matcher<JsonElement> isOfType(final ArrayList<String> types) {
+    public static Matcher<JsonElement> isOfType(final List<String> types) {
         return new TypeSafeDiagnosingMatcher<JsonElement>() {
             @Override
             protected boolean matchesSafely(JsonElement item, Description mismatchDescription) {

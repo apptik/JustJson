@@ -14,6 +14,7 @@ import io.apptik.json.wrapper.MetaInfo;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 //TODO cleanup
@@ -348,8 +349,8 @@ public abstract class Schema extends JsonObjectWrapper implements MetaInfo{
         return getJson().optInt("minProperties");
     }
 
-    public ArrayList<String> getRequired() {
-        return new JsonStringArrayWrapper().wrap(getJson().optJsonArray("required")).getStringList();
+    public List<String> getRequired() {
+        return new JsonStringArrayWrapper().wrap(getJson().optJsonArray("required"));
     }
 
     //TODO can return also object
@@ -378,11 +379,11 @@ public abstract class Schema extends JsonObjectWrapper implements MetaInfo{
         return getJson().optJsonArray("enum");
     }
 
-    public ArrayList<String> getType() {
+    public List<String> getType() {
         ArrayList<String> res;
         if(getJson().opt("type")==null) return null;
         if(getJson().opt("type").isJsonArray()) {
-            return new JsonStringArrayWrapper().wrap(getJson().optJsonArray("type")).getStringList();
+            return new JsonStringArrayWrapper().wrap(getJson().optJsonArray("type"));
         }
         else {
             res = new ArrayList<String>();

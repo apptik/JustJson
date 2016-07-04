@@ -26,10 +26,7 @@ import io.apptik.json.schema.SchemaV4;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static io.apptik.json.schema.validation.CommonMatchers.*;
 import static org.hamcrest.Matchers.allOf;
@@ -148,7 +145,7 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
             allMatchers.add(minProperties(minProperties));
         }
 
-        ArrayList<String> required = schema.getRequired();
+        List<String> required = schema.getRequired();
         if(required != null && !required.isEmpty()) {
             for(String param : required) {
                 allMatchers.add(isPropertyPresent(param));
@@ -195,7 +192,7 @@ public class SchemaV4Validator extends SchemaValidator<SchemaV4> {
 
     private void putMatchers4Common() {
 
-        ArrayList<String> schemaType = schema.getType();
+        List<String> schemaType = schema.getType();
         if(schemaType != null && !schemaType.isEmpty()) {
             allMatchers.add(isOfType(schemaType));
         }
