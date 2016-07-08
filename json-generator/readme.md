@@ -8,15 +8,15 @@ Simple tool to generate json from Json-schema.
 Maven:
 
     <dependency>
-        <groupId>org.djodjo.json</groupId>
+        <groupId>io.apptik.json</groupId>
         <artifactId>json-generator</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.4-SNAPSHOT</version>
     </dependency>
 
 
 Gradle:
 
-    'org.djodjo.json:json-generator:1.0.0'
+    'io.apptik.json:json-generator:1.0.4-SNAPSHOT'
 
 ##Customizable option
 * set custom propeties on all values(globals) or specific to the element key
