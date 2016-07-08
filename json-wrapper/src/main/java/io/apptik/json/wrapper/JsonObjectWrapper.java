@@ -23,8 +23,24 @@ import io.apptik.json.exception.JsonException;
 import io.apptik.json.JsonObject;
 
 import java.io.IOException;
+import java.net.URI;
 
 public class JsonObjectWrapper extends JsonElementWrapper {
+
+    public JsonObjectWrapper() {
+    }
+
+    public JsonObjectWrapper(JsonElement jsonElement) {
+        super(jsonElement);
+    }
+
+    public JsonObjectWrapper(JsonElement jsonElement, String contentType) {
+        super(jsonElement, contentType);
+    }
+
+    public JsonObjectWrapper(JsonElement jsonElement, String contentType, URI metaInfo) {
+        super(jsonElement, contentType, metaInfo);
+    }
 
     @Override
     public JsonObject getJson() {
