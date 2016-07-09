@@ -18,6 +18,7 @@ package io.apptik.json.wrapper;
 
 
 import io.apptik.json.JsonElement;
+import io.apptik.json.JsonObject;
 import io.apptik.json.exception.JsonException;
 import io.apptik.json.util.LinkedTreeMap;
 
@@ -33,17 +34,17 @@ import java.util.Map;
 public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements Iterable<Map.Entry<String, T>> {
 
     public T getValue(String key) throws JsonException {
-        return get(getJson().get(key), key);
+        return getInternal(getJson().get(key), key);
     }
 
 
     public T optValue(String key) {
-        return get(getJson().opt(key), key);
+        return getInternal(getJson().opt(key), key);
     }
 
     public T getValue(int pos) {
         java.util.Collection<JsonElement> var = getJson().valuesSet();
-        return get(var.toArray(new JsonElement[var.size()])[pos], getKey(pos));
+        return getInternal(var.toArray(new JsonObject[var.size()])[pos], getKey(pos));
     }
 
     public String getKey(int pos) {
@@ -69,6 +70,11 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
             }
         }
         return (O)this;
+    }
+
+    private T getInternal(JsonElement jsonElement, String key) {
+        if(jsonElement==null) return null;
+        return get(jsonElement, key);
     }
 
     protected abstract T get(JsonElement jsonElement, String key);
@@ -113,7 +119,7 @@ public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements It
 
         public TypedObjectEntry(Map.Entry<String, JsonElement> entry) {
             this.key = entry.getKey();
-            this.value = get(entry.getValue(), key);
+            this.value = getInternal(entry.getValue(), key);
         }
 
         public TypedObjectEntry(String key, T value) {

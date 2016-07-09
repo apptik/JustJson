@@ -63,7 +63,7 @@ public class JsonOneOfGenerationTest {
         "}" +
                         "}]" +
                         "}]" +
-                "}"));
+                "}").asJsonObject());
     }
 
     @Test

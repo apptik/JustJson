@@ -41,7 +41,8 @@ public class SchemaResourceFetcher implements SchemaFetcher {
         System.out.println("Fetching res (full):" + url);
         try {
 
-            res.wrap(JsonElement.readFrom(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(resource))));
+            res.wrap(JsonElement.readFrom(
+                    new InputStreamReader(getClass().getClassLoader().getResourceAsStream(resource))).asJsonObject());
 
         } catch (JsonException e) {
             e.printStackTrace();

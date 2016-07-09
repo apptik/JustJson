@@ -25,33 +25,33 @@ import io.apptik.json.JsonObject;
 import java.io.IOException;
 import java.net.URI;
 
-public class JsonObjectWrapper extends JsonElementWrapper {
+public class JsonObjectWrapper extends JsonElementWrapper<JsonObject> {
 
     public JsonObjectWrapper() {
     }
 
-    public JsonObjectWrapper(JsonElement jsonElement) {
+    public JsonObjectWrapper(JsonObject jsonElement) {
         super(jsonElement);
     }
 
-    public JsonObjectWrapper(JsonElement jsonElement, String contentType) {
+    public JsonObjectWrapper(JsonObject jsonElement, String contentType) {
         super(jsonElement, contentType);
     }
 
-    public JsonObjectWrapper(JsonElement jsonElement, String contentType, URI metaInfo) {
+    public JsonObjectWrapper(JsonObject jsonElement, String contentType, URI metaInfo) {
         super(jsonElement, contentType, metaInfo);
     }
 
     @Override
     public JsonObject getJson() {
         if(super.getJson() == null) try {
-            this.json  = JsonElement.readFrom("{ }");
+            this.json  = JsonElement.readFrom("{ }").asJsonObject();
         } catch (JsonException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return super.getJson().asJsonObject();
+        return super.getJson();
     }
 
     /**

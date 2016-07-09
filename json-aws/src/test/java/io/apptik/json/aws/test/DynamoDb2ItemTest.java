@@ -53,7 +53,7 @@ public class DynamoDb2ItemTest extends TestCase {
                 "\"bool\": true,\n" +
                 "\"nishto\": null,\n" +
                 "\"someObj\" : { \"el1\" : 1, \"el2\": 2, \"el3\": \"krai\"}\n" +
-                "}"));
+                "}").asJsonObject());
         ArrayList<DynamoDb2Item> list = new ArrayList<DynamoDb2Item>();
         list.add(dynamoDb2Item);
 

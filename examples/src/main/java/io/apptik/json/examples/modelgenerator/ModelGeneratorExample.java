@@ -66,7 +66,7 @@ public class ModelGeneratorExample {
                 "        }\n" +
                 "    },\n" +
                 "    \"required\": [\"id\", \"name\", \"price\"]\n" +
-                "}"));
+                "}").asJsonObject());
         fromSchema(schema);
     }
 

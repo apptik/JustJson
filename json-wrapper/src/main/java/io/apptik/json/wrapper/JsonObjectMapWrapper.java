@@ -2,6 +2,7 @@ package io.apptik.json.wrapper;
 
 
 import io.apptik.json.JsonElement;
+import io.apptik.json.JsonObject;
 
 public class JsonObjectMapWrapper<J extends JsonObjectWrapper>
         extends TypedJsonObject<J> {
@@ -13,9 +14,9 @@ public class JsonObjectMapWrapper<J extends JsonObjectWrapper>
     }
 
     @Override
-    protected J get(JsonElement jsonElement, String key) {
+    protected J get(JsonElement jsonObject, String key) {
         try {
-            return jobClass.newInstance().wrap(jsonElement);
+            return jobClass.newInstance().wrap(jsonObject.asJsonObject());
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -24,7 +25,7 @@ public class JsonObjectMapWrapper<J extends JsonObjectWrapper>
     }
 
     @Override
-    protected JsonElement to(J value) {
+    protected JsonObject to(J value) {
         return value.getJson();
 
     }

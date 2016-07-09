@@ -2,5 +2,5 @@ include  'json-core', 'json-ld', ':json-wrapper', ':json-schema', ':json-generat
 include 'examples'
 
 include 'model-generator'
-include 'perf-test'
+//include 'perf-test'
 

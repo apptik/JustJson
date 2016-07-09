@@ -38,7 +38,7 @@ public class JsonGenerationTest {
 
     @Before
     public void setUp() throws Exception {
-        schema =  new SchemaV4().wrap(JsonElement.readFrom(
+        schema = new SchemaV4().wrap(JsonElement.readFrom(
                 "{\n" +
 
 
@@ -52,20 +52,20 @@ public class JsonGenerationTest {
                         "\"one\" : {\"type\" : \"number\"  } ," +
                         "\"two\" : {\"type\" : \"string\" }" +
                         "}" +
-                        "},"+
+                        "}," +
                         "\"four\" : {\"type\" : \"boolean\"  }," +
                         "\"five\" : {\"type\" : \"integer\", \"minimum\": 200, \"maximum\":5000 }," +
                         "\"six\" : {\"enum\" : [\"one\", 2, 3.5, true, [\"almost empty aray\"], {\"one-item\":\"object\"}, null]  }, " +
                         "\"seven\" : {\"type\" : \"string\", \"format\": \"uri\" }," +
                         "\"eight\" : {\"type\" : \"string\", \"format\": \"email\" }" +
                         "}" +
-                        "}"));
+                        "}").asJsonObject());
     }
 
     @Test
     public void testGenerate() throws Exception {
         JsonGeneratorConfig gConf = new JsonGeneratorConfig();
-        ArrayList<String> images =  new ArrayList<String>();
+        ArrayList<String> images = new ArrayList<String>();
         images.add("/photos/image.jpg");
         images.add("/photos/image.jpg");
 
@@ -75,7 +75,7 @@ public class JsonGenerationTest {
 
         System.out.println(job.toString());
 
-        assertEquals(8,job.length());
+        assertEquals(8, job.length());
 
     }
 
@@ -85,14 +85,16 @@ public class JsonGenerationTest {
         gConf.globalIntegerMin = 300;
         gConf.globalIntegerMax = 400;
 
-        JsonObject job = new JsonGenerator(schema, gConf).generate().asJsonObject();
+        JsonGenerator g = new JsonGenerator(schema, gConf);
+        JsonElement el = g.generate();
+        JsonObject job = el.asJsonObject();
         System.out.println(job.toString());
         assertTrue(job.getInt("five") >= 300);
         assertTrue(job.getInt("five") <= 400);
     }
 
     @Test
-    public void testEmailTypeString(){
+    public void testEmailTypeString() {
         JsonObject job = new JsonGenerator(schema, null).generate().asJsonObject();
         System.out.println(job.toString());
         String emailString = job.get("eight").toString();
@@ -102,7 +104,7 @@ public class JsonGenerationTest {
     }
 
     @Test
-    public void testEmailTypeStringLimitedLocal(){
+    public void testEmailTypeStringLimitedLocal() {
         JsonGeneratorConfig gConf = new JsonGeneratorConfig();
         gConf.globalEmailLocalPartLengthMin = 5;
         gConf.globalEmailLocalPartLengthMax = 5;
@@ -112,8 +114,8 @@ public class JsonGenerationTest {
         Pattern emailRegex = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{1,10}$", Pattern.CASE_INSENSITIVE);
         Matcher matcher = emailRegex.matcher(emailString);
         assertTrue(matcher.find());
-        assertTrue(emailString.split("@")[0].length()>=5);
-        assertTrue(emailString.split("@")[0].length()<=5);
+        assertTrue(emailString.split("@")[0].length() >= 5);
+        assertTrue(emailString.split("@")[0].length() <= 5);
 
     }
 }

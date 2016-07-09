@@ -36,7 +36,7 @@ public class JsonObjectArrayWrapper<T extends JsonObjectWrapper> extends TypedJs
     }
 
     @Override
-    public <O extends JsonElementWrapper> O wrap(JsonElement jsonElement) {
+    public <O extends JsonElementWrapper> O wrap(JsonArray jsonElement) {
         throw new IllegalStateException("cannot wrap Typed Element with empty type");
     }
 
@@ -54,7 +54,7 @@ public class JsonObjectArrayWrapper<T extends JsonObjectWrapper> extends TypedJs
     @Override
     protected T get(JsonElement jsonElement, int pos) {
         try {
-            return cls.newInstance().wrap(jsonElement);
+            return cls.newInstance().wrap(jsonElement.asJsonObject());
         } catch (InstantiationException e) {
             throw new RuntimeException("Error wrapping json", e);
         } catch (IllegalAccessException e) {

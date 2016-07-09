@@ -38,19 +38,21 @@ public class JsonSchemaUriFetcherTest {
 
     @Before
     public void setUp() throws Exception {
-        schema =  new SchemaV4();
-        schemaGeo = new SchemaV4().wrap(JsonElement.readFrom("{\"description\":\"A geographical coordinate\",\"type\":\"object\",\"properties\":{\"latitude\":{\"type\":\"number\"},\"longitude\":{\"type\":\"number\"}}}"));
+        schema = new SchemaV4();
+        schemaGeo = new SchemaV4().wrap(JsonElement.readFrom("{\"description\":\"A geographical coordinate\"" +
+                ",\"type\":\"object\",\"properties\":" +
+                "{\"latitude\":{\"type\":\"number\"},\"longitude\":{\"type\":\"number\"}}}").asJsonObject());
         schemaUri = URI.create("http://json-schema.org/geo");
     }
 
-   //@Test
+    //@Test
     public void testFetch() throws Exception {
 
-        SchemaUriFetcher suf =  new SchemaUriFetcher();
+        SchemaUriFetcher suf = new SchemaUriFetcher();
 
         System.out.println(schemaUri.getPath());
 
-        Schema schema= suf.fetch(schemaUri, null, null);
+        Schema schema = suf.fetch(schemaUri, null, null);
 
         System.out.println(schema.toString());
 
@@ -64,11 +66,14 @@ public class JsonSchemaUriFetcherTest {
         JsonObjectWrapper job;
 
 
-        Schema schemaGeo = new SchemaV4().wrap(JsonElement.readFrom("{\"description\":\"A geographical coordinate\",\"type\":\"object\",\"properties\":{\"latitude\":{\"type\":\"number\"},\"longitude\":{\"type\":\"number\"}}}"));
+        Schema schemaGeo = new SchemaV4()
+                .wrap(JsonElement.readFrom("{\"description\":\"A geographical coordinate\",\"type\":\"object\"," +
+                        "\"properties\":{\"latitude\":{\"type\":\"number\"},\"longitude\":{\"type\":\"number\"}}}")
+                        .asJsonObject());
         job = (JsonObjectWrapper) new JsonObjectWrapper().setMetaInfoUri(schemaUri);
 
 
-        assertEquals(schemaGeo.getJson(), ((Schema)job.getMetaInfo()).getJson());
+        assertEquals(schemaGeo.getJson(), ((Schema) job.getMetaInfo()).getJson());
 
     }
 
@@ -79,7 +84,7 @@ public class JsonSchemaUriFetcherTest {
 
         SchemaUriFetcher suf = (SchemaUriFetcher) new SchemaUriFetcher().withConfig(
                 new SchemaFetcherConfig()
-                        .withUriSchemeReplacement("ftp",schemaUri.getScheme())
+                        .withUriSchemeReplacement("ftp", schemaUri.getScheme())
                         .withUriAuthorityReplacement("some.addr", schemaUri.getAuthority())
                         .withUriPathReplacement("/test123/geo", schemaUri.getPath())
         );
@@ -89,7 +94,7 @@ public class JsonSchemaUriFetcherTest {
 
         assertEquals(schemaUri, suf.convertUri(schemaUri2));
 
-        Schema schema= suf.fetch(schemaUri2, null, null);
+        Schema schema = suf.fetch(schemaUri2, null, null);
 
         System.out.println(schema.toString());
 
@@ -102,7 +107,10 @@ public class JsonSchemaUriFetcherTest {
         JsonObjectWrapper job;
         final URI schemaUri2 = URI.create("ftp://some.addr/test123/geo");
 
-        Schema schemaGeo = new SchemaV4().wrap(JsonElement.readFrom("{\"description\":\"A geographical coordinate\",\"type\":\"object\",\"properties\":{\"latitude\":{\"type\":\"number\"},\"longitude\":{\"type\":\"number\"}}}"));
+        Schema schemaGeo = new SchemaV4().wrap(JsonElement.readFrom(
+                "{\"description\":\"A geographical coordinate\",\"type\":\"object\"," +
+                        "\"properties\":{\"latitude\":{\"type\":\"number\"}," +
+                        "\"longitude\":{\"type\":\"number\"}}}").asJsonObject());
         job = new JsonObjectWrapper();
         job.setDefaultSchemaFetcher(new SchemaUriFetcher().withConfig(
                 new SchemaFetcherConfig()
@@ -112,7 +120,7 @@ public class JsonSchemaUriFetcherTest {
         ));
         job.setMetaInfoUri(schemaUri2);
 
-        assertEquals(schemaGeo.getJson(), ((Schema)job.getMetaInfo()).getJson());
+        assertEquals(schemaGeo.getJson(), ((Schema) job.getMetaInfo()).getJson());
 
     }
 
@@ -122,8 +130,8 @@ public class JsonSchemaUriFetcherTest {
         final URI schemaUri2 = URI.create("http://openthings.cc/rest/schema/xyz");
         //job = (JsonObjectWrapper) new JsonObjectWrapper().setMetaInfoUri(schemaUri2);
 
-        SchemaUriFetcher suf =  new SchemaUriFetcher();
-        Schema schema= suf.fetch(schemaUri2, null, null);
+        SchemaUriFetcher suf = new SchemaUriFetcher();
+        Schema schema = suf.fetch(schemaUri2, null, null);
         //TODO
         //System.out.println(schema.mergeAllRefs().toString());
 

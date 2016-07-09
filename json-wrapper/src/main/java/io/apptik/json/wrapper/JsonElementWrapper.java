@@ -28,6 +28,7 @@ import java.util.Map;
 
 import io.apptik.json.ElementWrapper;
 import io.apptik.json.JsonElement;
+import io.apptik.json.JsonObject;
 import io.apptik.json.Validator;
 import io.apptik.json.exception.JsonException;
 import io.apptik.json.util.LinkedTreeMap;
@@ -35,36 +36,34 @@ import io.apptik.json.util.LinkedTreeMap;
 
 /**
  * Json element Wrapper to be used to wrap JSON data with its schema content type used to describe the data.
- *
+ * <p/>
  * It can be extended to define a data model implementing getters and setters for required members.
- *
+ * <p/>
  * The idea is that there is no need to instantiate different POJO for different purpose on the same JSON data,
  * but just wrap that data.
- *
+ * <p/>
  * Compared to pure POJO mapping it is particularly useful when single JSON representation can be mapped to 2 or more
  * POJOs. For example if we get data about https://schema.org/LocalBusiness which is https://schema.org/Organization
  * and https://schema.org/Place at the same time we need to reference Place and Organization POJOs in the LocalBusiness
  * POJO as in java we cannot extend from 2 classes. This means that for any possible combination of DataTypes available
  * for the Resources we get we need to create POJOs to delegate to others.
- *
+ * <p/>
  * Using Json wrappers is fairly simple as we can just create wrappers implementing interfaces specific to the type we
  * need to work with, while full json data itself is still available to be wrapped again for other needs.
- *
  */
-public abstract class JsonElementWrapper implements ElementWrapper {
+public abstract class JsonElementWrapper<T extends JsonElement> implements ElementWrapper {
 
-    protected transient JsonElement json;
+    protected transient T json;
     private String contentType;
     private URI jsonSchemaUri;
     private MetaInfo metaInfo;
 
-    private transient LinkedHashSet<Validator> validators = new LinkedHashSet<Validator>();
+    private transient LinkedHashSet<Validator> validators;
     private transient LinkedTreeMap<String, MetaInfoFetcher> fetchers = new LinkedTreeMap<String, MetaInfoFetcher>();
 
-
     @Override
-    public <T extends JsonElement> T getJson() {
-        return (T)json;
+    public T getJson() {
+        return json;
     }
 
     public String getContentType() {
@@ -80,40 +79,41 @@ public abstract class JsonElementWrapper implements ElementWrapper {
     }
 
     public JsonElementWrapper() {
-       //todo do we need default fetcher ?
+        //todo do we need default fetcher ?
         // fetchers.put("defaultUriFetcher", new SchemaUriFetcher());
     }
 
-    public JsonElementWrapper(JsonElement jsonElement) {
+    public JsonElementWrapper(T jsonElement) {
         this.json = jsonElement;
     }
 
-    public JsonElementWrapper(JsonElement jsonElement, String contentType) {
+    public JsonElementWrapper(T jsonElement, String contentType) {
         this(jsonElement);
         this.contentType = contentType;
 
     }
 
-    public JsonElementWrapper(JsonElement jsonElement, String contentType, URI metaInfo) {
+    public JsonElementWrapper(T jsonElement, String contentType, URI metaInfo) {
         this(jsonElement, contentType);
         this.jsonSchemaUri = metaInfo;
         tryFetchMetaInfo(this.jsonSchemaUri);
     }
 
 
-
-
     /**
      * Tries to fetch a schema and add the default Schema validator for it
+     *
      * @param jsonSchemaUri
      * @return
      */
     private MetaInfo tryFetchMetaInfo(URI jsonSchemaUri) {
-        if(jsonSchemaUri==null) return null;
+        if (jsonSchemaUri == null) return null;
         try {
             metaInfo = doFetchMetaInfo(jsonSchemaUri);
             Validator validator = metaInfo.getDefaultValidator();
-            if(validator !=null) validators.add(validator);
+            if (validator != null) {
+                getValidators().add(validator);
+            }
         } catch (Exception ex) {
             return null;
         }
@@ -124,23 +124,23 @@ public abstract class JsonElementWrapper implements ElementWrapper {
     private MetaInfo doFetchMetaInfo(URI jsonSchemaUri) {
         MetaInfo currSchema = null;
 
-        Iterator<Map.Entry<String,MetaInfoFetcher>> iterator =  fetchers.entrySet().iterator();
-        while (iterator.hasNext() && currSchema==null){
-            Map.Entry<String,MetaInfoFetcher> entry = iterator.next();
+        Iterator<Map.Entry<String, MetaInfoFetcher>> iterator = fetchers.entrySet().iterator();
+        while (iterator.hasNext() && currSchema == null) {
+            Map.Entry<String, MetaInfoFetcher> entry = iterator.next();
             System.out.println("JsonElementWrapper try fetch using: " + entry.getKey());
             try {
                 currSchema = entry.getValue().fetch(jsonSchemaUri);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("JsonElementWrapper fetch result: " + ((currSchema==null)?"FAIL":"OK"));
+            System.out.println("JsonElementWrapper fetch result: " + ((currSchema == null) ? "FAIL" : "OK"));
         }
         return currSchema;
     }
 
-    public <T extends JsonElementWrapper> T wrap(JsonElement jsonElement) {
+    public <J extends JsonElementWrapper> J wrap(T jsonElement) {
         this.json = jsonElement;
-        return (T)this;
+        return (J) this;
     }
 
     public JsonElementWrapper setContentType(String contentType) {
@@ -180,16 +180,19 @@ public abstract class JsonElementWrapper implements ElementWrapper {
     }
 
     public JsonElementWrapper addValidator(Validator validator) {
-        this.validators.add(validator);
+        getValidators().add(validator);
         return this;
     }
 
     public LinkedHashSet<Validator> getValidators() {
+        if (validators == null) {
+            validators = new LinkedHashSet<Validator>();
+        }
         return validators;
     }
 
     public boolean isDataValid() {
-        for (Validator validator : validators) {
+        for (Validator validator : getValidators()) {
             if (!validator.isValid(this.getJson()))
                 return false;
         }
@@ -198,14 +201,14 @@ public abstract class JsonElementWrapper implements ElementWrapper {
 
     public boolean validateData(StringBuilder sb) {
         boolean res = true;
-        Iterator<Validator> iterator = validators.iterator();
+        Iterator<Validator> iterator = getValidators().iterator();
         System.out.println("JsonElementWrapper start validating ");
         Validator validator;
-        while (iterator.hasNext()){
-            validator =  iterator.next();
+        while (iterator.hasNext()) {
+            validator = iterator.next();
             System.out.println("JsonElementWrapper validating using: " + validator.getTitle());
 
-            if(!validator.validate(this.getJson(), sb)) {
+            if (!validator.validate(this.getJson(), sb)) {
                 res = false;
             }
         }
@@ -213,7 +216,7 @@ public abstract class JsonElementWrapper implements ElementWrapper {
     }
 
     public MetaInfo fetchMetaInfo() {
-        if(metaInfo ==null)
+        if (metaInfo == null)
             tryFetchMetaInfo(this.jsonSchemaUri);
         return metaInfo;
     }
@@ -225,7 +228,7 @@ public abstract class JsonElementWrapper implements ElementWrapper {
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException, JsonException {
         ois.defaultReadObject();
-        this.wrap(JsonElement.readFrom((String) ois.readObject()));
+        this.wrap((T) JsonElement.readFrom((String) ois.readObject()));
     }
 
     public String toString() {

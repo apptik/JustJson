@@ -70,7 +70,7 @@ public class JsonGeneratorExample {
                             "}" +
                             "}]" +
                             "}]" +
-                            "}"));
+                            "}").asJsonObject());
         } catch (IOException e) {
             e.printStackTrace();
         }

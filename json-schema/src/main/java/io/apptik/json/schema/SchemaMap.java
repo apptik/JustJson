@@ -31,7 +31,7 @@ public class SchemaMap extends TypedJsonObject<Schema> {
 
     @Override
     protected Schema get(JsonElement jsonElement, String key) {
-        return (Schema) schema.getEmptySchema(key).wrap(jsonElement);
+        return (Schema) schema.getEmptySchema(key).wrap(jsonElement.asJsonObject());
     }
 
 

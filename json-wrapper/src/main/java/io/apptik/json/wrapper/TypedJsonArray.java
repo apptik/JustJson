@@ -14,28 +14,32 @@ import java.util.*;
  * In the case of many reads and/or writes back use
  * {@link CachedTypedJsonArray}
  *
- *
  * @param <T> The type
  */
-public abstract class TypedJsonArray<T> extends JsonElementWrapper implements List<T> {
+public abstract class TypedJsonArray<T> extends JsonElementWrapper<JsonArray> implements List<T> {
 
     public TypedJsonArray() {
         super();
     }
 
     @Override
-    public <T extends JsonElementWrapper> T wrap(JsonElement jsonElement) {
+    public <T extends JsonElementWrapper> T wrap(JsonArray jsonElement) {
         return super.wrap(jsonElement);
     }
 
     @Override
     public JsonArray getJson() {
         if (super.getJson() == null) try {
-            this.json = JsonElement.readFrom("[]");
+            this.json = JsonElement.readFrom("[]").asJsonArray();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return super.getJson().asJsonArray();
+        return super.getJson();
+    }
+
+    private T getInternal(JsonElement jsonElement, int pos) {
+        if (jsonElement == null) return null;
+        return get(jsonElement, pos);
     }
 
     protected abstract T get(JsonElement jsonElement, int pos);
@@ -69,7 +73,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
             @Override
             public T next() {
                 JsonElement el = iterator.next();
-                return get(el, indexOf(el));
+                return getInternal(el, indexOf(el));
             }
 
             @Override
@@ -82,8 +86,8 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
     @Override
     public Object[] toArray() {
         Object[] arr = new Object[getJson().size()];
-        for(int i=0;i<arr.length;i++) {
-            arr[i] = get(getJson().get(i), i);
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = getInternal(getJson().get(i), i);
         }
         return arr;
     }
@@ -147,7 +151,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
 
     @Override
     public T get(int i) {
-        return get(getJson().asJsonArray().get(i), i);
+        return getInternal(getJson().asJsonArray().get(i), i);
     }
 
     @Override
@@ -163,7 +167,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
 
     @Override
     public T remove(int i) {
-        return get(getJson().remove(i), i);
+        return getInternal(getJson().remove(i), i);
     }
 
     @Override
@@ -188,7 +192,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
             @Override
             public T next() {
                 JsonElement el = iterator.next();
-                return get(el, indexOf(el));
+                return getInternal(el, indexOf(el));
             }
 
             @Override
@@ -199,7 +203,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
             @Override
             public T previous() {
                 int pos = iterator.previousIndex();
-                return get(iterator.previous(), pos);
+                return getInternal(iterator.previous(), pos);
             }
 
             @Override
@@ -241,7 +245,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
             @Override
             public T next() {
                 JsonElement el = iterator.next();
-                return get(el, indexOf(el));
+                return getInternal(el, indexOf(el));
             }
 
             @Override
@@ -252,7 +256,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
             @Override
             public T previous() {
                 int pos = iterator.previousIndex();
-                return get(iterator.previous(), pos);
+                return getInternal(iterator.previous(), pos);
             }
 
             @Override
@@ -287,7 +291,7 @@ public abstract class TypedJsonArray<T> extends JsonElementWrapper implements Li
         List<JsonElement> subList = getJson().subList(i, i2);
         ArrayList<T> resList = new ArrayList<T>();
         for (JsonElement el : subList) {
-            resList.add(get(el, indexOf(el)));
+            resList.add(getInternal(el, indexOf(el)));
         }
         return resList;
     }

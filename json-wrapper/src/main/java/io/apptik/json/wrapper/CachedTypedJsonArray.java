@@ -20,7 +20,7 @@ public abstract class CachedTypedJsonArray<T> extends TypedJsonArray<T> {
     volatile boolean wrapping;
 
     @Override
-    public <T extends JsonElementWrapper> T wrap(JsonElement jsonElement) {
+    public <T extends JsonElementWrapper> T wrap(JsonArray jsonElement) {
         super.wrap(jsonElement);
         wrapElements();
         return (T) this;
@@ -161,7 +161,7 @@ public abstract class CachedTypedJsonArray<T> extends TypedJsonArray<T> {
 
     @Override
     public int size() {
-        if(wrapping) {
+        if (wrapping) {
             return json.asJsonArray().size();
         } else {
             return elements.size();
@@ -184,7 +184,7 @@ public abstract class CachedTypedJsonArray<T> extends TypedJsonArray<T> {
     @Override
     public JsonArray getJson() {
         this.json.asJsonArray().clear();
-        for(T el:elements) {
+        for (T el : elements) {
             this.json.asJsonArray().put(to(el));
         }
         return super.getJson();

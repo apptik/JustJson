@@ -64,7 +64,7 @@ public class JsonSchemaV4Validation {
 
     @Test
     public void testTypeObject() throws Exception {
-        schema.wrap(JsonElement.readFrom("{\"type\" : \"object\"}"));
+        schema.wrap(JsonElement.readFrom("{\"type\" : \"object\"}").asJsonObject());
         assertTrue(schema.getDefaultValidator().isValid(jsonObject.get("obj")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("arr")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("int")));
@@ -75,7 +75,7 @@ public class JsonSchemaV4Validation {
     }
     @Test
     public void testTypeArray() throws Exception {
-        schema.wrap(JsonElement.readFrom("{\"type\" : \"array\"}"));
+        schema.wrap(JsonElement.readFrom("{\"type\" : \"array\"}").asJsonObject());
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("obj")));
         assertTrue(schema.getDefaultValidator().isValid(jsonObject.get("arr")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("int")));
@@ -86,7 +86,7 @@ public class JsonSchemaV4Validation {
     }
     @Test
     public void testTypeString() throws Exception {
-        schema.wrap(JsonElement.readFrom("{\"type\" : \"string\"}"));
+        schema.wrap(JsonElement.readFrom("{\"type\" : \"string\"}").asJsonObject());
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("obj")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("arr")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("int")));
@@ -97,7 +97,7 @@ public class JsonSchemaV4Validation {
     }
     @Test
     public void testTypeNumber() throws Exception {
-        schema.wrap(JsonElement.readFrom("{\"type\" : \"number\"}"));
+        schema.wrap(JsonElement.readFrom("{\"type\" : \"number\"}").asJsonObject());
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("obj")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("arr")));
         assertTrue(schema.getDefaultValidator().isValid(jsonObject.get("int")));
@@ -108,7 +108,7 @@ public class JsonSchemaV4Validation {
     }
     @Test
     public void testTypeInteger() throws Exception {
-        schema.wrap(JsonElement.readFrom("{\"type\" : \"integer\"}"));
+        schema.wrap(JsonElement.readFrom("{\"type\" : \"integer\"}").asJsonObject());
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("obj")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("arr")));
         assertTrue(schema.getDefaultValidator().isValid(jsonObject.get("int")));
@@ -119,7 +119,7 @@ public class JsonSchemaV4Validation {
     }
     @Test
     public void testTypeBool() throws Exception {
-        schema.wrap(JsonElement.readFrom("{\"type\" : \"boolean\"}"));
+        schema.wrap(JsonElement.readFrom("{\"type\" : \"boolean\"}").asJsonObject());
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("obj")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("arr")));
         assertFalse(schema.getDefaultValidator().isValid(jsonObject.get("int")));
@@ -137,7 +137,7 @@ public class JsonSchemaV4Validation {
                 "\"one\" : {\"type\" : \"string\"  } ," +
                 "\"two\" : {\"type\" : \"object\" }" +
                 "}" +
-                "}"));
+                "}").asJsonObject());
         Validator validator = schema.getDefaultValidator();
         assertFalse(validator.isValid(JsonElement.readFrom("{ " +
                 "\"one\":\"string is good\"," +
@@ -172,7 +172,7 @@ public class JsonSchemaV4Validation {
                 "\"one\" : {\"type\" : \"string\"  } ," +
                 "\"two\" : {\"type\" : \"object\" }" +
                 "}" +
-                "}"));
+                "}").asJsonObject());
         Validator validator = schema.getDefaultValidator();
         assertTrue(validator.isValid(JsonElement.readFrom("{ " +
                 "\"one\":\"string is good\"" +
@@ -206,16 +206,16 @@ public class JsonSchemaV4Validation {
 
     @Test
     public void testRequired() throws Exception {
-        schema.wrap(JsonElement.readFrom("{\"required\" : [\"other\"]}"));
+        schema.wrap(JsonElement.readFrom("{\"required\" : [\"other\"]}").asJsonObject());
         Validator validator = schema.getDefaultValidator();
         assertFalse(validator.isValid(jsonObject));
-        schema.wrap(JsonElement.readFrom("{\"required\" : [\"obj\"]}"));
+        schema.wrap(JsonElement.readFrom("{\"required\" : [\"obj\"]}").asJsonObject());
         validator = schema.getDefaultValidator();
         assertTrue(validator.isValid(jsonObject));
-        schema.wrap(JsonElement.readFrom("{\"required\" : [\"obj\",\"another\"]}"));
+        schema.wrap(JsonElement.readFrom("{\"required\" : [\"obj\",\"another\"]}").asJsonObject());
         validator = schema.getDefaultValidator();
         assertFalse(validator.isValid(jsonObject));
-        schema.wrap(JsonElement.readFrom("{\"required\" : [\"obj\",\"arr\"]}"));
+        schema.wrap(JsonElement.readFrom("{\"required\" : [\"obj\",\"arr\"]}").asJsonObject());
         validator = schema.getDefaultValidator();
         assertTrue(validator.isValid(jsonObject));
 
@@ -224,7 +224,7 @@ public class JsonSchemaV4Validation {
 
     @Test
     public void testEnum() throws Exception {
-        schema.wrap(JsonElement.readFrom("{\"enum\" : [\"other\",1,true,null,{ \"one\": 1}, [1,2,3]]}"));
+        schema.wrap(JsonElement.readFrom("{\"enum\" : [\"other\",1,true,null,{ \"one\": 1}, [1,2,3]]}").asJsonObject());
         Validator validator = schema.getDefaultValidator();
 
         JsonObject jobBad = JsonObject.readFrom("{ " +
@@ -266,7 +266,7 @@ public class JsonSchemaV4Validation {
                 "\"one\" : {\"type\" : \"number\"   ," +
                 "\"multipleOf\" : 5 }" +
                 "}" +
-                "}"));
+                "}").asJsonObject());
         Validator validator = schema.getDefaultValidator();
         assertFalse(validator.isValid(JsonElement.readFrom("{ " +
                 "\"one\":1" +
@@ -280,7 +280,7 @@ public class JsonSchemaV4Validation {
                 "\"one\" : {\"type\" : \"number\"   ," +
                 "\"multipleOf\" : 3.4 }" +
                 "}" +
-                "}"));
+                "}").asJsonObject());
         validator = schema.getDefaultValidator();
         assertFalse(validator.isValid(JsonElement.readFrom("{ " +
                 "\"one\":1" +

@@ -15,7 +15,7 @@ public class SchemaList extends TypedJsonArray<Schema> {
 
     @Override
     protected Schema get(JsonElement jsonElement, int pos) {
-        return (Schema) schema.getEmptySchema(String.valueOf(pos)).wrap(jsonElement);
+        return (Schema) schema.getEmptySchema(String.valueOf(pos)).wrap(jsonElement.asJsonObject());
     }
 
     @Override

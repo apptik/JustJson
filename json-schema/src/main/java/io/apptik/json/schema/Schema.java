@@ -156,7 +156,7 @@ public abstract class Schema extends JsonObjectWrapper implements MetaInfo{
     }
 
     @Override
-    public <T extends JsonElementWrapper> T wrap(JsonElement jsonElement) {
+    public <T extends JsonElementWrapper> T wrap(JsonObject jsonElement) {
         Schema schema = super.wrap(jsonElement);
         mergeWithRef();
         return (T) schema;

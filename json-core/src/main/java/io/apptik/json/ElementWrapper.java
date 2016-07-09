@@ -19,6 +19,6 @@ package io.apptik.json;
 
 import java.io.Serializable;
 
-public interface ElementWrapper extends Serializable {
-    <T extends JsonElement> T getJson();
+public interface ElementWrapper<T extends JsonElement> extends Serializable {
+    T getJson();
 }
