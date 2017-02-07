@@ -1,4 +1,8 @@
-include ':playzone', ':app-json'
+include ':playzone'
 include ':json-core', ':json-ld', ':json-wrapper', ':json-schema', ':json-generator', ':json-aws'
 include ':examples'
 include ':model-generator'
+
+if (System.getenv()['ANDROID_HOME']) {
+    include ':app-json'
+}
