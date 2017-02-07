@@ -791,6 +791,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
     }
 
     public JsonObject clear() {
+        checkIfFrozen();
         nameValuePairs.clear();
         return this;
     }

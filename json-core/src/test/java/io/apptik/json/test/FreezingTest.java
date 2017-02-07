@@ -15,6 +15,9 @@ import static org.junit.Assert.fail;
 
 public class FreezingTest {
 
+
+
+
     @Test
     public void objectFreezing() {
         JsonObject object = new JsonObject();
@@ -23,6 +26,65 @@ public class FreezingTest {
         object.freeze();
         try {
             object.put("bar", 20);
+            fail();
+        } catch(IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonObject instance.",
+                    ex.getMessage());
+        }
+
+        try {
+            object.put("bar", 5.5);
+            fail();
+        } catch(IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonObject instance.",
+                    ex.getMessage());
+        }
+
+        try {
+            object.put("bar", null);
+            fail();
+        } catch(IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonObject instance.",
+                    ex.getMessage());
+        }
+
+        try {
+            object.put("bar", "xx");
+            fail();
+        } catch(IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonObject instance.",
+                    ex.getMessage());
+        }
+
+
+        try {
+            object.put("bar", new JsonObject());
+            fail();
+        } catch(IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonObject instance.",
+                    ex.getMessage());
+        }
+
+        try {
+            object.put("bar", new JsonArray());
+            fail();
+        } catch(IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonObject instance.",
+                    ex.getMessage());
+        }
+
+
+        try {
+            object.clear();
+            fail();
+        } catch(IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonObject instance.",
+                    ex.getMessage());
+        }
+
+
+        try {
+            object.remove("bar");
             fail();
         } catch(IllegalStateException ex) {
             assertEquals("Attempt to modify a frozen JsonObject instance.",
