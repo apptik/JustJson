@@ -819,7 +819,14 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
 
     @Override
     public JsonArray freeze() {
-        frozen = true;
+        frozen = true; for(JsonElement el:values) {
+            if(el.isJsonArray()) {
+                el.asJsonArray().freeze();
+            }
+            if(el.isJsonObject()) {
+                el.asJsonObject().freeze();
+            }
+        }
         return this;
     }
 

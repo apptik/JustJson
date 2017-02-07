@@ -805,6 +805,14 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
     @Override
     public JsonObject freeze() {
         frozen = true;
+        for(JsonElement el:nameValuePairs.values()) {
+            if(el.isJsonArray()) {
+                el.asJsonArray().freeze();
+            }
+            if(el.isJsonObject()) {
+                el.asJsonObject().freeze();
+            }
+        }
         return this;
     }
 

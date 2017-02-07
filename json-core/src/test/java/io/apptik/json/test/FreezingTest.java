@@ -15,7 +15,57 @@ import static org.junit.Assert.fail;
 
 public class FreezingTest {
 
+    @Test
+    public void objectChildrenFreezing() {
+        JsonObject object = new JsonObject();
+        JsonArray childArray =  new JsonArray();
+        JsonObject childObject = new JsonObject();
+        object.put("foo", childArray);
+        object.put("bar", childObject);
+        object.freeze();
+        try {
+            childArray.put(true);
+            fail();
+        } catch (IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonArray instance.",
+                    ex.getMessage());
+        }
 
+        try {
+            childObject.put("foochild",true);
+            fail();
+        } catch (IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonObject instance.",
+                    ex.getMessage());
+        }
+
+    }
+
+    @Test
+    public void arrayChildrenFreezing() {
+        JsonArray array = new JsonArray();
+        JsonArray childArray =  new JsonArray();
+        JsonObject childObject = new JsonObject();
+        array.put(childArray);
+        array.put(childObject);
+        array.freeze();
+        try {
+            childArray.put(true);
+            fail();
+        } catch (IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonArray instance.",
+                    ex.getMessage());
+        }
+
+        try {
+            childObject.put("foochild",true);
+            fail();
+        } catch (IllegalStateException ex) {
+            assertEquals("Attempt to modify a frozen JsonObject instance.",
+                    ex.getMessage());
+        }
+
+    }
 
 
     @Test
