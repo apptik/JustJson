@@ -154,6 +154,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
     }
 
     public JsonArray put(JsonElement value) {
+        checkIfFrozen();
         if (value != null) {
             values.add(value);
         }
@@ -219,7 +220,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * @return this array.
      */
     public JsonArray put(int index, Object value) throws JsonException {
-
+        checkIfFrozen();
         while (values.size() <= index) {
             values.add(new JsonNull());
         }
@@ -264,7 +265,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
     @Override
     public void add(int i, JsonElement jsonElement) {
         checkIfFrozen();
-        values.add(i, jsonElement);
+        put(i, jsonElement);
     }
 
     /**
@@ -761,11 +762,13 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
 
     @Override
     public boolean add(JsonElement jsonElement) {
+        checkIfFrozen();
         return values.add(jsonElement);
     }
 
     @Override
     public boolean remove(Object o) {
+        checkIfFrozen();
         return values.remove(o);
     }
 
@@ -776,26 +779,31 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
 
     @Override
     public boolean addAll(Collection<? extends JsonElement> jsonElements) {
+        checkIfFrozen();
         return values.addAll(jsonElements);
     }
 
     @Override
     public boolean addAll(int i, Collection<? extends JsonElement> jsonElements) {
+        checkIfFrozen();
         return addAll(jsonElements);
     }
 
     @Override
     public boolean removeAll(Collection<?> objects) {
+        checkIfFrozen();
         return values.removeAll(objects);
     }
 
     @Override
     public boolean retainAll(Collection<?> objects) {
+        checkIfFrozen();
         return values.retainAll(objects);
     }
 
     @Override
     public void clear() {
+        checkIfFrozen();
         values.clear();
     }
 
