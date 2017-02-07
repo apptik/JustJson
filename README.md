@@ -1,8 +1,8 @@
 # JustJson
 
-[![Build Status](https://travis-ci.org/apptik/justjson.svg?branch=master)](https://travis-ci.org/apptik/JustJson)
-[![Join the chat at https://gitter.im/apptik/justjson](https://badges.gitter.im/apptik/justjson.svg)](https://gitter.im/apptik/JustJson?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![StackExchange](https://img.shields.io/stackexchange/stackoverflow/t/justjson.svg)](http://stackoverflow.com/questions/tagged/justjson)
+[![Build Status](https://travis-ci.org/apptik/JustJson.svg?branch=master)](https://travis-ci.org/apptik/JustJson)
+[![Join the chat at https://gitter.im/apptik/JustJson](https://badges.gitter.im/apptik/JustJson.svg)](https://gitter.im/apptik/JustJson?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![StackExchange](https://img.shields.io/stackexchange/stackoverflow/t/JustJson.svg)](http://stackoverflow.com/questions/tagged/JustJson)
 
 
 JSON helper library for Android and Java
@@ -35,12 +35,12 @@ Find [the latest JARs][mvn] or grab via Maven:
 <dependency>
   <groupId>io.apptik.json</groupId>
   <artifactId>json-XXX</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.json:json-XXX:1.0.3'
+compile 'io.apptik.json:json-XXX:1.0.4'
 ```
 
 Downloads of the released versions are available in [Sonatype's `releases` repository][release].
@@ -60,30 +60,30 @@ TODO
 
 ## Questions
 
-[StackOverflow with tag 'justjson'](http://stackoverflow.com/questions/ask)
+[StackOverflow with tag 'JustJson'](http://stackoverflow.com/questions/ask)
 
 ## Modules
 
 * [Json Core][json-core] - the json core module responsible for mapping json string/stream to basic Java Objects
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.json/json-core.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.json/json-core)
-[![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.3/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.3)
+[![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.4/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.4)
 * [Json Warpper][json-wrapper] - json wrapper classes that are used to wrap generic json representation around some defined interface
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.json/json-wrapper.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.json/json-wrapper)
-[![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-wrapper/1.0.3/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-wrapper/1.0.3)
+[![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-wrapper/1.0.4/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-wrapper/1.0.4)
 * [Json Schema][json-schema] - helper to provide some json wrapper MetaInfo based on [json-schema][json-schema.org]
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.json/json-schema.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.json/json-schema)
-[![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-schema/1.0.3/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-schema/1.0.3)
+[![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-schema/1.0.4/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-schema/1.0.4)
 * [Json Generator][json-generator] - Random customizable json generator what uses [json-schema][json-schema.org] metainfo
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.json/json-core.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.json/json-generator)
-[![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.3/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-generator/1.0.3)
+[![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.4/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-generator/1.0.4)
 * [Json AWS][json-aws] - helper for working with AWS json libraries
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.json/json-core.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.json/json-aws)
-[![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.3/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-aws/1.0.3)
+[![VersionEye](https://www.versioneye.com/java/io.apptik.json:json-core/1.0.4/badge.svg)](https://www.versioneye.com/java/io.apptik.json:json-aws/1.0.4)
 
 
 ## Licence
@@ -106,11 +106,11 @@ TODO
  [release]: https://oss.sonatype.org/content/repositories/releases/io/apptik/json/
  [snap]: https://oss.sonatype.org/content/repositories/snapshots/io/apptik/json/
  
- [json-core]: https://github.com/apptik/justjson/tree/master/json-core
- [json-wrapper]: https://github.com/apptik/justjson/tree/master/json-wrapper
- [json-schema]: https://github.com/apptik/justjson/tree/master/json-schema
- [json-generator]: https://github.com/apptik/justjson/tree/master/json-generator
- [json-aws]: https://github.com/apptik/justjson/tree/master/json-aws
+ [json-core]: https://github.com/apptik/JustJson/tree/master/json-core
+ [json-wrapper]: https://github.com/apptik/JustJson/tree/master/json-wrapper
+ [json-schema]: https://github.com/apptik/JustJson/tree/master/json-schema
+ [json-generator]: https://github.com/apptik/JustJson/tree/master/json-generator
+ [json-aws]: https://github.com/apptik/JustJson/tree/master/json-aws
  [json-schema.org]: http://json-schema.org/
 
 

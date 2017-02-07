@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+dependencies {
+    compile project (':json-core')
+    compile project (':json-wrapper')
+    compile project (':json-schema')
+}
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+task play(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    main = 'io.apptik.Main'
+    systemProperties System.getProperties()
+}

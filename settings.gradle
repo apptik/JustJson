@@ -1,6 +1,4 @@
-include  'json-core', 'json-ld', ':json-wrapper', ':json-schema', ':json-generator', 'json-aws'
-include 'examples'
-
-include 'model-generator'
-//include 'perf-test'
-
+include ':playzone', ':app-json'
+include ':json-core', ':json-ld', ':json-wrapper', ':json-schema', ':json-generator', ':json-aws'
+include ':examples'
+include ':model-generator'
