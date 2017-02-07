@@ -818,7 +818,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
     }
     public void checkIfFrozen() {
         if (isFrozen()) {
-            throw new UnsupportedOperationException(
+            throw new IllegalStateException(
                     "Attempt to modify a frozen JsonObject instance.");
         }
     }

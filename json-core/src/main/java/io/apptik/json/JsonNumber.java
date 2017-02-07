@@ -105,11 +105,9 @@ public class JsonNumber extends JsonElement {
 
     @Override
     public boolean equals( Object o ) {
-        return
-                (o instanceof JsonNumber && ((JsonNumber) o).value.equals(value))
+        return (o instanceof JsonNumber && ((JsonNumber) o).value.equals(value))
                         ||
-                        (  o !=null && asNumber().equals(o))
-                ;
+                        (  o !=null && asNumber().equals(o));
 
     }
 

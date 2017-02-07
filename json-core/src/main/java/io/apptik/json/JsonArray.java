@@ -827,7 +827,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
 
     public void checkIfFrozen() {
         if (isFrozen()) {
-            throw new UnsupportedOperationException(
+            throw new IllegalStateException(
                     "Attempt to modify a frozen JsonArray instance.");
         }
     }
