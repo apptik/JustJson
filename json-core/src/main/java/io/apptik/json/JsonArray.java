@@ -29,6 +29,8 @@ import io.apptik.json.exception.JsonException;
 import io.apptik.json.util.Freezable;
 import io.apptik.json.util.Util;
 
+import static io.apptik.json.JsonNull.JSON_NULL;
+
 // Note: this class was written without inspecting the non-free org.json sourcecode.
 
 /**
@@ -37,16 +39,16 @@ import io.apptik.json.util.Util;
  * Booleans, Integers, Longs, Doubles, {@code null} or {@link JsonNull}.
  * Values may not be {@link Double#isNaN() NaNs}, {@link Double#isInfinite()
  * infinities}, or of any type not listed here.
- *
+ * <p>
  * <p>{@code JsonArray} has the same type coercion behavior and
  * optional/mandatory accessors as {@link JsonObject}. See that class'
  * documentation for details.
- *
+ * <p>
  * <p><strong>Warning:</strong> this class represents null in two incompatible
  * ways: the standard Java {@code null} reference, and the sentinel value {@link
  * JsonNull}. In particular, {@code get} fails if the requested index
  * holds the null reference, but succeeds if it holds {@code JsonNull}.
- *
+ * <p>
  * <p>Instances of this class are not thread safe.
  */
 public final class JsonArray extends JsonElement implements List<JsonElement>, Freezable<JsonArray> {
@@ -66,8 +68,8 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * collection.
      *
      * @param copyFrom a collection whose values are of supported types.
-     *     Unsupported values are not permitted and will yield an array in an
-     *     inconsistent state.
+     *                 Unsupported values are not permitted and will yield an array in an
+     *                 inconsistent state.
      */
     /* Accept a raw type for API compatibility */
     public JsonArray(Collection copyFrom) throws JsonException {
@@ -114,7 +116,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * Appends {@code value} to the end of this array.
      *
      * @param value a finite value. May not be {@link Double#isNaN() NaNs} or
-     *     {@link Double#isInfinite() infinities}.
+     *              {@link Double#isInfinite() infinities}.
      * @return this array.
      */
     public JsonArray put(double value) throws JsonException {
@@ -143,21 +145,19 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * Appends {@code value} to the end of this array.
      *
      * @param value a {@link JsonObject}, {@link JsonArray}, String, Boolean,
-     *     Integer, Long, Double, or {@code null}. May
-     *     not be {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
-     *     infinities}. Unsupported values are not permitted and will cause the
-     *     array to be in an inconsistent state.
+     *              Integer, Long, Double, or {@code null}. May
+     *              not be {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
+     *              infinities}. Unsupported values are not permitted and will cause the
+     *              array to be in an inconsistent state.
      * @return this array.
      */
-    public JsonArray put(Object value) throws JsonException{
+    public JsonArray put(Object value) throws JsonException {
         return put(wrap(value));
     }
 
     public JsonArray put(JsonElement value) {
         checkIfFrozen();
-        if (value != null) {
-            values.add(value);
-        }
+        putInternal(value);
 
         return this;
     }
@@ -179,7 +179,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * index}, it will be replaced.
      *
      * @param value a finite value. May not be {@link Double#isNaN() NaNs} or
-     *     {@link Double#isInfinite() infinities}.
+     *              {@link Double#isInfinite() infinities}.
      * @return this array.
      */
     public JsonArray put(int index, double value) throws JsonException {
@@ -214,15 +214,15 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * index}, it will be replaced.
      *
      * @param value a {@link JsonObject}, {@link JsonArray}, String, Boolean,
-     *     Integer, Long, Double, or {@code null}. May
-     *     not be {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
-     *     infinities}.
+     *              Integer, Long, Double, or {@code null}. May
+     *              not be {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
+     *              infinities}.
      * @return this array.
      */
     public JsonArray put(int index, Object value) throws JsonException {
         checkIfFrozen();
         while (values.size() <= index) {
-            values.add(JsonNull.get());
+            values.add(JSON_NULL);
         }
         values.set(index, wrap(value));
         return this;
@@ -234,15 +234,15 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      */
     public boolean isNull(int index) {
         Object value = opt(index);
-        return value == null || value.equals(JsonNull.get());
+        return value == null || value.equals(JSON_NULL);
     }
 
     /**
      * Returns the value at {@code index}.
      *
      * @throws JsonException if this array has no value at {@code index}, or if
-     *     that value is the {@code null} reference. This method returns
-     *     normally if the value is {@code JsonObject#NULL}.
+     *                       that value is the {@code null} reference. This method returns
+     *                       normally if the value is {@code JsonObject#NULL}.
      */
     public JsonElement get(int index) throws JsonException {
         try {
@@ -321,7 +321,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * be coerced to a boolean.
      *
      * @throws JsonException if the value at {@code index} doesn't exist or
-     *     cannot be coerced to a boolean.
+     *                       cannot be coerced to a boolean.
      */
     public Boolean getBoolean(int index, boolean strict) throws JsonException {
         JsonElement el = get(index);
@@ -333,9 +333,9 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
             res = el.asBoolean();
         }
         if (el.isString()) {
-            res =  Util.toBoolean(el.asString());
+            res = Util.toBoolean(el.asString());
         }
-        if(res == null)
+        if (res == null)
             throw Util.typeMismatch(index, el, "boolean", strict);
         return res;
     }
@@ -373,7 +373,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * be coerced to a double.
      *
      * @throws JsonException if the value at {@code index} doesn't exist or
-     *     cannot be coerced to a double.
+     *                       cannot be coerced to a double.
      */
     public Double getDouble(int index, boolean strict) throws JsonException {
         JsonElement el = get(index);
@@ -385,9 +385,9 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
             res = el.asDouble();
         }
         if (el.isString()) {
-            res =  Util.toDouble(el.asString());
+            res = Util.toDouble(el.asString());
         }
-        if(res == null)
+        if (res == null)
             throw Util.typeMismatch(index, el, "double", strict);
         return res;
     }
@@ -425,11 +425,11 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * can be coerced to an int.
      *
      * @throws JsonException if the value at {@code index} doesn't exist or
-     *     cannot be coerced to a int.
+     *                       cannot be coerced to a int.
      */
     public Integer getInt(int index) throws JsonException {
         return getInt(index, false);
-   }
+    }
 
     /**
      * Returns the value at {@code index} if it exists and is an int or
@@ -445,9 +445,9 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
             res = el.asInt();
         }
         if (el.isString()) {
-            res =  Util.toInteger(el.asString());
+            res = Util.toInteger(el.asString());
         }
-        if(res == null)
+        if (res == null)
             throw Util.typeMismatch(index, el, "int", strict);
         return res;
     }
@@ -478,7 +478,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * can be coerced to a long.
      *
      * @throws JsonException if the value at {@code index} doesn't exist or
-     *     cannot be coerced to a long.
+     *                       cannot be coerced to a long.
      */
 
     public Long getLong(int index, boolean strict) throws JsonException {
@@ -491,9 +491,9 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
             res = el.asLong();
         }
         if (el.isString()) {
-            res =  Util.toLong(el.asString());
+            res = Util.toLong(el.asString());
         }
-        if(res == null)
+        if (res == null)
             throw Util.typeMismatch(index, el, "long", strict);
         return res;
     }
@@ -540,7 +540,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
             throw Util.typeMismatch(index, el, "string", true);
         }
         res = el.toString();
-        if(res == null)
+        if (res == null)
             throw Util.typeMismatch(index, el, "string", strict);
         return res;
     }
@@ -579,7 +579,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * JsonArray}.
      *
      * @throws JsonException if the value doesn't exist or is not a {@code
-     *     JsonArray}.
+     *                       JsonArray}.
      */
     public JsonArray getJsonArray(int index) throws JsonException {
         JsonElement el = get(index);
@@ -600,7 +600,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         } catch (JsonException e) {
             return null;
         }
-        if(!el.isJsonArray()) {
+        if (!el.isJsonArray()) {
             return null;
         }
         return el.asJsonArray();
@@ -611,7 +611,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      * JsonObject}.
      *
      * @throws JsonException if the value doesn't exist or is not a {@code
-     *     JsonObject}.
+     *                       JsonObject}.
      */
     public JsonObject getJsonObject(int index) throws JsonException {
         JsonElement el = get(index);
@@ -632,7 +632,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         } catch (JsonException e) {
             return null;
         }
-        if(!el.isJsonObject()) {
+        if (!el.isJsonObject()) {
             return null;
         }
         return el.asJsonObject();
@@ -653,7 +653,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         }
         for (int i = 0; i < length; i++) {
             String name = names.opt(i).toString();
-            if(opt(i) != null)
+            if (opt(i) != null)
                 result.put(name, opt(i));
         }
         return result;
@@ -661,49 +661,49 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
 
     public ArrayList<String> toArrayList() {
         ArrayList<String> res = new ArrayList<String>();
-        for(JsonElement el:values) {
+        for (JsonElement el : values) {
             res.add(el.toString());
         }
         return res;
     }
 
     public boolean isOnlyStrings() {
-        for(JsonElement el:values) {
-            if(!el.isString()) return false;
+        for (JsonElement el : values) {
+            if (!el.isString()) return false;
         }
         return true;
     }
 
     public boolean isOnlyNumbers() {
-        for(JsonElement el:values) {
-            if(!el.isNumber()) return false;
+        for (JsonElement el : values) {
+            if (!el.isNumber()) return false;
         }
         return true;
     }
 
     public boolean isOnlyBooleans() {
-        for(JsonElement el:values) {
-            if(!el.isBoolean()) return false;
+        for (JsonElement el : values) {
+            if (!el.isBoolean()) return false;
         }
         return true;
     }
 
     public boolean isOnlyObjects() {
-        for(JsonElement el:values) {
-            if(!el.isJsonObject()) return false;
+        for (JsonElement el : values) {
+            if (!el.isJsonObject()) return false;
         }
         return true;
     }
 
     public boolean isOnlyArrays() {
-        for(JsonElement el:values) {
-            if(!el.isJsonArray()) return false;
+        for (JsonElement el : values) {
+            if (!el.isJsonArray()) return false;
         }
         return true;
     }
 
     @Override
-    public void write( JsonWriter writer ) throws IOException {
+    public void write(JsonWriter writer) throws IOException {
         writer.beginArray();
         for (JsonElement e : this) {
             e.write(writer);
@@ -721,11 +721,13 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         return this;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         return o instanceof JsonArray && ((JsonArray) o).values.equals(values);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         // diverge from the original, which doesn't implement hashCode
         return values.hashCode();
     }
@@ -819,11 +821,12 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
 
     @Override
     public JsonArray freeze() {
-        frozen = true; for(JsonElement el:values) {
-            if(el.isJsonArray()) {
+        frozen = true;
+        for (JsonElement el : values) {
+            if (el.isJsonArray()) {
                 el.asJsonArray().freeze();
             }
-            if(el.isJsonObject()) {
+            if (el.isJsonObject()) {
                 el.asJsonObject().freeze();
             }
         }
@@ -844,6 +847,12 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
         if (isFrozen()) {
             throw new IllegalStateException(
                     "Attempt to modify a frozen JsonArray instance.");
+        }
+    }
+
+    void putInternal(JsonElement value) {
+        if (value != null) {
+            values.add(value);
         }
     }
 }

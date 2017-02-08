@@ -11,6 +11,8 @@ import java.util.Map;
 
 import io.apptik.json.exception.JsonException;
 
+import static io.apptik.json.JsonNull.JSON_NULL;
+
 public abstract class JsonElement {
 
     public static final String TYPE_OBJECT = "object";
@@ -198,12 +200,12 @@ public abstract class JsonElement {
                     return new JsonBoolean(in.nextBoolean());
                 case NULL:
                     in.nextNull();
-                    return JsonNull.get();
+                    return JSON_NULL;
                 case BEGIN_ARRAY:
                     JsonArray array = new JsonArray();
                     in.beginArray();
                     while (in.hasNext()) {
-                        array.put(read(in));
+                        array.putInternal(read(in));
                     }
                     in.endArray();
                     return array;
@@ -211,7 +213,7 @@ public abstract class JsonElement {
                     JsonObject object = new JsonObject();
                     in.beginObject();
                     while (in.hasNext()) {
-                        object.put(in.nextName(), read(in));
+                        object.putInternal(in.nextName(), read(in));
                     }
                     in.endObject();
                     return object;

@@ -31,6 +31,8 @@ import io.apptik.json.util.Freezable;
 import io.apptik.json.util.LinkedTreeMap;
 import io.apptik.json.util.Util;
 
+import static io.apptik.json.JsonNull.JSON_NULL;
+
 // Note: this class was written without inspecting the non-free org.json sourcecode.
 
 /**
@@ -39,53 +41,53 @@ import io.apptik.json.util.Util;
  * JsonArrays}, Strings, Booleans, Integers, Longs, Doubles or {@link JsonNull}.
  * Values may not be {@code null}, {@link Double#isNaN() NaNs}, {@link
  * Double#isInfinite() infinities}, or of any type not listed here.
- *
+ * <p>
  * <p>This class can coerce values to another type when requested.
  * <ul>
- *   <li>When the requested type is a boolean, strings will be coerced using a
- *       case-insensitive comparison to "true" and "false".
- *   <li>When the requested type is a double, other {@link Number} types will
- *       be coerced using {@link Number#doubleValue() doubleValue}. Strings
- *       that can be coerced using {@link Double#valueOf(String)} will be.
- *   <li>When the requested type is an int, other {@link Number} types will
- *       be coerced using {@link Number#intValue() intValue}. Strings
- *       that can be coerced using {@link Double#valueOf(String)} will be,
- *       and then cast to int.
- *   <li><a name="lossy">When the requested type is a long, other {@link Number} types will
- *       be coerced using {@link Number#longValue() longValue}. Strings
- *       that can be coerced using {@link Double#valueOf(String)} will be,
- *       and then cast to long. This two-step conversion is lossy for very
- *       large values. For example, the string "9223372036854775806" yields the
- *       long 9223372036854775807.</a>
- *   <li>When the requested type is a String, other non-null values will be
- *       coerced using {@link String#valueOf(Object)}. Although null cannot be
- *       coerced, the sentinel value {@link JsonNull} is coerced to the
- *       string "null".
+ * <li>When the requested type is a boolean, strings will be coerced using a
+ * case-insensitive comparison to "true" and "false".
+ * <li>When the requested type is a double, other {@link Number} types will
+ * be coerced using {@link Number#doubleValue() doubleValue}. Strings
+ * that can be coerced using {@link Double#valueOf(String)} will be.
+ * <li>When the requested type is an int, other {@link Number} types will
+ * be coerced using {@link Number#intValue() intValue}. Strings
+ * that can be coerced using {@link Double#valueOf(String)} will be,
+ * and then cast to int.
+ * <li><a name="lossy">When the requested type is a long, other {@link Number} types will
+ * be coerced using {@link Number#longValue() longValue}. Strings
+ * that can be coerced using {@link Double#valueOf(String)} will be,
+ * and then cast to long. This two-step conversion is lossy for very
+ * large values. For example, the string "9223372036854775806" yields the
+ * long 9223372036854775807.</a>
+ * <li>When the requested type is a String, other non-null values will be
+ * coerced using {@link String#valueOf(Object)}. Although null cannot be
+ * coerced, the sentinel value {@link JsonNull} is coerced to the
+ * string "null".
  * </ul>
- *
+ * <p>
  * <p>This class can look up both mandatory and optional values:
  * <ul>
- *   <li>Use <code>get<i>Type</i>()</code> to retrieve a mandatory value. This
- *       fails with a {@code JsonException} if the requested name has no value
- *       or if the value cannot be coerced to the requested type.
- *   <li>Use <code>opt<i>Type</i>()</code> to retrieve an optional value. This
- *       returns a system- or user-supplied default if the requested name has no
- *       value or if the value cannot be coerced to the requested type.
+ * <li>Use <code>get<i>Type</i>()</code> to retrieve a mandatory value. This
+ * fails with a {@code JsonException} if the requested name has no value
+ * or if the value cannot be coerced to the requested type.
+ * <li>Use <code>opt<i>Type</i>()</code> to retrieve an optional value. This
+ * returns a system- or user-supplied default if the requested name has no
+ * value or if the value cannot be coerced to the requested type.
  * </ul>
- *
+ * <p>
  * <p><strong>Warning:</strong> this class represents null in two incompatible
  * ways: the standard Java {@code null} reference, and the sentinel value {@link
  * JsonNull}. In particular, calling {@code put(name, null)} removes the
  * named entry from the object but {@code put(name, JsonObject.NULL)} stores an
  * entry whose value is {@code JsonObject.NULL}.
- *
+ * <p>
  * <p>Instances of this class are not thread safe. This class is
  * not designed for inheritance and should not be subclassed.
  * In particular, self-use by overrideable methods is not specified. See
  * <i>Effective Java</i> Item 17, "Design and Document or inheritance or else
  * prohibit it" for further information.
  */
-public final class JsonObject extends JsonElement implements Iterable<Map.Entry<String,JsonElement>>, Freezable<JsonObject> {
+public final class JsonObject extends JsonElement implements Iterable<Map.Entry<String, JsonElement>>, Freezable<JsonObject> {
 
     private volatile boolean frozen = false;
     private final LinkedTreeMap<String, JsonElement> nameValuePairs = new LinkedTreeMap<String, JsonElement>();
@@ -103,7 +105,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * the given map.
      *
      * @param copyFrom a map whose keys are of type {@link String} and whose
-     *     values are of supported types.
+     *                 values are of supported types.
      * @throws NullPointerException if any of the map's keys are null.
      */
     /* (accept a raw type for API compatibility) */
@@ -147,7 +149,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * mapping with the same name.
      *
      * @param value a finite value. May not be {@link Double#isNaN() NaNs} or
-     *     {@link Double#isInfinite() infinities}.
+     *              {@link Double#isInfinite() infinities}.
      * @return this object.
      */
     public JsonObject put(String name, double value) throws JsonException {
@@ -180,9 +182,9 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * mapping for {@code name} is removed.
      *
      * @param value a {@link JsonObject}, {@link JsonArray}, String, Boolean,
-     *     Integer, Long, Double, {@code null}. May not be
-     *     {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
-     *     infinities}.
+     *              Integer, Long, Double, {@code null}. May not be
+     *              {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
+     *              infinities}.
      * @return this object.
      */
     public JsonObject put(String name, Object value) throws JsonException {
@@ -195,17 +197,14 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * mapping for {@code name} is removed.
      *
      * @param value a {@link JsonObject}, {@link JsonArray}, {@link JsonString}, {@link JsonBoolean},
-     *     {@link JsonNumber}, {@link JsonNull}. May not be
-     *     {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
-     *     infinities}.
+     *              {@link JsonNumber}, {@link JsonNull}. May not be
+     *              {@link Double#isNaN() NaNs} or {@link Double#isInfinite()
+     *              infinities}.
      * @return this object.
      */
     public JsonObject put(String name, JsonElement value) throws JsonException {
         checkIfFrozen();
-        if (value == null) {
-            value = JsonNull.get();
-        }
-        nameValuePairs.put(checkName(name), value);
+        putInternal(name, value);
         return this;
     }
 
@@ -228,7 +227,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * and new values are inserted in order into a new array which is itself
      * mapped to {@code name}. In aggregate, this allows values to be added to a
      * mapping one at a time.
-     *
+     * <p>
      * <p> Note that {@code append(String, Object)} provides better semantics.
      * In particular, the mapping for {@code name} will <b>always</b> be a
      * {@link JsonArray}. Using {@code accumulate} will result in either a
@@ -236,8 +235,8 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * depending on the number of calls to it.
      *
      * @param value a {@link JsonObject}, {@link JsonArray}, String, Boolean,
-     *     Integer, Long, Double or null. May not be {@link
-     *     Double#isNaN() NaNs} or {@link Double#isInfinite() infinities}.
+     *              Integer, Long, Double or null. May not be {@link
+     *              Double#isNaN() NaNs} or {@link Double#isInfinite() infinities}.
      */
     // TODO: Change {@code append) to {@link #append} when append is
     // unhidden.
@@ -267,8 +266,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * will be thrown.
      *
      * @throws JsonException if {@code name} is {@code null} or if the mapping for
-     *         {@code name} is non-null and is not a {@link JsonArray}.
-     *
+     *                       {@code name} is non-null and is not a {@link JsonArray}.
      * @hide
      */
     public JsonObject append(String name, Object value) throws JsonException {
@@ -291,7 +289,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         return this;
     }
 
-    String checkName(String name){
+    String checkName(String name) {
         if (name == null) {
             throw new JsonException("Names must be non-null");
         }
@@ -302,7 +300,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * Removes the named mapping if it exists; does nothing otherwise.
      *
      * @return the value previously mapped by {@code name}, or null if there was
-     *     no such mapping.
+     * no such mapping.
      */
     public Object remove(String name) {
         checkIfFrozen();
@@ -352,7 +350,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * can be coerced to a boolean, or throws otherwise.
      *
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
-     *     to a boolean.
+     *                       to a boolean.
      */
     public Boolean getBoolean(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
@@ -364,9 +362,9 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
             res = el.asBoolean();
         }
         if (el.isString()) {
-            res =  Util.toBoolean(el.asString());
+            res = Util.toBoolean(el.asString());
         }
-        if(res == null)
+        if (res == null)
             throw Util.typeMismatch(name, el, "boolean", strict);
         return res;
     }
@@ -376,7 +374,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * can be coerced to a boolean, or throws otherwise.
      *
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
-     *     to a boolean.
+     *                       to a boolean.
      */
     public Boolean getBoolean(String name) throws JsonException {
         return getBoolean(name, true);
@@ -411,7 +409,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * can be coerced to a double, or throws otherwise.
      *
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
-     *     to a double.
+     *                       to a double.
      */
     public Double getDouble(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
@@ -423,9 +421,9 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
             res = el.asDouble();
         }
         if (el.isString()) {
-            res =  Util.toDouble(el.asString());
+            res = Util.toDouble(el.asString());
         }
-        if(res == null)
+        if (res == null)
             throw Util.typeMismatch(name, el, "double", strict);
         return res;
     }
@@ -457,12 +455,13 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
             return fallback;
         }
     }
+
     /**
      * Returns the value mapped by {@code name} if it exists and is an int or
      * can be coerced to an int, or throws otherwise.
      *
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
-     *     to an int.
+     *                       to an int.
      */
     public Integer getInt(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
@@ -474,9 +473,9 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
             res = el.asInt();
         }
         if (el.isString()) {
-            res =  Util.toInteger(el.asString());
+            res = Util.toInteger(el.asString());
         }
-        if(res == null)
+        if (res == null)
             throw Util.typeMismatch(name, el, "int", strict);
         return res;
     }
@@ -516,7 +515,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * so this is <a href="#lossy">lossy</a>; use strings to transfer numbers via Util.
      *
      * @throws JsonException if the mapping doesn't exist or cannot be coerced
-     *     to a long.
+     *                       to a long.
      */
     public Long getLong(String name, boolean strict) throws JsonException {
         JsonElement el = get(name);
@@ -528,9 +527,9 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
             res = el.asLong();
         }
         if (el.isString()) {
-            res =  Util.toLong(el.asString());
+            res = Util.toLong(el.asString());
         }
-        if(res == null)
+        if (res == null)
             throw Util.typeMismatch(name, el, "long", strict);
         return res;
     }
@@ -579,7 +578,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
             throw Util.typeMismatch(name, el, "string", true);
         }
         res = el.toString();
-        if(res == null)
+        if (res == null)
             throw Util.typeMismatch(name, el, "string", strict);
         return res;
     }
@@ -618,7 +617,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * JsonArray}, or throws otherwise.
      *
      * @throws JsonException if the mapping doesn't exist or is not a {@code
-     *     JsonArray}.
+     *                       JsonArray}.
      */
     public JsonArray getJsonArray(String name) throws JsonException {
         JsonElement el = get(name);
@@ -639,7 +638,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         } catch (JsonException e) {
             return null;
         }
-        if(!el.isJsonArray()) {
+        if (!el.isJsonArray()) {
             return null;
         }
         return el.asJsonArray();
@@ -650,7 +649,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * JsonObject}, or throws otherwise.
      *
      * @throws JsonException if the mapping doesn't exist or is not a {@code
-     *     JsonObject}.
+     *                       JsonObject}.
      */
     public JsonObject getJsonObject(String name) throws JsonException {
         JsonElement el = get(name);
@@ -671,7 +670,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
         } catch (JsonException e) {
             return null;
         }
-        if(!el.isJsonObject()) {
+        if (!el.isJsonObject()) {
             return null;
         }
         return el.asJsonObject();
@@ -714,7 +713,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * is a view of the keys in this object. {@link Set#remove(Object)} will remove
      * the corresponding mapping from this object and set iterator behaviour
      * is undefined if this object is modified after it is returned.
-     *
+     * <p>
      * See {@link #keys()}.
      *
      * @hide.
@@ -724,21 +723,22 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
     }
 
     public Collection<JsonElement> valuesSet() {
-        if(isFrozen()) Collections.unmodifiableCollection(nameValuePairs.values());
+        if (isFrozen()) Collections.unmodifiableCollection(nameValuePairs.values());
         return nameValuePairs.values();
     }
+
     /**
      * Returns an array containing the string names in this object. This method
      * returns null if this object contains no mappings.
      */
-    public JsonArray names() throws JsonException{
+    public JsonArray names() throws JsonException {
         return nameValuePairs.isEmpty()
                 ? null
                 : new JsonArray(new ArrayList<String>(nameValuePairs.keySet()));
     }
 
     @Override
-    public void write( JsonWriter writer ) throws IOException {
+    public void write(JsonWriter writer) throws IOException {
         writer.beginObject();
         for (Map.Entry<String, JsonElement> e : nameValuePairs.entrySet()) {
             writer.name(e.getKey());
@@ -758,7 +758,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
     }
 
     @Override
-    public boolean equals( Object o ) {
+    public boolean equals(Object o) {
         return o instanceof JsonObject && ((JsonObject) o).nameValuePairs.equals(nameValuePairs);
     }
 
@@ -776,19 +776,20 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
      * Merge Json Object with another Json Object.
      * It does not change element of another with the same name exists.
      * However if the element is Json Object then it will go down and merge that object.
+     *
      * @param another
      * @return
      */
     public JsonObject merge(JsonObject another) {
-        for(Map.Entry<String, JsonElement> anotherEntry:another) {
+        for (Map.Entry<String, JsonElement> anotherEntry : another) {
             JsonElement curr = this.opt(anotherEntry.getKey());
-            if(curr == null) {
+            if (curr == null) {
                 try {
                     this.put(anotherEntry.getKey(), anotherEntry.getValue());
                 } catch (JsonException e) {
                     e.printStackTrace();
                 }
-            } else if(curr.isJsonObject() && anotherEntry.getValue().isJsonObject()) {
+            } else if (curr.isJsonObject() && anotherEntry.getValue().isJsonObject()) {
                 curr.asJsonObject().merge(anotherEntry.getValue().asJsonObject());
             }
         }
@@ -810,11 +811,11 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
     @Override
     public JsonObject freeze() {
         frozen = true;
-        for(JsonElement el:nameValuePairs.values()) {
-            if(el.isJsonArray()) {
+        for (JsonElement el : nameValuePairs.values()) {
+            if (el.isJsonArray()) {
                 el.asJsonArray().freeze();
             }
-            if(el.isJsonObject()) {
+            if (el.isJsonObject()) {
                 el.asJsonObject().freeze();
             }
         }
@@ -830,10 +831,18 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
             throw new JsonException("Cannot Recreate Json Object", e);
         }
     }
+
     public void checkIfFrozen() {
         if (isFrozen()) {
             throw new IllegalStateException(
                     "Attempt to modify a frozen JsonObject instance.");
         }
+    }
+
+    void putInternal(String name, JsonElement value) {
+        if (value == null) {
+            value = JSON_NULL;
+        }
+        nameValuePairs.put(checkName(name), value);
     }
 }

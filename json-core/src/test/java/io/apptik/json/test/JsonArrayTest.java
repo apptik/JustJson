@@ -17,19 +17,21 @@
 
 package io.apptik.json.test;
 
+import junit.framework.TestCase;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import io.apptik.json.JsonArray;
-import io.apptik.json.exception.JsonException;
-import io.apptik.json.JsonNull;
 import io.apptik.json.JsonObject;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import io.apptik.json.exception.JsonException;
+
+import static io.apptik.json.JsonNull.JSON_NULL;
 
 /**
  * This black box test was written without inspecting the non-free org.json sourcecode.
@@ -149,8 +151,8 @@ public class JsonArrayTest extends TestCase {
     @Test
     public void testNulls() throws JsonException {
         JsonArray array = new JsonArray();
-        array.put(3, new JsonNull());
-        array.put(0, new JsonNull());
+        array.put(3, JSON_NULL);
+        array.put(0, JSON_NULL);
         assertEquals(4, array.length());
         assertEquals("[null,null,null,null]", array.toString());
 
@@ -178,7 +180,7 @@ public class JsonArrayTest extends TestCase {
         array.put(null);
         assertEquals(array.get(0),"null");
         assertEquals(array.get(1), null);
-        assertEquals(array.get(1), new JsonNull());
+        assertEquals(array.get(1), JSON_NULL);
         assertEquals(2,array.length());
 
 
@@ -345,7 +347,7 @@ public class JsonArrayTest extends TestCase {
     @Test
     public void testToJsonObjectNullKey() throws JsonException {
         JsonArray keys = new JsonArray();
-        keys.put(new JsonNull());
+        keys.put(JSON_NULL);
         JsonArray values = new JsonArray();
         values.put(5.5d);
         JsonObject object = values.toJsonObject(keys);

@@ -19,12 +19,6 @@ package io.apptik.json.test;
 
 import junit.framework.TestCase;
 
-import io.apptik.json.JsonArray;
-import io.apptik.json.JsonNull;
-import io.apptik.json.JsonNumber;
-import io.apptik.json.JsonObject;
-import io.apptik.json.JsonString;
-import io.apptik.json.exception.JsonException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -41,6 +35,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
+
+import io.apptik.json.JsonArray;
+import io.apptik.json.JsonNumber;
+import io.apptik.json.JsonObject;
+import io.apptik.json.JsonString;
+import io.apptik.json.exception.JsonException;
+
+import static io.apptik.json.JsonNull.JSON_NULL;
 
 
 /**
@@ -496,7 +498,7 @@ public class JsonObjectTest extends TestCase {
     @Test
     public void testNullCoercionToString() throws JsonException {
         JsonObject object = new JsonObject();
-        object.put("foo", new JsonNull());
+        object.put("foo", JSON_NULL);
         assertEquals("null", object.getString("foo", Boolean.FALSE));
     }
 
@@ -572,7 +574,7 @@ public class JsonObjectTest extends TestCase {
         JsonObject object = new JsonObject();
         object.put("foo", Boolean.TRUE);
         object.put("bar", 5.0d);
-        object.put("baz", new JsonNull());
+        object.put("baz", JSON_NULL);
 
         JsonArray names = new JsonArray();
         names.put("bar");
@@ -616,7 +618,7 @@ public class JsonObjectTest extends TestCase {
         object.put("false", 15);
 
         JsonArray names = new JsonArray();
-        names.put(new JsonNull());
+        names.put(JSON_NULL);
         names.put(Boolean.FALSE);
         names.put("foo");
 
@@ -758,7 +760,7 @@ public class JsonObjectTest extends TestCase {
     @Test
     public void testNullValue() throws JsonException {
         JsonObject object = new JsonObject();
-        object.put("foo", new JsonNull());
+        object.put("foo", JSON_NULL);
         object.put("bar", (Collection) null);
 
         assertTrue(object.has("foo"));
@@ -859,7 +861,7 @@ public class JsonObjectTest extends TestCase {
 
     @Test
     public void test_wrap() throws Exception {
-        assertEquals(new JsonNull(), JsonObject.wrap(null));
+        assertEquals(JSON_NULL, JsonObject.wrap(null));
 
         JsonArray a = new JsonArray();
         assertEquals(a, JsonObject.wrap(a));
@@ -867,7 +869,7 @@ public class JsonObjectTest extends TestCase {
         JsonObject o = new JsonObject();
         assertEquals(o, JsonObject.wrap(o));
 
-        assertEquals(new JsonNull(), JsonObject.wrap(new JsonNull()));
+        assertEquals(JSON_NULL, JsonObject.wrap(JSON_NULL));
 
         assertTrue(JsonObject.wrap(new byte[0]) instanceof JsonArray);
         assertTrue(JsonObject.wrap(new ArrayList<String>()) instanceof JsonArray);

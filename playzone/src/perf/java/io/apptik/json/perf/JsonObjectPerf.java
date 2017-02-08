@@ -21,17 +21,17 @@ public class JsonObjectPerf {
     public Object jjsonRead(States.GeneralParams p) throws InterruptedException, IOException {
         return JsonElement.readFrom(p.jsonString);
     }
-    @Benchmark
+    //@Benchmark
     public Object gsonRead(States.GeneralParams p) throws InterruptedException, IOException {
         return new com.google.gson.JsonParser().parse(p.jsonString);
 
     }
-    @Benchmark
+    //@Benchmark
     public Object jacksonRead(States.GeneralParams p) throws InterruptedException, IOException {
         return p.jackson.readTree(p.jsonString);
     }
 
-    @Benchmark
+    //@Benchmark
     public Object jacksonAfterBurnerRead(States.GeneralParams p) throws InterruptedException, IOException {
         return p.jacksonAfterburner.readTree(p.jsonString);
     }
