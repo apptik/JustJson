@@ -18,13 +18,18 @@
 package io.apptik.json;
 
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import io.apptik.json.exception.JsonException;
 import io.apptik.json.util.Freezable;
 import io.apptik.json.util.LinkedTreeMap;
 import io.apptik.json.util.Util;
-
-import java.io.IOException;
-import java.util.*;
 
 // Note: this class was written without inspecting the non-free org.json sourcecode.
 
@@ -198,7 +203,7 @@ public final class JsonObject extends JsonElement implements Iterable<Map.Entry<
     public JsonObject put(String name, JsonElement value) throws JsonException {
         checkIfFrozen();
         if (value == null) {
-            value = new JsonNull();
+            value = JsonNull.get();
         }
         nameValuePairs.put(checkName(name), value);
         return this;

@@ -17,10 +17,6 @@
 
 package io.apptik.json;
 
-import io.apptik.json.exception.JsonException;
-import io.apptik.json.util.Freezable;
-import io.apptik.json.util.Util;
-
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -28,6 +24,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+
+import io.apptik.json.exception.JsonException;
+import io.apptik.json.util.Freezable;
+import io.apptik.json.util.Util;
 
 // Note: this class was written without inspecting the non-free org.json sourcecode.
 
@@ -222,7 +222,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
     public JsonArray put(int index, Object value) throws JsonException {
         checkIfFrozen();
         while (values.size() <= index) {
-            values.add(new JsonNull());
+            values.add(JsonNull.get());
         }
         values.set(index, wrap(value));
         return this;
@@ -234,7 +234,7 @@ public final class JsonArray extends JsonElement implements List<JsonElement>, F
      */
     public boolean isNull(int index) {
         Object value = opt(index);
-        return value == null || value.equals(new JsonNull());
+        return value == null || value.equals(JsonNull.get());
     }
 
     /**

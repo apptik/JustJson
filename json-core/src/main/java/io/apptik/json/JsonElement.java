@@ -1,7 +1,5 @@
 package io.apptik.json;
 
-import io.apptik.json.exception.JsonException;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -10,6 +8,8 @@ import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Map;
+
+import io.apptik.json.exception.JsonException;
 
 public abstract class JsonElement {
 
@@ -198,7 +198,7 @@ public abstract class JsonElement {
                     return new JsonBoolean(in.nextBoolean());
                 case NULL:
                     in.nextNull();
-                    return new JsonNull();
+                    return JsonNull.get();
                 case BEGIN_ARRAY:
                     JsonArray array = new JsonArray();
                     in.beginArray();

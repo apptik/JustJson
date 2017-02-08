@@ -2,11 +2,16 @@
 
 buildscript {
     repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
         jcenter()
         mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0-beta3'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+
     }
 }
 
@@ -21,4 +26,7 @@ allprojects {
 
 ext {
     assertjCore2 = 'org.assertj:assertj-core:2.4.1'
+
+    jmhCore = 'org.openjdk.jmh:jmh-core:1.17.4'
+    jmhGen = 'org.openjdk.jmh:jmh-generator-annprocess:1.17.4'
 }

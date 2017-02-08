@@ -19,7 +19,16 @@ package io.apptik.json;
 import java.io.IOException;
 
 public final class JsonNull extends JsonElement {
-    
+
+    static final JsonNull inst = new JsonNull();
+
+    private JsonNull() {
+    }
+
+    public static JsonNull get() {
+        return inst;
+    }
+
     @Override
     public boolean isNull() {
         return true;
