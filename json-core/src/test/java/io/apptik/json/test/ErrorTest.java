@@ -1,10 +1,11 @@
 package io.apptik.json.test;
 
 
-import io.apptik.json.JsonElement;
 import org.junit.Test;
 
 import java.io.IOException;
+
+import io.apptik.json.JsonElement;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.fail;
@@ -375,7 +376,7 @@ public class ErrorTest {
             JsonElement.readFrom(obj);
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Expected ':' at line: 1, column: 8, near: .. {\"foo\"[5,[]]} .., path: $.foo",
+            assertEquals("Expected ':' at line: 1, column: 8, path: $.foo, near: .. {\"foo\"[5,[]]} ..",
                     e.getMessage());
         }
 
@@ -383,10 +384,11 @@ public class ErrorTest {
             JsonElement.readFrom(malformedObject1());
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Expected ':' at line: 3, column: 16, near: .. \": {\n" +
+            assertEquals("Expected ':' at line: 3, column: 16, path: $.store.book" +
+                            ", near: .. \": {\n" +
                             "        \"book\"[\n" +
                             "            {\n" +
-                            "      .., path: $.store.book",
+                            "      ..",
                     e.getMessage());
         }
 
@@ -394,7 +396,9 @@ public class ErrorTest {
             JsonElement.readFrom(malformedObject2());
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Unterminated object at line: 12, column: 58, near: .. gh\"                \"title\": \"Sword of Ho .., path: $.store.book[1].author",
+            assertEquals("Unterminated object at line: 12, column: 58" +
+                            ", path: $.store.book[1].author" +
+                            ", near: .. gh\"                \"title\": \"Sword of Ho ..",
                     e.getMessage());
         }
 
@@ -402,9 +406,11 @@ public class ErrorTest {
             JsonElement.readFrom(malformedObject3());
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Unterminated object at line: 28, column: 19, near: .. ,\n" +
+            assertEquals("Unterminated object at line: 28, column: 19" +
+                            ", path: $.store.book[3].isbn" +
+                            ", near: .. ,\n" +
                             "                \"price\": 22.99\n" +
-                            "        .., path: $.store.book[3].isbn",
+                            "        ..",
                     e.getMessage());
         }
 
@@ -412,10 +418,12 @@ public class ErrorTest {
             JsonElement.readFrom(malformedObject4());
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Use JsonReader.setLenient(true) to accept malformed Util at line: 29, column: 14, near: .. 22.99,\n" +
+            assertEquals("Expected name at line: 29, column: 14" +
+                            ", path: $.store.book[3].price" +
+                            ", near: .. 22.99,\n" +
                             "            }\n" +
                             "        ],\n" +
-                            "         .., path: $.store.book[3].price",
+                            "         ..",
                     e.getMessage());
         }
 
@@ -423,10 +431,13 @@ public class ErrorTest {
             JsonElement.readFrom(malformedObject5());
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Expected ':' at line: 32, column: 15, near: .. le: {\n" +
+            assertEquals("Expected ':' at line: 32, column: 15" +
+                            ", path: $.store.bicycle: {\n" +
+                            "            " +
+                            ", near: .. le: {\n" +
                             "            \"color\": \"red\",\n" +
-                            "       .., path: $.store.bicycle: {\n" +
-                            "            ",
+                            "       .."
+                            ,
                     e.getMessage());
         }
 
@@ -440,7 +451,7 @@ public class ErrorTest {
             JsonElement.readFrom(obj);
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Unexpected End of input at line: 1, column: 14, near: .. EOF .., path: $.foo",
+            assertEquals("End of input at line: 1, column: 14, path: $.foo, near: .. EOF ..",
                     e.getMessage());
         }
 
@@ -448,7 +459,7 @@ public class ErrorTest {
             JsonElement.readFrom(unexpectedEndObject());
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Unexpected End of input at line: 37, column: 1, near: .. EOF .., path: $.expensive",
+            assertEquals("End of input at line: 37, column: 1, path: $.expensive, near: .. EOF ..",
                     e.getMessage());
         }
     }
@@ -460,7 +471,7 @@ public class ErrorTest {
             JsonElement.readFrom(obj);
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Unterminated array at line: 1, column: 25, near: .. o\":[5,10,9,8,7,6,[]} .., path: $.foo[6]",
+            assertEquals("Unterminated array at line: 1, column: 25, path: $.foo[7], near: .. o\":[5,10,9,8,7,6,[]} ..",
                     e.getMessage());
         }
 
@@ -468,25 +479,25 @@ public class ErrorTest {
             JsonElement.readFrom(malformedArray1());
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Expected ':' at line: 4, column: 27, near: ..           \"author\" \"Nigel Rees\",\n" +
-                            "        .., path: $[0].author",
+            assertEquals("Expected ':' at line: 4, column: 27, path: $[0].author, near: ..           \"author\" \"Nigel Rees\",\n" +
+                            "        ..",
                     e.getMessage());
         }
         try {
             JsonElement.readFrom(malformedArray2());
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Unterminated object at line: 12, column: 19, near: .. ,\n" +
+            assertEquals("Unterminated object at line: 12, column: 19, path: $[1].title, near: .. ,\n" +
                             "                \"price\": 12.99\n" +
-                            "        .., path: $[1].title",
+                            "        ..",
                     e.getMessage());
         }
         try {
             JsonElement.readFrom(malformedArray3());
             fail("must fail");
         } catch (IOException e) {
-            assertEquals("Unterminated object at line: 25, column: 57, near: .. -8\"                \"price\": 22.99\n" +
-                            "       .., path: $[3].isbn",
+            assertEquals("Unterminated object at line: 25, column: 57, path: $[3].isbn, near: .. -8\"                \"price\": 22.99\n" +
+                            "       ..",
                     e.getMessage());
         }
     }

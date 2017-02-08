@@ -226,9 +226,8 @@ public abstract class JsonElement {
             }
         }
 
-
         static public JsonElement fromJson(Reader in) throws IOException, JsonException {
-            JsonReader reader = new JsonReader(in);
+           JsonReader reader = new JsonReader(in);
             return read(reader);
         }
 
