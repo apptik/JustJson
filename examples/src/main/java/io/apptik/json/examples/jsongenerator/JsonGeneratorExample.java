@@ -91,7 +91,7 @@ public class JsonGeneratorExample {
         gConf.globalArrayItemsMax = 7;
 
         gConf.globalIntegerMin = 0;
-        gConf.globalIntegerMax = 100;
+        gConf.globalIntegerMax = 201;
         //can still limit numbers as long as its still valid according to the schema
         gConf.integerMin.put("five1", 300);
         gConf.integerMax.put("five1", 400);
