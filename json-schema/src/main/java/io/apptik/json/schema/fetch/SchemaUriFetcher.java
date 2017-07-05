@@ -16,7 +16,6 @@
 
 package io.apptik.json.schema.fetch;
 
-
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonObject;
 import io.apptik.json.exception.JsonException;
@@ -28,100 +27,107 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-
 public class SchemaUriFetcher implements SchemaFetcher {
 
-    private SchemaFetcherConfig cfg;
+	private SchemaFetcherConfig cfg;
 
+	public URI convertUri(final URI schemaUri) {
+		if (cfg == null) {
+			return schemaUri;
+		}
+		URI res = null;
 
-    //TODO use config to set to use id instead of orig source
-    public URI resolveUri(URI targetUri, URI srcOrigUri, URI srcId) {
-        if(targetUri.isAbsolute()) {
-            return targetUri;
-        } else if(srcOrigUri==null || !srcOrigUri.isAbsolute()) {
-            return targetUri;
-        } else {
-            return srcOrigUri.resolve(targetUri);
-        }
-    }
+		String scheme = schemaUri.getScheme();
+		String authority = schemaUri.getAuthority();
+		String path = schemaUri.getPath();
+		String query = schemaUri.getQuery();
 
-    public URI convertUri(URI schemaUri) {
-        if(cfg==null) return  schemaUri;
-        URI res = null;
+		if (cfg.uriSchemeReplacements.containsKey(scheme)) {
+			scheme = cfg.uriSchemeReplacements.get(scheme);
+		}
 
-        String scheme = schemaUri.getScheme();
-        String authority = schemaUri.getAuthority();
-        String path = schemaUri.getPath();
-        String query = schemaUri.getQuery();
+		if (cfg.uriAuthorityReplacements.containsKey(authority)) {
+			authority = cfg.uriAuthorityReplacements.get(authority);
+		}
 
-        if(cfg.uriSchemeReplacements.containsKey(scheme)) {
-            scheme = cfg.uriSchemeReplacements.get(scheme);
-        }
+		if (cfg.uriPathReplacements.containsKey(path)) {
+			path = cfg.uriPathReplacements.get(path);
+		}
 
-        if(cfg.uriAuthorityReplacements.containsKey(authority)) {
-            authority = cfg.uriAuthorityReplacements.get(authority);
-        }
+		if (cfg.uriQueryReplacements.containsKey(query)) {
+			query = cfg.uriQueryReplacements.get(query);
+		}
 
-        if(cfg.uriPathReplacements.containsKey(path)) {
-            path = cfg.uriPathReplacements.get(path);
-        }
+		try {
+			res = new URI(scheme, authority, path, query,
+					schemaUri.getFragment());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
 
-        if(cfg.uriQueryReplacements.containsKey(query)) {
-            query = cfg.uriQueryReplacements.get(query);
-        }
+	public Schema fetch(final URI targetUri) {
+		return fetch(targetUri, null, null);
+	}
 
-        try {
-            res =  new URI(scheme, authority, path, query, schemaUri.getFragment());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
+	public Schema fetch(final URI targetUri, final URI srcOrigUri,
+			final URI srcId) {
+		Schema res = null;
 
+		URI schemaUri = convertUri(resolveUri(targetUri, srcOrigUri, srcId));
+		if (!schemaUri.isAbsolute()) {
+			throw new RuntimeException(
+					"Json Schema Fetcher works only with absolute URIs");
+		}
+		try {
+			String fragment = schemaUri.getFragment();
+			JsonObject schemaJson = JsonElement.readFrom(
+					new InputStreamReader(schemaUri.toURL().openStream()))
+					.asJsonObject();
+			if (fragment != null && !fragment.trim().isEmpty()) {
+				String[] pointers = fragment.split("/");
+				for (String pointer : pointers) {
+					if (pointer != null && !pointer.trim().isEmpty()) {
+						schemaJson = schemaJson.getJsonObject(pointer);
 
-    @Override
-    public Schema fetch(URI targetUri) {
-        return fetch(targetUri, null, null);
-    }
+					}
+				}
+			}
 
-    //accepts only absolute URI or converted absolute URI
-    @Override
-    public Schema fetch(URI targetUri, URI srcOrigUri, URI srcId) {
-        Schema res = null;
+			String version = schemaJson.optString("$schema", "");
+			if (version.equals(Schema.VER_4)) {
+				res = new SchemaV4().setSchemaFetcher(this)
+						.setOrigSrc(schemaUri).wrap(schemaJson);
+			} else {
+				res = new SchemaV4().setSchemaFetcher(this)
+						.setOrigSrc(schemaUri).wrap(schemaJson);
+			}
 
-        URI schemaUri = convertUri(resolveUri(targetUri, srcOrigUri, srcId));
-        if(!schemaUri.isAbsolute()) throw new RuntimeException("Json Schema Fetcher works only with absolute URIs");
-        try {
-            String fragment = schemaUri.getFragment();
-            JsonObject schemaJson = JsonElement.readFrom(new InputStreamReader(schemaUri.toURL().openStream())).asJsonObject();
-            if(fragment!=null && !fragment.trim().isEmpty()) {
-                String[] pointers = fragment.split("/");
-                for (String pointer : pointers) {
-                    if (pointer != null && !pointer.trim().isEmpty()) {
-                        schemaJson = schemaJson.getJsonObject(pointer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JsonException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
 
-                    }
-                }
-            }
+	// accepts only absolute URI or converted absolute URI
 
-            String version = schemaJson.optString("$schema","");
-            if(version.equals(Schema.VER_4)) {
-                res = new SchemaV4().setSchemaFetcher(this).setOrigSrc(schemaUri).wrap(schemaJson);
-            } else {
-                res = new SchemaV4().setSchemaFetcher(this).setOrigSrc(schemaUri).wrap(schemaJson);
-            }
+	// TODO use config to set to use id instead of orig source
+	public URI resolveUri(final URI targetUri, final URI srcOrigUri,
+			final URI srcId) {
+		if (targetUri.isAbsolute()) {
+			return targetUri;
+		} else if (srcOrigUri == null || !srcOrigUri.isAbsolute()) {
+			return targetUri;
+		} else {
+			return srcOrigUri.resolve(targetUri);
+		}
+	}
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JsonException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    @Override
-    public SchemaFetcher withConfig(SchemaFetcherConfig cfg) {
-        this.cfg = cfg;
-        return this;
-    }
+	public SchemaFetcher withConfig(final SchemaFetcherConfig cfg) {
+		this.cfg = cfg;
+		return this;
+	}
 }

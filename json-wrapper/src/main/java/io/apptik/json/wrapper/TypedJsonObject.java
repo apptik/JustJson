@@ -16,7 +16,6 @@
 
 package io.apptik.json.wrapper;
 
-
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonObject;
 import io.apptik.json.exception.JsonException;
@@ -25,123 +24,124 @@ import io.apptik.json.util.LinkedTreeMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
 /**
- * Helper class that can be used for Json Objects containing always the same type;
+ * Helper class that can be used for Json Objects containing always the same
+ * type;
  *
- * @param <T> The type
+ * @param <T>
+ *            The type
  */
-public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements Iterable<Map.Entry<String, T>> {
+public abstract class TypedJsonObject<T> extends JsonObjectWrapper implements
+		Iterable<Map.Entry<String, T>> {
 
-    public T getValue(String key) throws JsonException {
-        return getInternal(getJson().get(key), key);
-    }
+	final class TypedObjectEntry implements Map.Entry<String, T> {
+		private final String key;
+		private T value;
 
+		public TypedObjectEntry(final Map.Entry<String, JsonElement> entry) {
+			this.key = entry.getKey();
+			this.value = getInternal(entry.getValue(), key);
+		}
 
-    public T optValue(String key) {
-        return getInternal(getJson().opt(key), key);
-    }
+		public TypedObjectEntry(final String key, final T value) {
+			this.key = key;
+			this.value = value;
+		}
 
-    public T getValue(int pos) {
-        java.util.Collection<JsonElement> var = getJson().valuesSet();
-        return getInternal(var.toArray(new JsonObject[var.size()])[pos], getKey(pos));
-    }
+		public String getKey() {
+			return key;
+		}
 
-    public String getKey(int pos) {
-        try {
-            return getJson().names().getString(pos);
-        } catch (JsonException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+		public T getValue() {
+			return value;
+		}
 
-    public <O extends TypedJsonObject<T>> O putValue(String key, T value) throws JsonException {
-        getJson().put(key, to(value));
-        return (O)this;
-    }
+		public T setValue(final T value) {
+			T old = this.value;
+			this.value = value;
+			return old;
+		}
+	}
 
-    public <O extends TypedJsonObject<T>> O  putAll(Map<String, T> map) {
-        for(Map.Entry<String, T> entry : map.entrySet()) {
-            try {
-                putValue(entry.getKey(),entry.getValue());
-            } catch (JsonException e) {
-                e.printStackTrace();
-            }
-        }
-        return (O)this;
-    }
+	protected abstract T get(JsonElement jsonElement, String key);
 
-    private T getInternal(JsonElement jsonElement, String key) {
-        if(jsonElement==null) return null;
-        return get(jsonElement, key);
-    }
+	public Map<String, T> getEntries() {
+		Map<String, T> res = new LinkedTreeMap<String, T>();
+		for (Map.Entry<String, T> el : this) {
+			res.put(el.getKey(), el.getValue());
+		}
+		return res;
+	}
 
-    protected abstract T get(JsonElement jsonElement, String key);
-    protected abstract JsonElement to(T value);
+	private T getInternal(final JsonElement jsonElement, final String key) {
+		if (jsonElement == null) {
+			return null;
+		}
+		return get(jsonElement, key);
+	}
 
-    @Override
-    public Iterator<Map.Entry<String, T>> iterator() {
-        final Iterator<Map.Entry<String, JsonElement>> iterator = getJson().iterator();
-        return new Iterator<Map.Entry<String, T>>() {
-            @Override
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
+	public String getKey(final int pos) {
+		try {
+			return getJson().names().getString(pos);
+		} catch (JsonException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
-            @Override
-            public Map.Entry<String, T> next() {
-                return new TypedObjectEntry(iterator.next());
-            }
+	public T getValue(final int pos) {
+		java.util.Collection<JsonElement> var = getJson().valuesSet();
+		return getInternal(var.toArray(new JsonObject[var.size()])[pos],
+				getKey(pos));
+	}
 
-            @Override
-            public void remove() {
-                iterator.remove();
-            }
-        };
-    }
+	public T getValue(final String key) throws JsonException {
+		return getInternal(getJson().get(key), key);
+	}
 
-    public int length() {
-        return getJson().length();
-    }
+	public Iterator<Map.Entry<String, T>> iterator() {
+		final Iterator<Map.Entry<String, JsonElement>> iterator = getJson()
+				.iterator();
+		return new Iterator<Map.Entry<String, T>>() {
 
-    public Map<String, T> getEntries() {
-        Map<String, T> res = new LinkedTreeMap<String, T>();
-        for (Map.Entry<String, T> el : this) {
-            res.put(el.getKey(), el.getValue());
-        }
-        return res;
-    }
+			public boolean hasNext() {
+				return iterator.hasNext();
+			}
 
-    final class TypedObjectEntry implements Map.Entry<String, T> {
-        private final String key;
-        private T value;
+			public Map.Entry<String, T> next() {
+				return new TypedObjectEntry(iterator.next());
+			}
 
-        public TypedObjectEntry(Map.Entry<String, JsonElement> entry) {
-            this.key = entry.getKey();
-            this.value = getInternal(entry.getValue(), key);
-        }
+			public void remove() {
+				iterator.remove();
+			}
+		};
+	}
 
-        public TypedObjectEntry(String key, T value) {
-            this.key = key;
-            this.value = value;
-        }
+	public int length() {
+		return getJson().length();
+	}
 
-        @Override
-        public String getKey() {
-            return key;
-        }
+	public T optValue(final String key) {
+		return getInternal(getJson().opt(key), key);
+	}
 
-        @Override
-        public T getValue() {
-            return value;
-        }
+	public <O extends TypedJsonObject<T>> O putAll(final Map<String, T> map) {
+		for (Map.Entry<String, T> entry : map.entrySet()) {
+			try {
+				putValue(entry.getKey(), entry.getValue());
+			} catch (JsonException e) {
+				e.printStackTrace();
+			}
+		}
+		return (O) this;
+	}
 
-        @Override
-        public T setValue(T value) {
-            T old = this.value;
-            this.value = value;
-            return old;
-        }
-    }
+	public <O extends TypedJsonObject<T>> O putValue(final String key,
+			final T value) throws JsonException {
+		getJson().put(key, to(value));
+		return (O) this;
+	}
+
+	protected abstract JsonElement to(T value);
 }
