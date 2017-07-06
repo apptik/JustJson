@@ -16,7 +16,6 @@
 
 package io.apptik.json.schema.fetch;
 
-
 import io.apptik.json.JsonElement;
 import io.apptik.json.exception.JsonException;
 import io.apptik.json.schema.Schema;
@@ -27,39 +26,37 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
 
-
 //TODO
 public class SchemaResourceFetcher implements SchemaFetcher {
 
-    @Override
-    public Schema fetch(URI targetUri, URI srcOrigUri, URI srcId) {
-        Schema res = new SchemaV4();
-        final String resource = targetUri.getPath();
+	public Schema fetch(final URI targetUri) {
+		return fetch(targetUri, null, null);
+	}
 
-        URL url = getClass().getClassLoader().getResource(resource);
-        System.out.println("Fetching res (simpple):" + resource);
-        System.out.println("Fetching res (full):" + url);
-        try {
+	public Schema fetch(final URI targetUri, final URI srcOrigUri,
+			final URI srcId) {
+		Schema res = new SchemaV4();
+		final String resource = targetUri.getPath();
 
-            res.wrap(JsonElement.readFrom(
-                    new InputStreamReader(getClass().getClassLoader().getResourceAsStream(resource))).asJsonObject());
+		URL url = getClass().getClassLoader().getResource(resource);
+		System.out.println("Fetching res (simpple):" + resource);
+		System.out.println("Fetching res (full):" + url);
+		try {
 
-        } catch (JsonException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return res;
+			res.wrap(JsonElement.readFrom(
+					new InputStreamReader(getClass().getClassLoader()
+							.getResourceAsStream(resource))).asJsonObject());
 
-    }
+		} catch (JsonException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return res;
 
-    @Override
-    public SchemaFetcher withConfig(SchemaFetcherConfig cfg) {
-        return null;
-    }
+	}
 
-    @Override
-    public Schema fetch(URI targetUri) {
-        return fetch(targetUri, null, null);
-    }
+	public SchemaFetcher withConfig(final SchemaFetcherConfig cfg) {
+		return null;
+	}
 }

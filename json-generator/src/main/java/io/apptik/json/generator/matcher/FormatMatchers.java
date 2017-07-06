@@ -16,235 +16,296 @@
 
 package io.apptik.json.generator.matcher;
 
-
 import io.apptik.json.schema.Schema;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 public class FormatMatchers {
 
-    private FormatMatchers() {}
+	public static Matcher<Schema> isColorFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is color format");
+			}
 
-    public static Matcher<Schema> isDateFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                return Schema.FORMAT_DATE.equals(item.getFormat());
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!Schema.FORMAT_COLOR.equals(item.getFormat())) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is date format");
-            }
-        };
-    }
+	public static Matcher<Schema> isDateFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is date format");
+			}
 
-    public static Matcher<Schema> isDateTimeFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                return Schema.FORMAT_DATE_TIME.equals(item.getFormat());
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				return Schema.FORMAT_DATE.equals(item.getFormat());
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is date-time format");
-            }
-        };
-    }
+	public static Matcher<Schema> isDateTimeFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is date-time format");
+			}
 
-    public static Matcher<Schema> isColorFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!Schema.FORMAT_COLOR.equals(item.getFormat())) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				return Schema.FORMAT_DATE_TIME.equals(item.getFormat());
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is color format");
-            }
-        };
-    }
+	public static Matcher<Schema> isEmailFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is email format");
+			}
 
-    public static Matcher<Schema> isEmailFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_EMAIL)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!item.getFormat().equals(Schema.FORMAT_EMAIL)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is email format");
-            }
-        };
-    }
+	public static Matcher<Schema> isHostnameFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is hostname format");
+			}
 
-    public static Matcher<Schema> isHostnameFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_HOST_NAME) && !item.getFormat().equals(Schema.FORMAT_HOSTNAME)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!item.getFormat().equals(Schema.FORMAT_HOST_NAME)
+						&& !item.getFormat().equals(Schema.FORMAT_HOSTNAME)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is hostname format");
-            }
-        };
-    }
+	public static Matcher<Schema> isIPv4Format() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is IP v4 address format");
+			}
 
-    public static Matcher<Schema> isIPv4Format() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_IP_ADDR) && !item.getFormat().equals(Schema.FORMAT_IPV4)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!item.getFormat().equals(Schema.FORMAT_IP_ADDR)
+						&& !item.getFormat().equals(Schema.FORMAT_IPV4)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is IP v4 address format");
-            }
-        };
-    }
+	public static Matcher<Schema> isIPv6Format() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is IP v6 address format");
+			}
 
-    public static Matcher<Schema> isIPv6Format() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_IPV6)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!item.getFormat().equals(Schema.FORMAT_IPV6)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is IP v6 address format");
-            }
-        };
-    }
+	public static Matcher<Schema> isPhoneFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is phone format");
+			}
 
-    public static Matcher<Schema> isPhoneFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_PHONE)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!item.getFormat().equals(Schema.FORMAT_PHONE)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is phone format");
-            }
-        };
-    }
+	public static Matcher<Schema> isRegexFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is regex format");
+			}
 
-    public static Matcher<Schema> isRegexFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_REGEX)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!item.getFormat().equals(Schema.FORMAT_REGEX)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is regex format");
-            }
-        };
-    }
+	public static Matcher<Schema> isStyleFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is style format");
+			}
 
-    public static Matcher<Schema> isStyleFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_STYLE)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!item.getFormat().equals(Schema.FORMAT_STYLE)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is style format");
-            }
-        };
-    }
+	public static Matcher<Schema> isTimeFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is time format");
+			}
 
-    public static Matcher<Schema> isTimeFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_TIME)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!item.getFormat().equals(Schema.FORMAT_TIME)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is time format");
-            }
-        };
-    }
+	public static Matcher<Schema> isUriFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is uri format");
+			}
 
-    public static Matcher<Schema> isUriFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_URI)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!item.getFormat().equals(Schema.FORMAT_URI)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is uri format");
-            }
-        };
-    }
+	public static Matcher<Schema> isUTCmilisecFormat() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is utc-millisec format");
+			}
 
-    public static Matcher<Schema> isUTCmilisecFormat() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!SchemaDefMatchers.isStringType().matches(item)) return false;
-                if(item.getFormat() == null) return false;
-                if(!item.getFormat().equals(Schema.FORMAT_UTC_MILISEC)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!SchemaDefMatchers.isStringType().matches(item)) {
+					return false;
+				}
+				if (item.getFormat() == null) {
+					return false;
+				}
+				if (!item.getFormat().equals(Schema.FORMAT_UTC_MILISEC)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is utc-millisec format");
-            }
-        };
-    }
-
-
-
+	private FormatMatchers() {
+	}
 
 }

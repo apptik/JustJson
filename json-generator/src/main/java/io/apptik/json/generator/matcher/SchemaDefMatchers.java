@@ -16,190 +16,236 @@
 
 package io.apptik.json.generator.matcher;
 
-
+import static io.apptik.json.JsonElement.TYPE_ARRAY;
+import static io.apptik.json.JsonElement.TYPE_BOOLEAN;
+import static io.apptik.json.JsonElement.TYPE_INTEGER;
+import static io.apptik.json.JsonElement.TYPE_NUMBER;
+import static io.apptik.json.JsonElement.TYPE_OBJECT;
+import static io.apptik.json.JsonElement.TYPE_STRING;
 import io.apptik.json.schema.Schema;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import static io.apptik.json.JsonElement.*;
-
 public class SchemaDefMatchers {
 
-    private SchemaDefMatchers() {}
+	public static Matcher<Schema> isArrayType() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is Array type");
+			}
 
-    public static Matcher<Schema> isObjectType() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(item.getType() == null) return false;
-                if(!item.getType().contains(TYPE_OBJECT)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (item.getType() == null) {
+					return false;
+				}
+				if (!item.getType().contains(TYPE_ARRAY)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is Object type");
-            }
-        };
-    }
+	public static Matcher<Schema> isBooleanType() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is Boolean type");
+			}
 
-    public static Matcher<Schema> isArrayType() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(item.getType() == null) return false;
-                if(!item.getType().contains(TYPE_ARRAY)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (item.getType() == null) {
+					return false;
+				}
+				if (!item.getType().contains(TYPE_BOOLEAN)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is Array type");
-            }
-        };
-    }
+	public static Matcher<Schema> isEnum() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is enum");
+			}
 
-    public static Matcher<Schema> isStringType() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(item.getType() == null) return false;
-                if(!item.getType().contains(TYPE_STRING)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (item.getEnum() == null) {
+					return false;
+				}
+				if (item.getEnum().length() == 0) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is String type");
-            }
-        };
-    }
+	public static Matcher<Schema> isIntegerType() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is Integer type");
+			}
 
-    public static Matcher<Schema> isNumberType() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(item.getType() == null) return false;
-                if(!item.getType().contains(TYPE_NUMBER) && !isIntegerType().matches(item)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (item.getType() == null) {
+					return false;
+				}
+				if (!item.getType().contains(TYPE_INTEGER)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is Number type");
-            }
-        };
-    }
+	public static Matcher<Schema> isLimitedNumber() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is Limited Number");
+			}
 
-    public static Matcher<Schema> isIntegerType() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(item.getType() == null) return false;
-                if(!item.getType().contains(TYPE_INTEGER)) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!isNumberType().matches(item)) {
+					return false;
+				}
+				if (item.getMinimum() == null && item.getMaximum() == null) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is Integer type");
-            }
-        };
-    }
+	public static Matcher<Schema> isLimitedRangeObject() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is Limited Range Object");
+			}
 
-    public static Matcher<Schema> isLimitedNumber() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!isNumberType().matches(item)) return false;
-                if(item.getMinimum()==null && item.getMaximum()==null) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is Limited Number");
-            }
-        };
-    }
+				if (!isRangeObject().matches(item)) {
+					return false;
+				}
+				if (Double.compare(item.getProperties().optValue("min")
+						.getMinimum(), Double.NaN) == 0) {
+					return false;
+				}
+				if (Double.compare(item.getProperties().optValue("max")
+						.getMaximum(), Double.NaN) == 0) {
+					return false;
+				}
 
-    public static Matcher<Schema> isBooleanType() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(item.getType() == null) return false;
-                if(!item.getType().contains(TYPE_BOOLEAN)) return false;
-                return true;
-            }
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is Boolean type");
-            }
-        };
-    }
+	public static Matcher<Schema> isNumberType() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is Number type");
+			}
 
-    public static Matcher<Schema> isEnum() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(item.getEnum() == null) return false;
-                if(item.getEnum().length() == 0) return false;
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (item.getType() == null) {
+					return false;
+				}
+				if (!item.getType().contains(TYPE_NUMBER)
+						&& !isIntegerType().matches(item)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is enum");
-            }
-        };
-    }
+	public static Matcher<Schema> isObjectType() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is Object type");
+			}
 
-    public static Matcher<Schema> isRangeObject() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
-                if(!isObjectType().matches(item)) return false;
-                if(item.getProperties() == null) return false;
-                if(item.getProperties().length() != 2) return false;
-                if(item.getProperties().optValue("min") == null) return false;
-                if(item.getProperties().optValue("max") == null) return false;
-                if(!isNumberType().matches(item.getProperties().optValue("min"))) return false;
-                if(!isNumberType().matches(item.getProperties().optValue("max"))) return false;
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (item.getType() == null) {
+					return false;
+				}
+				if (!item.getType().contains(TYPE_OBJECT)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
+	public static Matcher<Schema> isRangeObject() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is Range Object");
+			}
 
-                return true;
-            }
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (!isObjectType().matches(item)) {
+					return false;
+				}
+				if (item.getProperties() == null) {
+					return false;
+				}
+				if (item.getProperties().length() != 2) {
+					return false;
+				}
+				if (item.getProperties().optValue("min") == null) {
+					return false;
+				}
+				if (item.getProperties().optValue("max") == null) {
+					return false;
+				}
+				if (!isNumberType().matches(
+						item.getProperties().optValue("min"))) {
+					return false;
+				}
+				if (!isNumberType().matches(
+						item.getProperties().optValue("max"))) {
+					return false;
+				}
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is Range Object");
-            }
-        };
-    }
+				return true;
+			}
+		};
+	}
 
-    public static Matcher<Schema> isLimitedRangeObject() {
-        return new ComparableTypeSafeMatcher<Schema>() {
-            @Override
-            protected boolean matchesSafely(Schema item) {
+	public static Matcher<Schema> isStringType() {
+		return new ComparableTypeSafeMatcher<Schema>() {
+			public void describeTo(final Description description) {
+				description.appendText("is String type");
+			}
 
-                if(!isRangeObject().matches(item)) return false;
-                if(Double.compare(item.getProperties().optValue("min").getMinimum(), Double.NaN)==0) return false;
-                if(Double.compare(item.getProperties().optValue("max").getMaximum(), Double.NaN)==0) return false;
+			@Override
+			protected boolean matchesSafely(final Schema item) {
+				if (item.getType() == null) {
+					return false;
+				}
+				if (!item.getType().contains(TYPE_STRING)) {
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 
-
-                return true;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("is Limited Range Object");
-            }
-        };
-    }
-
-
-
-
+	private SchemaDefMatchers() {
+	}
 
 }
