@@ -225,7 +225,7 @@ public abstract class Schema extends JsonObjectWrapper implements MetaInfo {
 	}
 
 	public Integer getMaxLength() {
-		return getJson().optInt("maxLength", 30);
+		return getJson().optInt("maxLength");
 	}
 
 	public Integer getMaxProperties() {

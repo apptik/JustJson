@@ -134,6 +134,11 @@ public class StringGenerator extends JsonGenerator {
 											.get(propertyName).size())));
 				}
 			}
+			if (configuration.emptyJson) {
+				// force to create empty string
+				minLength = 0;
+				maxLength = 0;
+			}
 
 		}
 
@@ -141,9 +146,11 @@ public class StringGenerator extends JsonGenerator {
 		String regex = this.schema.getPattern();
 		if (regex == null) {
 			if (maxLength < minLength) {
-				maxLength = minLength + 1;
+				regex = "\\w{" + minLength + "}";
+			} else {
+				regex = "\\w{" + minLength + "," + maxLength + "}";
+
 			}
-			regex = "\\w{" + minLength + "," + maxLength + "}";
 		}
 		Generex wGenerex = new Generex(regex);
 

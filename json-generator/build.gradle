@@ -19,14 +19,18 @@ apply plugin: 'jacoco'
 
 
 compileJava {
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
-
+repositories {
+   mavenCentral()
+}
 dependencies {
+    compile 'com.github.mifmif:generex:1.0.2'
     compile project (':json-core')
     compile project (':json-wrapper')
     compile project (':json-schema')
+    
     testCompile 'junit:junit:[4,)'
 }
 
