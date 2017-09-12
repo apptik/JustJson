@@ -31,11 +31,6 @@ public class JsonGeneratorExample {
 
     public static void main(String[] args) {
         JsonGeneratorExample generator = new JsonGeneratorExample();
-                Schema arraySchema = null;
-        try {
-            arraySchema =  new SchemaV4().wrap(JsonElement.readFrom("{\"type\" : \"array\",\"items\" : {\"type\": \"object\",\"required\" : [\"name\"],\"properties\": {\"name\": {\"type\": \"string\"},\"birthday\": {\"type\": \"integer\",\"format\": \"int32\"}}}}").asJsonObject());
-        } catch (Exception e) {}
-        System.out.println(generator.generateNoSettings(arraySchema).toString());
         System.out.println("generation without settings");
         System.out.println(generator.generateNoSettings(generator.schema1).toString());
         System.out.println("generation with settings");
