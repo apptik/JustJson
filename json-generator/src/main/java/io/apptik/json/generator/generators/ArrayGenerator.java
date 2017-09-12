@@ -59,7 +59,7 @@ public class ArrayGenerator extends JsonGenerator {
             minItems = (maxItems != null && maxItems <= 1) ? 0 : 1;
         }
         if (maxItems == null) {
-            maxItems = minItems + 2;
+            maxItems = 500;
         }
         maxItems = minItems + rnd.nextInt(maxItems-minItems);
 
