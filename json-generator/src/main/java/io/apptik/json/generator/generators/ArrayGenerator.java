@@ -43,8 +43,8 @@ public class ArrayGenerator extends JsonGenerator {
         JsonArray res = new JsonArray();
         SchemaList items = schema.getItems();
         JsonElement  newEl;
-        int minItems = schema.getMinItems();
-        int maxItems = schema.getMaxItems();
+        Integer minItems = schema.getMinItems();
+        Integer maxItems = schema.getMaxItems();
 
         if(configuration!=null) {
             if (configuration.globalArrayItemsMin!=null) minItems = configuration.globalArrayItemsMin;
@@ -54,6 +54,12 @@ public class ArrayGenerator extends JsonGenerator {
                 if (configuration.arrayItemsMax.get(propertyName)!=null) maxItems = configuration.arrayItemsMax.get(propertyName);
 
             }
+        }
+        if (minItems == null) {
+            minItems = (maxItems != null && maxItems <= 1) ? 0 : 1;
+        }
+        if (maxItems == null) {
+            maxItems = 500;
         }
         maxItems = minItems + rnd.nextInt(maxItems-minItems);
 
