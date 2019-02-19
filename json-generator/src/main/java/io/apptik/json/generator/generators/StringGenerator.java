@@ -27,6 +27,7 @@ import org.hamcrest.Matcher;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.Random;
 
 import static io.apptik.json.generator.matcher.FormatMatchers.*;
 
@@ -77,13 +78,27 @@ public class StringGenerator extends JsonGenerator {
                 }
             }
         }
+
+        //Check for generic default types
+        if (schema.getDefault() != null && !schema.getDefault().isEmpty()) {
+            return new JsonString(schema.getDefault());
+        }
+        if (schema.getConst() != null && !schema.getConst().isEmpty()) {
+            return new JsonString(schema.getConst());
+        }
+        if (schema.getExamples() != null && schema.getExamples().length() > 0) {
+            return new JsonString(schema.getExamples().get(new Random().nextInt(schema.getExamples().length())).toString());
+        }
+        if (schema.getEnum() != null && schema.getEnum().length() > 0) {
+            return new JsonString(schema.getEnum().get(new Random().nextInt(schema.getEnum().length() -1)).toString());
+        }
+
         if(configuration!=null) {
             if (configuration.globalStringLengthMin!=null) minChars = configuration.globalStringLengthMin;
             if (configuration.globalStringLengthMax!=null) maxChars = configuration.globalStringLengthMax;
             if (propertyName != null ) {
                 if (configuration.stringLengthMin.get(propertyName)!=null) minChars = configuration.stringLengthMin.get(propertyName);
                 if (configuration.stringLengthMax.get(propertyName)!=null) maxChars = configuration.stringLengthMax.get(propertyName);
-
                 if (configuration.stringPredefinedValues.get(propertyName) != null) {
                     return new JsonString(configuration.stringPredefinedValues.get(propertyName).get(rnd.nextInt(configuration.stringPredefinedValues.get(propertyName).size())));
                 }
@@ -92,8 +107,9 @@ public class StringGenerator extends JsonGenerator {
         }
 
         String res = "";
-        int cnt = minChars + rnd.nextInt(maxChars-minChars);
-        for(int i=0;i<cnt;i++) res += (rnd.nextBoolean())? (char)(65 + rnd.nextInt(25)):(char)(97 + rnd.nextInt(25));
+        int cnt = minChars + rnd.nextInt(maxChars - minChars);
+        for (int i = 0; i < cnt; i++)
+            res += (rnd.nextBoolean()) ? (char) (65 + rnd.nextInt(25)) : (char) (97 + rnd.nextInt(25));
         return new JsonString(res);
     }
 }

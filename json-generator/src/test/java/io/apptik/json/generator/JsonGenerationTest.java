@@ -45,7 +45,7 @@ public class JsonGenerationTest {
                         "\"type\" : \"object\"," +
                         "\"properties\" : {" +
                         "\"one\" : {\"type\" : \"number\"  } ," +
-                        "\"two\" : {\"type\" : \"string\" }," +
+                        "\"two\" : {\"type\" : \"string\"  }," +
                         "\"three\" : " + "{" +
                         "\"type\" : \"object\"," +
                         "\"properties\" : {" +
@@ -76,7 +76,102 @@ public class JsonGenerationTest {
         System.out.println(job.toString());
 
         assertEquals(8, job.length());
+    }
 
+    @Test
+    public void testDefaults() throws Exception {
+        SchemaV4 defaultsSchema = new SchemaV4().wrap(JsonElement.readFrom(
+                "{\n" +
+                        "\"type\" : \"object\"," +
+                        "\"properties\" : {" +
+                            "\"integerDefault\" : {\"type\" : \"integer\", \"default\": 1  } ," +
+                            "\"integerConst\" : {\"type\" : \"integer\", \"const\": 2  }," +
+                            "\"integerEnum\" : {\"type\" : \"integer\", \"enum\": [ 3, 4]  }," +
+                            "\"integerExamples\" : {\"type\" : \"integer\", \"examples\": [ 5, 6]  }," +
+                            "\"numberDefault\" : {\"type\" : \"number\", \"default\": 25.1  } ," +
+                            "\"numberConst\" : {\"type\" : \"number\", \"const\": 25.2  }," +
+                            "\"numberEnum\" : {\"type\" : \"number\", \"enum\": [ 25.3, 25.4 ]  }," +
+                            "\"numberExamples\" : {\"type\" : \"number\", \"examples\": [ 25.5, 25.6]  }," +
+                            "\"stringDefault\" : {\"type\" : \"string\", \"default\": \"someDefault\"  }," +
+                            "\"stringConst\" : {\"type\" : \"string\", \"const\": \"someConst\"  }," +
+                            "\"stringEnum\" : {\"type\" : \"string\", \"enum\": [\"someEnum\", \"someEnum2\"]  }," +
+                            "\"stringExamples\" : {\"type\" : \"string\", \"examples\": [\"someExample\", \"someExample2\"]  }," +
+                            "\"booleanDefault\" : {\"type\" : \"boolean\", \"default\": true  }," +
+                            "\"booleanConst\" : {\"type\" : \"boolean\", \"const\": false  }," +
+                            "\"booleanEnum\" : {\"type\" : \"boolean\", \"enum\": [ true, true]  }," +
+                            "\"booleanExamples\" : {\"type\" : \"boolean\", \"examples\": [ false, false]  }," +
+                            "\"arrayWithDefaults\" : {\"type\" : \"array\"," +
+                                " \"items\" : { \"type\" : \"object\", " +
+                                    "\"properties\" : {" +
+                                        "\"integerDefault\" : {\"type\" : \"integer\", \"default\": 1  } ," +
+                                        "\"integerConst\" : {\"type\" : \"integer\", \"const\": 2  }," +
+                                        "\"integerEnum\" : {\"type\" : \"integer\", \"enum\": [ 3, 4]  }," +
+                                        "\"integerExamples\" : {\"type\" : \"integer\", \"examples\": [ 5, 6]  }," +
+                                        "\"numberDefault\" : {\"type\" : \"number\", \"default\": 25.1  } ," +
+                                        "\"numberConst\" : {\"type\" : \"number\", \"const\": 25.2  }," +
+                                        "\"numberEnum\" : {\"type\" : \"number\", \"enum\": [ 25.3, 25.4 ]  }," +
+                                        "\"numberExamples\" : {\"type\" : \"number\", \"examples\": [ 25.5, 25.6]  }," +
+                                        "\"stringDefault\" : {\"type\" : \"string\", \"default\": \"someDefault\"  }," +
+                                        "\"stringConst\" : {\"type\" : \"string\", \"const\": \"someConst\"  }," +
+                                        "\"stringEnum\" : {\"type\" : \"string\", \"enum\": [\"someEnum\", \"someEnum2\"]  }," +
+                                        "\"stringExamples\" : {\"type\" : \"string\", \"examples\": [\"someExample\", \"someExample2\"]  }," +
+                                        "\"booleanDefault\" : {\"type\" : \"boolean\", \"default\": true  }," +
+                                        "\"booleanConst\" : {\"type\" : \"boolean\", \"const\": false  }," +
+                                        "\"booleanEnum\" : {\"type\" : \"boolean\", \"enum\": [ true, true]  }," +
+                                        "\"booleanExamples\" : {\"type\" : \"boolean\", \"examples\": [ false, false]  }" +
+                                    "}" +
+                                "}" +
+                            "}" +
+                        "}" +
+                    "}").asJsonObject());
+
+        JsonObject job = new JsonGenerator(defaultsSchema, new JsonGeneratorConfig()).generate().asJsonObject();
+        System.out.println("Output is: " + job.toString());
+        assertEquals("someDefault", job.getString("stringDefault"));
+        assertEquals("someConst", job.getString("stringConst"));
+        assertTrue(job.getString("stringEnum").contains("someEnum") || job.getString("stringEnum").contains("someEnum2"));
+        assertTrue(job.getString("stringExamples").contains("someExample") || job.getString("stringExamples").contains("someExample2"));
+
+        assertTrue(1 == job.getInt("integerDefault"));
+        assertTrue(2 == job.getInt("integerConst"));
+        assertTrue(job.getInt("integerEnum") == 3|| job.getInt("integerEnum") == 4);
+        assertTrue(job.getInt("integerExamples") == 5 || job.getInt("integerExamples") == 6);
+
+        assertEquals(25.1, job.getDouble("numberDefault"));
+        assertEquals(25.2, job.getDouble("numberConst"));
+        assertTrue(job.getDouble("numberEnum") == 25.3|| job.getDouble("numberEnum") == 25.4);
+        assertTrue(job.getDouble("numberExamples") == 25.5 || job.getDouble("numberExamples") == 25.6);
+
+        assertTrue(true == job.getBoolean("booleanDefault"));
+        assertTrue(false == job.getBoolean("booleanConst"));
+        assertTrue(job.getBoolean("booleanEnum") == true);
+        assertTrue(job.getBoolean("booleanExamples") == false);
+
+        assertEquals("someDefault", job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getString("stringDefault"));
+        assertEquals("someConst", job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getString("stringConst"));
+        assertTrue(job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getString("stringEnum").contains("someEnum")
+                || job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getString("stringEnum").contains("someEnum2"));
+        assertTrue(job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getString("stringExamples").contains("someExample")
+                || job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getString("stringExamples").contains("someExample2"));
+
+        assertTrue(1 == job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getInt("integerDefault"));
+        assertTrue(2 == job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getInt("integerConst"));
+        assertTrue(job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getInt("integerEnum") == 3
+                || job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getInt("integerEnum") == 4);
+        assertTrue(job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getInt("integerExamples") == 5
+                || job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getInt("integerExamples") == 6);
+
+        assertEquals(25.1, job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getDouble("numberDefault"));
+        assertEquals(25.2, job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getDouble("numberConst"));
+        assertTrue(job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getDouble("numberEnum") == 25.3||
+                job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getDouble("numberEnum") == 25.4);
+        assertTrue(job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getDouble("numberExamples") == 25.5 ||
+                job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getDouble("numberExamples") == 25.6);
+
+        assertTrue(true == job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getBoolean("booleanDefault"));
+        assertTrue(false == job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getBoolean("booleanConst"));
+        assertTrue(job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getBoolean("booleanEnum") == true);
+        assertTrue(job.getJsonArray("arrayWithDefaults").get(0).asJsonObject().getBoolean("booleanExamples") == false);
     }
 
     @Test
