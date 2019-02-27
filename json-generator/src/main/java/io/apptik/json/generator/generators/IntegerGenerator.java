@@ -22,6 +22,8 @@ import io.apptik.json.generator.JsonGeneratorConfig;
 import io.apptik.json.generator.JsonGenerator;
 import io.apptik.json.schema.Schema;
 
+import java.util.Random;
+
 public class IntegerGenerator extends JsonGenerator {
     public IntegerGenerator(Schema schema, JsonGeneratorConfig configuration) {
         super(schema, configuration);
@@ -35,6 +37,21 @@ public class IntegerGenerator extends JsonGenerator {
     public JsonElement generate() {
         int minValue = 0;
         int maxValue = Integer.MAX_VALUE;
+
+        //Check for generic default types
+        if (schema.getDefaultInt() != null) {
+            return new JsonNumber(schema.getDefaultInt());
+        }
+        if (schema.getConstInt() != null) {
+            return new JsonNumber(schema.getConstInt());
+        }
+        if (schema.getExamples() != null && schema.getExamples().length() > 0) {
+            return checkIfDefaultIsAInteger(schema.getExamples().get(new Random().nextInt(schema.getExamples().length())).toString());
+        }
+        if (schema.getEnum() != null && schema.getEnum().length() > 0) {
+            return checkIfDefaultIsAInteger(schema.getEnum().get(new Random().nextInt(schema.getEnum().length() -1)).toString());
+        }
+        
         if(configuration!=null) {
             if (configuration.globalIntegerMin!=null) minValue = configuration.globalIntegerMin;
             if (configuration.globalIntegerMax!=null) maxValue = configuration.globalIntegerMax;
@@ -46,5 +63,13 @@ public class IntegerGenerator extends JsonGenerator {
         }
 
         return new JsonNumber(minValue + rnd.nextInt(maxValue-minValue));
+    }
+
+    private JsonNumber checkIfDefaultIsAInteger(String defaultValue) {
+        try {
+            return new JsonNumber(Integer.parseInt(defaultValue));
+        } catch (NumberFormatException ex) {
+            throw new RuntimeException("Default value: " + defaultValue + " of key: " + propertyName + ", is not a integer type");
+        }
     }
 }

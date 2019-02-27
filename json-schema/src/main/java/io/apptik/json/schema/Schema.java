@@ -274,7 +274,31 @@ public abstract class Schema extends JsonObjectWrapper implements MetaInfo{
     }
 
     public String getDefault() {
-        return getJson().optString("default","");
+        return getJson().optString("default");
+    }
+
+    public Integer getDefaultInt() {
+        return getJson().optInt("default");
+    }
+
+    public Integer getConstInt() {
+        return getJson().optInt("const");
+    }
+
+    public Double getDefaultNumber() {
+        return getJson().optDouble("default");
+    }
+
+    public Double getConstNumber() {
+        return getJson().optDouble("const");
+    }
+
+    public Boolean getDefaultBoolean() {
+        return getJson().optBoolean("default");
+    }
+
+    public Boolean getConstBoolean() {
+        return getJson().optBoolean("const");
     }
 
     public Double getMultipleOf() {
@@ -373,6 +397,14 @@ public abstract class Schema extends JsonObjectWrapper implements MetaInfo{
 
     public JsonObject getDependencies() {
         return getJson().optJsonObject("dependencies");
+    }
+
+    public JsonArray getExamples() {
+        return getJson().optJsonArray("examples");
+    }
+
+    public String getConst() {
+        return getJson().optString("const");
     }
 
     public JsonArray getEnum() {

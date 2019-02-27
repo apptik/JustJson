@@ -61,7 +61,9 @@ public class ArrayGenerator extends JsonGenerator {
         if (maxItems == null) {
             maxItems = 500;
         }
-        maxItems = minItems + rnd.nextInt(maxItems-minItems);
+        if(maxItems > 1) {
+            maxItems = minItems + rnd.nextInt(maxItems - minItems);
+        }
 
 
         //meant for JSON generator after all, not OutOfMemory generator :)

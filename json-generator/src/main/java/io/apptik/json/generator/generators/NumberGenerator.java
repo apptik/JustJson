@@ -18,9 +18,12 @@ package io.apptik.json.generator.generators;
 
 import io.apptik.json.JsonElement;
 import io.apptik.json.JsonNumber;
+import io.apptik.json.JsonString;
 import io.apptik.json.generator.JsonGenerator;
 import io.apptik.json.generator.JsonGeneratorConfig;
 import io.apptik.json.schema.Schema;
+
+import java.util.Random;
 
 public class NumberGenerator extends JsonGenerator {
     public NumberGenerator(Schema schema, JsonGeneratorConfig configuration) {
@@ -36,6 +39,22 @@ public class NumberGenerator extends JsonGenerator {
 
         int minValue = 0;
         int maxValue = Integer.MAX_VALUE;
+        String defaultValue = schema.getDefault();
+
+        //Check for generic default types
+        if (schema.getDefaultNumber() != null) {
+            return new JsonNumber(schema.getDefaultNumber());
+        }
+        if (schema.getConstNumber() != null) {
+            return new JsonNumber(schema.getConstNumber());
+        }
+        if (schema.getExamples() != null && schema.getExamples().length() > 0) {
+            return checkIfDefaultIsANumber(schema.getExamples().get(new Random().nextInt(schema.getExamples().length())).toString());
+        }
+        if (schema.getEnum() != null && schema.getEnum().length() > 0) {
+            return checkIfDefaultIsANumber(schema.getEnum().get(new Random().nextInt(schema.getEnum().length() -1)).toString());
+        }
+
         if(configuration!=null) {
             if (configuration.globalNumberMin!=null) minValue = configuration.globalNumberMin;
             if (configuration.globalNumberMax!=null) maxValue = configuration.globalNumberMax;
@@ -47,5 +66,13 @@ public class NumberGenerator extends JsonGenerator {
         }
 
         return new JsonNumber(minValue + rnd.nextInt(maxValue-minValue) + Math.abs(rnd.nextDouble()));
+    }
+
+    private JsonNumber checkIfDefaultIsANumber(String defaultValue) {
+        try {
+            return new JsonNumber(Double.parseDouble(defaultValue));
+        } catch (NumberFormatException ex) {
+            throw new RuntimeException("Default value: " + defaultValue + " of key: " + propertyName + ", is not a number type");
+        }
     }
 }
